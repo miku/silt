@@ -1,0 +1,580 @@
+# silt — todo
+
+Plan for porting [patent](https://github.com/r14dd/patent) to Go. Phase 1 is
+**parity**. Extensions and refinements come after that (M9). The analysis this
+plan builds on is in [2026-10-25-patent.md](2026-10-25-patent.md).
+
+- **Reference:** patent `0.14.1` @ `8d741bd` (local: `~/code/r14dd/patent`).
+  Port against this commit. Upstream changes after it go to the backlog, not
+  into the port.
+- **Module:** `github.com/miku/silt`, Go 1.27.
+
+## What parity means
+
+- Same input, same behaviour: the same sources get selected, each registry gets
+  the same query strings, the ranking thresholds and verdict rules are the same,
+  and so are the JSON shape, exit codes, TUI features and keybindings.
+- The Go code should be idiomatic, not a line-by-line transliteration. Structure
+  can differ. Observable behaviour can't, apart from the allowed deviations
+  below.
+- patent's ~380 tests are the spec: 161 adapter, 60 TUI state, 38 TUI render,
+  36 verdict, 18 source framework, 16 rank, 10 OpenAI, 7 CLI, 7 freshness,
+  6 Ollama, and a few more. Every Rust test gets a Go counterpart, tracked in
+  `notes/parity-tests.md`.
+- Port quirks unchanged. If something in patent looks wrong, add it to M9
+  instead of fixing it during the port. Anything we do change goes in the
+  deviations table, with a reason.
+- `go test ./...` never touches the network. Live tests run behind `-tags live`.
+
+### Allowed deviations
+
+| patent | silt | why |
+|---|---|---|
+| `patent`, `PATENT_MODEL` / `PATENT_API_BASE` / `PATENT_API_KEY`, `<config>/patent/config.toml`, `<cache>/patent/` | `silt`, `SILT_*`, `<config>/silt/config.toml`, `<cache>/silt/` | rename only |
+| User-Agent `patent/x (prior-art search; https://github.com/r14dd/patent)` | `silt/x (...; https://github.com/miku/silt)` | registries should see who is calling |
+| Fan-out iterates a `HashSet`, so which duplicate wins dedup changes from run to run | iterate in `Source.All()` order | patent's order is unspecified, so any fixed order counts as parity, and a fixed order is testable |
+
+### patent quirks we port unchanged (fixes are listed in M9)
+
+- The interactive TUI search ignores `--limit` and always keeps 50
+  (`src/bin/patent/tui.rs:1219`).
+- Errors exit with code 1, the same code as "Crowded".
+- `sources_failed` is displayed, but it never reaches the prompt or the
+  saturation floor.
+- PyPI is bot-walled, so in practice it always comes back as "not reached".
+
+## Milestones
+
+| # | Milestone | Outcome | Depends on |
+|---|---|---|---|
+| M0 | Decisions & scaffolding | decisions written down, CI green, embedding spike measured | — |
+| M1 | Domain model & freshness | `model`, `freshness`, error types | M0 |
+| M2 | Source framework + 3 adapters | fan-out, dedup, selection, narrowing; crates.io, GitHub, Hacker News | M1 |
+| M3 | Walking skeleton | `silt --keyword-only --fast --json "..."` works end to end | M2 |
+| M4 | Remaining 16 adapters | all 19 sources | M2 |
+| M5 | Semantic ranking | embeddings match fastembed within tolerance | M0 spike, M3 |
+| M6 | LLM verdict | Ollama + OpenAI-compatible backends, integrity guards, `--print-prompt` | M3 |
+| M7 | TUI | results view, interactive search, filter, sort, detail | M3 |
+| M8 | Parity check & release | side-by-side harness, docs, binaries | M4–M7 |
+| M9 | Post-parity backlog | not scheduled | — |
+
+M4, M5, M6 and M7 can run in parallel once M3 is in.
+
+---
+
+## M0 — Decisions & scaffolding
+
+Record each decision briefly in `notes/decisions.md`.
+
+- [ ] **D1 Package layout.** Library packages live at the module root, since
+  patent ships a reusable lib. The binary goes under `cmd/silt`.
+  ```
+  silt (root)          doc.go, errors.go                         ← src/lib.rs
+  cmd/silt/            flags, validation, resolution, output     ← src/bin/patent/main.rs, cli.rs
+  model/               Query, Source, Match, Saturation, Verdict ← src/model.rs
+  freshness/                                                     ← src/freshness.rs
+  sources/             Adapter, fan-out, dedup, detect, narrowing,
+                       one file per adapter                      ← src/sources/
+  rank/                Embedder, cosine, keyword ranking         ← src/rank.rs
+  verdict/             prompt, guards, FromData, Assess          ← src/verdict.rs
+  llm/, llm/ollama/, llm/openai/                                 ← src/llm.rs, ollama.rs, openai.rs
+  tui/                 headless App state machine                ← src/tui.rs
+  internal/pipeline/   search → rank → verdict                   ← src/bin/patent/pipeline.rs
+  internal/config/     config.toml                               ← src/bin/patent/config.rs
+  internal/ui/         terminal rendering                        ← src/bin/patent/tui.rs
+  ```
+- [ ] **D2 Embedding backend.** This is the biggest risk, so spike it before M5.
+  The Go side has to run the same model as fastembed's `AllMiniLML6V2`, with the
+  same tokenizer, truncation, pooling and normalisation, so that cosine values
+  land within about 1e-3 of patent's. The thresholds (0.35 relevance gate;
+  0.55/0.60/0.70 floor) are calibrated on those values. Candidates:
+  1. `knights-analytics/hugot` with its pure-Go backend. No cgo; least code.
+  2. A hand-written pure-Go forward pass plus a WordPiece tokenizer.
+     MiniLM-L6 is small: 6 layers, 384 dims, ~22M params. The weights download
+     once, and the result is a static binary.
+  3. ONNX Runtime via `hugot` or `yalue/onnxruntime_go`. This is what patent
+     does, so it's the most faithful, but it needs cgo plus a shared library and
+     inherits patent's glibc ≥ 2.38 requirement.
+  4. Ollama `/api/embed` with `all-minilm`. There's no in-process model, but it
+     needs a running daemon, which breaks the offline `--fast` path.
+
+  Spike 1, then 2. Use 3 if neither works out. A backend is good enough when the
+  golden test passes and ranking ~300 short texts takes about 1 s or less on a
+  laptop.
+  - [ ] Read how fastembed 7 sets up `AllMiniLML6V2` (in
+    `~/.cargo/registry/src/*/fastembed-7*`): HF repo, files, max length,
+    pooling, normalisation.
+  - [ ] Write a small Rust harness on top of patent's `Ranker` that dumps
+    embeddings and pairwise cosines for ~50 fixed strings (ideas and match
+    texts, including long, empty, CJK and emoji ones) to
+    `testdata/embeddings/golden.json`.
+- [ ] **D3 CLI library.** Requirements: an optional positional idea, comma
+  lists, a range check on `--limit`, env fallbacks, and `--completions <shell>`.
+  Proposal: `spf13/cobra` + pflag, which has completion generators built in.
+  Do the env > config > default precedence by hand in one resolver; that logic
+  is needed anyway. (clap also generates elvish completions; dropping elvish
+  would go in the deviations table.)
+- [ ] **D4 TUI stack.** Proposal: `charmbracelet/bubbletea` + `lipgloss` +
+  `bubbles`. Clipboard: `atotto/clipboard`. Opening URLs: `pkg/browser`.
+- [ ] **D5 Smaller libraries.** HTML: `PuerkitoBio/goquery`. TOML:
+  `pelletier/go-toml/v2` with `DisallowUnknownFields` (patent uses
+  `deny_unknown_fields`). HTTP and concurrency: stdlib. Tests: `httptest`;
+  decide whether to use testify or plain `testing`.
+- [ ] **D6 Error model.** Mirror patent's `Error` enum with typed errors:
+  `HTTPError`, `HTTPClientError`, `ParseError`, `UnavailableError`,
+  `LLMUnreachableError`, `LLMRejectedError`, `EmbeddingError`. Add
+  `IsRetryable(err)`, which is false for Unavailable and HTTPClient.
+- [ ] Scaffolding: `go mod init github.com/miku/silt`; a Makefile with `build`,
+  `test`, `test-live` and `lint` targets; golangci-lint config; GitHub Actions
+  running `go vet`, `go test -race` and lint; version via `-ldflags` and
+  `debug.ReadBuildInfo`.
+- [ ] Attribution: silt is MIT, and patent is MIT OR Apache-2.0
+  (© Riad Mukhtarov). The port is a derivative work, so keep patent's copyright
+  and MIT notice (in `NOTICE` or a README section).
+- [ ] Generate `notes/parity-tests.md` from patent's test names, as a
+  checklist mapping each Rust test to its Go test.
+
+**Done when** CI is green on the empty skeleton, D1–D6 are written down, and the
+D2 spike has numbers for accuracy and speed.
+
+## M1 — Domain model & freshness
+
+- [ ] `model.Source` (`src/model.rs`):
+  - 19 values, with `All()` in patent's order.
+  - `KebabName()`: `crates-io`, `hacker-news`, `docker-hub`,
+    `vscode-marketplace`, `artifact-hub`, …
+  - `String()` display names: `crates.io`, `Hacker News`, `VS Code`, …
+  - `ParseSource`: case-insensitive and accepts every alias (`crates_io`,
+    `crates.io`, `docker`, `vscode`, `intellij`, `brew`, `nix`, `hackernews`,
+    …). On failure the error lists the valid names.
+  - JSON: marshals as kebab-case. Unmarshal also accepts the old PascalCase
+    names.
+- [ ] `model.Query{Idea, Keywords}`.
+- [ ] `model.Match`: `name, source, url, description, popularity *uint64,
+  similarity float32, last_updated *string`. Missing popularity and
+  last_updated are written as `null`, so don't use `omitempty`.
+- [ ] `model.Saturation`: ordered `Open < Crowded < Saturated`, with `Max` and
+  `ExitCode()` (0/1/2). Lowercase in JSON; PascalCase is accepted on input.
+- [ ] `model.Verdict`: `level, headline, gaps, sources_checked, sources_failed,
+  caveat`. Empty gaps and source lists must marshal as `[]`, not `null` (Go's
+  nil slices marshal as `null`). A missing `sources_failed` on input decodes as
+  empty.
+- [ ] Error types (D6).
+- [ ] `freshness` (`src/freshness.rs`):
+  - `FromRFC3339`: accepts any fractional precision, converts `+hh:mm` offsets
+    to UTC, and outputs whole seconds ending in `Z`.
+  - `FromUnixSecs` / `FromUnixMillis`: out-of-range input returns none. Go's
+    `time.Unix` never fails, so add an explicit range check; `i64::MAX` must
+    give none, as it does with Rust's `time` crate.
+  - `FromGoDate("Feb 28, 2026")`: rejects `Feb 30, 2026`, `Smarch 3, 2026` and
+    `Feb 2026`.
+  - `Age(ts, now)` returns a label and a stale flag:
+    - years are counted as completed calendar years, not days / 365.2425;
+    - 360–364 days reads "11 months ago";
+    - a future date reads "today" and is never stale;
+    - `StaleAfterYears = 2`, with the boundary exactly on the anniversary.
+  - Lenient date fields (patent's `lenient`): if a registry changes a field's
+    type (string ↔ number, object, null), the date becomes none instead of
+    failing the whole response. In Go: a `Lenient[T]` type whose
+    `UnmarshalJSON` never returns an error.
+- [ ] Port the tests: `model.rs` (2) and `freshness.rs` (7), plus JSON
+  round-trip tests for every type.
+
+**Done when** Go's JSON for a sample verdict and match list is semantically
+equal to patent's `--json` for the same data. Compare parsed JSON, not bytes:
+serde writes `0.0` / `1.0` where Go writes `0` / `1`.
+
+## M2 — Source framework + first three adapters
+
+- [ ] `sources.Adapter` interface: `ID() model.Source` and
+  `Search(ctx, model.Query) ([]model.Match, error)`. Each adapter has a base-URL
+  override for tests, like patent's `with_base_url`.
+- [ ] Shared HTTP client: 10 s total timeout, 5 s connect timeout, User-Agent as
+  in the deviations table.
+- [ ] `ideaContains(idea, terms)` (`mod.rs:149`):
+  - lowercases the idea;
+  - matches whole words only, with ASCII-alphanumeric boundaries;
+  - checks every occurrence, so the `go` inside `django` doesn't hide a later
+    standalone `go`;
+  - handles multi-word and punctuated terms (`machine learning`, `c#`, `.net`).
+- [ ] `detectSources(idea)`: port the rule table verbatim from
+  `mod.rs:169-379` and keep the term lists as data.
+  - GitHub and Hacker News are always selected.
+  - Language and ecosystem rules.
+  - Domain sweeps: AI, cli, frontend, backend, mobile, game, embedded,
+    containers, IDE/plugin, JetBrains IDE names.
+  - Fallback: if only the two always-on sources matched, add npm, PyPI and
+    crates.io.
+- [ ] `narrowed(keywords, n)` and `narrowingCandidates(query, minTerms)`:
+  - pick the n longest keywords and keep them in their original order;
+  - try `len(keywords)`, then 3, 2, … down to `minTerms`, skipping duplicates;
+  - with no keywords, fall back to the raw idea.
+
+  Use a **stable** sort (`slices.SortStableFunc`). Rust's `sort_by` is stable,
+  so equal-length keywords must break ties the same way.
+- [ ] Fan-out `SearchSources`:
+  - one goroutine per adapter, each with a 15 s deadline;
+  - one retry after 800 ms, unless `!IsRetryable(err)`;
+  - a timeout counts as a failure (`"<src> timed out"`);
+  - returns `{Matches, Reached, Failed}`, and a failing source never fails the
+    run;
+  - prints nothing (output would draw over the TUI).
+- [ ] `Dedup` + `enrich` (`mod.rs:536`):
+  - key by URL, or by `(name, source)` when the URL is empty or whitespace;
+  - keep the first occurrence;
+  - fill only `last_updated` and `popularity` from later duplicates.
+- [ ] `SearchAll(q)` and `SearchFiltered(q, include, exclude)`.
+- [ ] Adapters:
+  - **crates.io**: `/api/v1/crates?q=&per_page=20`, narrowing with min 2.
+    Popularity is downloads; the date is `updated_at`.
+  - **GitHub**: `/search/repositories?per_page=50`, optional `GITHUB_TOKEN`.
+    Two rate-limit messages, one with a token and one without. Popularity is
+    stars; the date is `pushed_at`.
+  - **Hacker News**: Algolia `search?hitsPerPage=20&tags=story`, narrowing with
+    min 2. Strips HTML tags and truncates. Popularity is points; no date.
+- [ ] Port the tests: the `sources/mod.rs` unit tests (18), including
+  `every_built_source_is_reachable_from_some_idea` and
+  `port_killer_demo_searches_npm`; plus the fan-out, dedup and three-adapter
+  tests from `tests/sources.rs`.
+
+**Done when** a test with three `httptest` servers (one slow, one that returns
+500 then 200, one Unavailable) produces the right reached/failed split within
+the deadlines.
+
+## M3 — Walking skeleton: CLI, config, keyword ranking, data-only verdict
+
+- [ ] `validateIdea` (`main.rs:12`):
+  - needs at least 3 whitespace tokens with at least 3 Unicode alphanumeric
+    characters each;
+  - needs at least 3 unique tokens and at least 2 non-stopwords;
+  - scripts without spaces are accepted when there are fewer than 3 tokens and
+    at least 2 non-ASCII alphanumeric characters;
+  - same error messages, with `silt` in them.
+- [ ] `STOPWORDS` copied verbatim. `buildQuery`: lowercase, strip punctuation
+  except `-`, and keep tokens that are longer than 2 bytes and not stopwords.
+- [ ] Flags (D3): `idea` (optional), `--limit` (≥ 1, default 50), `--model`,
+  `--api-base`, `--api-key`, `--keyword-only`, `--fast`, `--sources`,
+  `--exclude`, `--print-prompt`, `--list-sources`, `--json`,
+  `--completions <shell>`, `--version`, `--help`. Adapt the help texts from
+  `cli.rs`.
+- [ ] `--list-sources` prints `%-22s %s` (kebab name, display name).
+- [ ] Config file at `os.UserConfigDir()/silt/config.toml` with `model`,
+  `api_base` and `api_key`. A missing file is fine; an unknown key is an error
+  that names the file.
+- [ ] Settings resolution: flag/env > config > default, with `OPENAI_API_KEY` as
+  the last fallback for the key. Port the errors and warnings from
+  `main.rs:139-173`:
+  - error: `api_base` set but no model;
+  - warning: key set without a base URL;
+  - warning: `--fast` combined with a base URL;
+  - note: the query will be sent to `api_base`.
+- [ ] Without an idea: `--json` is an error; if stdout isn't a TTY, print a
+  usage error; otherwise start the interactive TUI (a stub until M7).
+- [ ] The data-only part of `verdict`:
+  - `CAVEAT`, verbatim;
+  - `floorLevel`: at least 5 matches ≥ 0.60 → Saturated; at least 2 ≥ 0.55, or
+    one ≥ 0.70 → Crowded;
+  - `dataHeadline` and `FromData`.
+- [ ] `rank.ByKeywords` (`rank.rs:166`): score is the fraction of keywords found
+  as substrings in `name + description`. Sort descending (stable), drop zeros,
+  truncate.
+- [ ] `internal/pipeline.Run`:
+  - search, either filtered or with auto-detected sources;
+  - rank to `max(limit, 50)`;
+  - verdict: `--fast` uses `FromData`; if the best similarity is below 0.35,
+    use the "nothing relevant" fallback; the LLM comes in M6;
+  - truncate to `limit` only after the verdict;
+  - print the same progress lines to stderr.
+
+  Until M4, the unported adapters are listed as failed ("not reached"), so the
+  skeleton never overstates its coverage.
+- [ ] Output: JSON when `--json` is set or stdout isn't a TTY (the latter with
+  the stderr note). Shape: `{schema_version: 1, query, verdict, matches}`,
+  two-space indent, `SetEscapeHTML(false)` (Go escapes `<>&` by default, serde
+  doesn't). Exit with `level.ExitCode()`.
+- [ ] Port the tests: `main.rs` (4), `config.rs` (4) and `tests/cli.rs` (7;
+  build the binary once in `TestMain`).
+
+**Done when**
+`silt --keyword-only --fast --json "cli tool that kills a process on a given port"`
+returns ranked matches from crates.io, GitHub and HN, with a data-only verdict,
+honest `sources_failed`, and the right exit code.
+
+## M4 — Remaining adapters (16)
+
+For each adapter: port the adapter, port its `httptest` tests from
+`tests/sources.rs`, and add a live smoke test (`-tags live`, from
+`tests/live.rs`).
+
+Rules for all adapters:
+- decode only the fields we need;
+- date fields are lenient;
+- a non-2xx response is a retryable HTTP error;
+- popularity 0 becomes `null` wherever patent filters it out.
+
+- [ ] **npm**
+  - Endpoint: `registry.npmjs.org/-/v1/search?text=&size=20`.
+  - Query: the idea verbatim if it's at most 64 chars; otherwise the longest
+    keywords that fit; as a last resort the idea cut to 64 chars.
+  - Popularity: `score.detail.popularity × 1e6`. Date: `package.date`.
+  - URL: `npmjs.com/package/<name>`.
+- [ ] **PyPI** (scrape)
+  - Endpoint: `pypi.org/search/?q=<keywords>`.
+  - A 403 is Unavailable. A page over 2000 bytes with no `a.package-snippet` is
+    also Unavailable. A small empty page is a genuine empty result.
+- [ ] **Go** (scrape)
+  - Endpoint: `pkg.go.dev/search?q=&m=package`, narrowing with min 2.
+  - Parse `.SearchSnippet` entries, capped at 20. The name is the direct text
+    nodes of the first `a[href]` (not the nested module path), with whitespace
+    collapsed. The synopsis falls back to the name.
+  - Date: `[data-test-id=snippet-published]` via `FromGoDate`.
+  - A `gopher-message` element means a genuine empty result. Otherwise a page
+    over 2000 bytes with no results is drift: return a `ParseError`, which is
+    retryable.
+- [ ] **Maven**
+  - Endpoint: `search.maven.org/solrsearch/select?rows=20&wt=json`, narrowing
+    with min 1.
+  - No descriptions. No popularity (`versionCount` is deliberately unused).
+    Date: `timestamp` in milliseconds.
+- [ ] **RubyGems**
+  - Endpoint: `rubygems.org/api/v1/search.json?query=`, narrowing with min 2,
+    take 20.
+  - Popularity: downloads. No date.
+- [ ] **Docker Hub**
+  - Endpoint: `hub.docker.com/v2/search/repositories/`.
+  - Popularity: `star_count`. No date (the v3 catalog has dates; patent
+    deliberately doesn't use it).
+  - URL: `hub.docker.com/r/<repo>`.
+- [ ] **VS Code Marketplace**
+  - Endpoint: POST `/_apis/public/gallery/extensionquery` with filterType 8 =
+    `Microsoft.VisualStudio.Code` and filterType 10 = the query.
+  - The request needs `flags: 914`, or `lastUpdated` is silently dropped.
+  - Popularity: installs. Date: `lastUpdated`.
+- [ ] **JetBrains**
+  - Endpoint: `plugins.jetbrains.com/api/searchPlugins`, narrowing with min 2.
+  - Popularity: downloads. Date: `cdate` in milliseconds.
+- [ ] **NuGet**
+  - Endpoint: `azuresearch-usnc.nuget.org/query?q=&take=20`, narrowing with
+    min 1.
+  - Popularity: `totalDownloads`. No date.
+- [ ] **Homebrew**
+  - Fetches the full `api/formula.json` and `api/cask.json` catalogs and caches
+    them per adapter instance.
+  - Narrowing with min 2: every term must appear in the name or the
+    description. Take 20.
+  - URL: the homepage, or `<base>/formula/<name>` when there is none.
+- [ ] **Packagist**
+  - Endpoint: `packagist.org/search.json?q=&per_page=15`, narrowing with min 2.
+  - Popularity: downloads, falling back to favers; never 0.
+- [ ] **Hex**
+  - Endpoint: `hex.pm/api/packages?search=`.
+  - Search each of the 3 longest keywords separately and merge the results; a
+    multi-word query returns the whole catalogue.
+  - Popularity: `downloads.all`. Date: `updated_at`.
+- [ ] **Artifact Hub**
+  - Endpoint: `artifacthub.io/api/v1/packages/search?limit=15`, narrowing with
+    min 1.
+  - The URL needs the numeric `repository.kind` mapped to a slug (`helm`,
+    `olm`, `krew`, …).
+  - Popularity: stars. Date: `ts` in seconds.
+- [ ] **AUR**
+  - Endpoint: `aur.archlinux.org/rpc/?v=5&type=search` with `by=name-desc`,
+    falling back to `by=name` when that is refused. Narrowing with min 1.
+  - An HTTP 200 with `{"type":"error"}` is a refusal, not an empty result.
+  - URL: `/packages/<Name>`. Popularity: `NumVotes`. Date: `LastModified` in
+    seconds.
+- [ ] **Hackage**
+  - `/packages/search` returns names only, so fetch
+    `/package/<n>/<n>.cabal` in parallel (max 20) to get the synopsis and
+    homepage.
+  - No date: the last-modified header isn't a release date.
+- [ ] **Nixpkgs**
+  - POST to the Elasticsearch backend behind `search.nixos.org`, channel
+    `unstable`, size 20, using the public credentials the site ships to every
+    browser.
+  - The name gets a version suffix. The URL points to the search.nixos.org
+    package page.
+
+**Done when** all 19 sources pass their mocked tests, `--list-sources` lists
+19, and the live smoke tests pass (or fail as expected for PyPI).
+
+## M5 — Semantic ranking
+
+- [ ] `rank.Embedder` (`EmbedQuery`, `Embed([]string)`), implemented with the
+  D2 backend.
+- [ ] Model cache at `os.UserCacheDir()/silt/<model>/`:
+  - download once, with progress on stderr;
+  - write to a temp file and rename, and verify a checksum;
+  - `ModelIsCached()` requires a non-empty model file, so a partial download
+    doesn't count.
+- [ ] Load the model concurrently with the source fan-out. patent uses
+  `tokio::join!` + `spawn_blocking`; in Go, a goroutine and a channel.
+- [ ] Text embedded per match: `"name: description"`, or just `name` when the
+  description is empty.
+- [ ] `scoreSortLimit`:
+  - cosine similarity, 0 for zero vectors;
+  - sort descending (stable), drop negatives, truncate;
+  - similarity only, age never affects the score (keep patent's comment that
+    explains why).
+- [ ] First-run notice in the CLI: "downloading the embedding model … (~80 MB,
+  one-time)".
+- [ ] Golden test against `testdata/embeddings/golden.json`: each pairwise
+  cosine within 1e-3.
+- [ ] Differential test: save `patent --fast --json` output for ~20 ideas. For
+  every match, recompute the similarity in Go from its name and description and
+  compare it with patent's stored value.
+- [ ] Port `rank.rs` (16). Share one loaded model across tests with
+  `sync.OnceValue`. Model-dependent tests are skipped unless the model is
+  cached; CI caches the model directory.
+
+**Done when** the golden and differential tests pass, and `silt --fast --json`
+gives the same verdict level as patent on the recorded matches.
+
+## M6 — LLM backends & verdict
+
+- [ ] `llm.LLM` interface: `Generate(ctx, prompt) (string, error)` and
+  `Label() string`.
+- [ ] **Ollama** (`src/ollama.rs`)
+  - `POST /api/generate` on `http://localhost:11434`, default model `qwen3.5`.
+  - Body: `stream: false`, `think: false`, `temperature 0`, `num_predict 512`.
+    Timeouts: 120 s total, 5 s connect.
+  - Connection error → Unreachable, with an `ollama serve` /
+    `ollama pull <model>` hint.
+  - Non-2xx: 5xx → Unreachable, anything else → Rejected, lifting the message
+    from `{"error"}` when present.
+  - A 200 that contains `{"error"}` → Rejected. A missing `response` → Parse.
+- [ ] **OpenAI-compatible** (`src/openai.rs`)
+  - `POST {base}/chat/completions` with a bearer key, `temperature 0` and
+    `max_tokens 2048`.
+  - If a 400 mentions `max_completion_tokens`, or mentions `temperature`
+    together with `unsupported`, retry once with `max_completion_tokens: 2048`
+    and no temperature.
+  - Map errors as in `openai.rs:115-152`.
+- [ ] `verdict.BuildPrompt`:
+  - text verbatim, with `patent` renamed to `silt`;
+  - top-10 average similarity;
+  - the top 15 matches with popularity, age and URL, then "… and N more";
+  - rules, level guide and output schema.
+
+  Golden-file test against patent's `--print-prompt` for a fixed input.
+- [ ] Guards (`src/verdict.rs`):
+  - `ABSENCE_PHRASES`, with `HEDGE_WORDS` stripped first; `NO_MATCH_PHRASES`.
+  - `extractJSON`: cut everything up to the last `</think>`, then take the
+    first fenced block, allowing an optional `json` tag.
+  - `parseVerdict`:
+    - the level is a PascalCase string; a missing headline is an error;
+    - drop gaps that claim absence or name a top-10 match as a whole word;
+    - if the floor raises the level, switch to the data headline;
+    - run the headline guard;
+    - a close match combined with a "no match" claim gets the data headline;
+    - Open with 0 close matches gets the data headline.
+  - `isWholeWord` uses Unicode alphanumeric boundaries while `ideaContains`
+    uses ASCII. Keep both as they are.
+- [ ] `Assess`: one retry after 800 ms on HTTP or Unreachable errors.
+- [ ] Pipeline:
+  - use the OpenAI backend when `api_base` is set, Ollama otherwise;
+  - log "Generating verdict via <label> (<model>)...";
+  - if the LLM fails, fall back to the search-only verdict ("Verdict
+    unavailable — …") instead of aborting.
+- [ ] `--print-prompt`: run the pipeline in fast mode, print the prompt built
+  from the ranked matches and the reached sources, and exit 0.
+- [ ] Port `tests/verdict.rs` (36), `tests/ollama.rs` (6) and
+  `tests/openai.rs` (10).
+
+## M7 — TUI
+
+- [ ] `tui.App`, the headless state machine: a 1:1 port of `src/tui.rs`.
+  - Modes: Normal, Filter, Help, Detail.
+  - Pages of 20, with an expand toggle; the cursor wraps around.
+  - The filter matches name or description, case-insensitively, and re-applies
+    the sort.
+  - Sort cycles similarity → popularity → name. It's stable, and missing
+    popularity sorts last.
+  - Detail scroll; status messages shown for 2 s; yank URL; `LoadResults`
+    resets all state.
+  - The clipboard sits behind an interface, so tests never touch the real one.
+- [ ] Render layer (D4):
+  - header: the idea, the sources checked, and "Not reached: …";
+  - verdict panel: 🟢/🟡/🔴, headline, gaps, caveat;
+  - matches table: per-source colours, popularity, age, `⚑` when stale, and
+    single-width glyphs (`★`, `↳`, `·`);
+  - a scrollbar that follows the viewport offset;
+  - detail popup, help overlay, status line.
+- [ ] Keys, as in the README:
+  - Normal: `↑/k ↓/j g/Home G/End / s m Enter o y n ? q`, plus `Ctrl-C`.
+  - Filter: `Esc`, `Backspace`, `Enter`, and typed characters.
+  - Detail: `o`/`Enter`, `y`, `j`/`k`, `Esc`/`q`.
+  - Mouse: the wheel scrolls; a left click selects a row.
+- [ ] Interactive mode:
+  - a search prompt with cursor editing (`←/→/Home/End/Backspace`);
+  - a spinner while the pipeline runs in a goroutine;
+  - `Esc` / `Ctrl-C` cancels, and `n` starts a new search;
+  - uses the resolved backend config, and, like patent, a limit of 50.
+- [ ] Invariant tests:
+  - the caveat is never clipped, at common terminal sizes and with 0..n gaps;
+  - "Not reached" is shown whenever a source failed;
+  - the stale mark appears only when a date is known.
+- [ ] Restore the terminal on panic; respect `NO_COLOR`.
+- [ ] Port `tests/tui.rs` (60) and `src/tui.rs` (7). Port the render tests
+  from `src/bin/patent/tui.rs` (38) where they apply, by rendering `View()` at
+  fixed sizes.
+
+## M8 — Parity check & release
+
+- [ ] Tick off every entry in `notes/parity-tests.md`, or write down why it
+  doesn't apply.
+- [ ] Differential harness (`scripts/parity`), run live on ~30 reference ideas:
+  README examples, the ideas from `every_built_source…`, CJK, edge cases. Run
+  `patent --json --fast --keyword-only` and `silt …` at the same time and
+  compare:
+  - selected, reached and failed sources;
+  - match URL sets (Jaccard);
+  - verdict level.
+
+  Then repeat with embeddings and compare the similarity deltas.
+- [ ] Record/replay: an HTTP-recording `RoundTripper` that lets silt replay a
+  recorded fan-out deterministically. It's also useful for regression tests
+  later.
+- [ ] Compare `--print-prompt` byte for byte (apart from the name) on replayed
+  data. Also compare `--list-sources`, `--help`, error messages and exit codes.
+- [ ] README: usage, flags table, exit codes, keybindings, markers, the
+  integrity principle, attribution. Start a CHANGELOG at `0.1.0`.
+- [ ] Release: goreleaser builds for linux, macOS and windows (amd64 and
+  arm64), static if D2 allows it. Also installable with
+  `go install github.com/miku/silt/cmd/silt@latest`.
+
+**Done when** the harness shows no unexplained differences on the reference
+set.
+
+---
+
+## M9 — Post-parity backlog (not scheduled)
+
+Collected here so these ideas stay out of the port.
+
+**Fixes to patent behaviour**
+- Feed `sources_failed` into the prompt and headline, so an Open verdict over
+  2 of 8 sources doesn't read like one over 8 of 8 (patent `roadmap-0.6.0.md`).
+- Make the interactive TUI respect `--limit`.
+- Give errors their own exit code, so that 1 only ever means Crowded.
+- Find another route to PyPI: the simple index plus a JSON lookup per name, or
+  a harvested name list.
+- Add richer `Match` fields: repository, license, archived
+  (`roadmap-0.6.0.md`).
+
+**Towards silt's own goal** (from `2026-09-29-design.md`: a harvested index
+instead of a live fan-out)
+- Revisit the framing: does silt keep patent's prior-art verdict, or become a
+  discovery and navigation tool that uses the verdict as one view?
+- Harvest bulk metadata per registry: crates.io DB dump, the npm changes feed,
+  the PyPI simple index, Homebrew JSON, the Hackage index tarball,
+  `index.golang.org`, the Maven Central index, …
+- Build a local index (full-text plus vectors) that can be queried offline,
+  with the same honesty rules: report which sources were indexed and how fresh
+  each one is.
+- Add more ecosystems from `List_of_software_package_management_systems.txt`:
+  Conda, CPAN, CRAN, Debian, Flathub, F-Droid, LuaRocks, opam, pub.dev, Swift
+  Package Index, Conan/vcpkg, …
+- Link identities across sources by normalising repository URLs, which dedups
+  better than exact URL matching.
+- Add response caching and per-source rate limits.
