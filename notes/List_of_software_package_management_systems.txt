@@ -1,0 +1,644 @@
+   Link: canonical
+   Link: license
+   Jump to content
+   [ ] Main menu
+   Main menu
+   Navigation
+     * Main page
+     * Contents
+     * Current events
+     * Random article
+     * About Wikipedia
+     * Contact us
+   Contribute
+     * Help
+     * Learn to edit
+     * Community portal
+     * Recent changes
+     * Upload file
+     * Special pages
+   [IMG] Wikipedia The Free Encyclopedia
+   Search
+   _____________________
+   Search
+   [ ] Appearance
+     * Donate
+     * Create account
+     * Log in
+   [ ] Personal tools
+     * Donate
+     * Create account
+     * Log in
+
+Contents
+
+     * (Top)
+     * 1 Binary packages
+          * 1.1 Unix-like
+               * 1.1.1 Linux
+               * 1.1.2 Linux (discontinued)
+               * 1.1.3 Android
+               * 1.1.4 BSD
+               * 1.1.5 macOS (OS X)
+               * 1.1.6 Solaris, illumos
+               * 1.1.7 iOS
+          * 1.2 Windows
+          * 1.3 z/OS
+     * 2 Source code-based
+          * 2.1 BSD
+          * 2.2 Linux
+          * 2.3 macOS (OS X)
+     * 3 Hybrid systems
+     * 4 Meta package managers
+     * 5 Game package managers
+     * 6 Proprietary software systems
+     * 7 Application-level package managers
+     * 8 Meta server application-level package manager
+     * 9 See also
+     * 10 References
+   [ ] Toggle the table of contents
+
+                  List of software package management systems
+
+   [ ] 3 languages
+     * Italiano
+     * Русский
+     * Українська
+   Edit links
+     * Article
+     * Talk
+   [ ] English
+     * Read
+     * Edit
+     * View history
+   [ ] Tools
+   Tools
+   Actions
+     * Read
+     * Edit
+     * View history
+   General
+     * What links here
+     * Related changes
+     * Upload file
+     * Permanent link
+     * Page information
+     * Cite this page
+     * Get shortened URL
+     * Switch to legacy parser
+   Print/export
+     * Download as PDF
+     * Printable version
+   In other projects
+     * Wikimedia Commons
+     * Wikidata item
+   Appearance
+   From Wikipedia, the free encyclopedia
+
+   Link: mw:PageProp/Category
+   Link: mw:PageProp/Category
+   This is a list of notable software package manager systems, categorized
+   first by package format (binary, source code, hybrid) and then by
+   operating system family.^[1]
+
+Binary packages
+
+   [edit]
+
+   The following package manager systems distribute software in binary
+   package form; i.e., all executables are compiled and ready to install and
+   use.
+
+  Unix-like
+
+   [edit]
+
+    Linux
+
+   [edit]
+     * dpkg: Originally used by Debian and now by Ubuntu and derivatives.
+       Uses the .deb format and was the first to have a widely known
+       dependency resolution tool, APT. The ncurses-based front-end for APT,
+       aptitude, is also a popular package manager for Debian-based systems;
+     * Flatpak: A containerized/sandboxed packaging format formerly named
+       xdg-app;
+     * Snap: Cross-distribution containerized package manager, non-free on
+       the server-side, originally developed for Ubuntu;
+     * Nix: Aims to make package management reliable and reproducible. It
+       provides atomic upgrades and rollbacks, side-by-side installation of
+       multiple versions of a package, multi-user package management, and
+       easy setup of build environments;
+     * GNU Guix: Used by the GNU Guix System. It is based on Nix^[2], with
+       Guile Scheme APIs. The default channel in the GNU Guix System omits
+       proprietary software, but users can add third party channels without
+       this restriction^[3];
+     * Pacman: Used in Arch Linux, Frugalware and DeLi Linux. Its binary
+       package format is a compressed tar archive (default file extension:
+       .pkg.tar.zst) built using the makepkg utility (which comes bundled
+       with pacman) and a specialized type of shell script called a PKGBUILD.
+       Pacman is often used indirectly via wrappers with AUR support such as
+       aura, pakku, paru, pikaur, trizen, and yay.
+     * Pamac: A frontend to pacman with both a CLI and a GUI, built and
+       maintained by Manjaro;
+     * Portage: A package management system invoked by the emerge command,
+       originally created for and used by Gentoo Linux;
+          * Entropy: Used by and created for Sabayon Linux. It works with
+            binary packages that are bzip2-compressed tar archives (file
+            extension: .tbz2), that are created using Entropy, from tbz2
+            binaries produced by Portage from ebuilds, a type of specialized
+            shell script;
+     * RPM Package Manager: Created by Red Hat. RPM is the Linux Standard
+       Base packaging format and the base of a number of additional tools:
+          * APT-RPM: an APT-like frontend to RPM;
+          * openSUSE's ZYpp (zypper);
+          * Fedora's DNF and YUM, also used by Red Hat Enterprise Linux and
+            Yellow Dog Linux;
+     * slackpkg;
+          * netpkg: The package manager used by Zenwalk. Compatible with
+            Slackware package management tools;
+          * slapt-get: An APT-like package manager for Slackware;
+     * XBPS (X Binary Package System): Used by Void Linux.
+     * apk-tools: Used by Alpine Linux. Originally a collection of shell
+       scripts, but has been since rewritten in C.
+
+    Linux (discontinued)
+
+   [edit]
+     * OpenPKG: Cross-platform package management system based on RPM Package
+       Manager;
+     * PISI: Stands for "Packages Installed Successfully as Intended"; used
+       by Pisi Linux.^[4] Pardus used to use Pisi, but migrated to APT in
+       2013.^[5]
+     * Red Hat's up2date, an out-of-date/discontinued predecessor to YUM.
+
+    Android
+
+   [edit]
+     * Accrescent
+     * Amazon Appstore: Alternative app store for Android devices;
+     * Aptoide: application for installing mobile applications which runs on
+       the Android operating system. In Aptoide there is no centralized
+       store; instead, each user manages their own store.
+     * F-Droid: Alternative app store for Android, whose official repository
+       contains only free software;
+     * Samsung Galaxy Store: An app store developed by Samsung for Android,
+       Tizen, Windows Mobile and Bada devices.
+     * GetJar: An independent mobile phone app store founded in Lithuania in
+       2004;
+     * Google Play: Online app store developed by Google for Android devices
+       that license the proprietary Google Application set;
+     * Huawei AppGallery: An app store developed by Huawei for Android
+       devices and HarmonyOS devices;
+     * SlideME: Alternative app store for Android.
+
+    BSD
+
+   [edit]
+     * FreeBSD pkg – FreeBSD binary packages are built on top of source based
+       FreeBSD Ports and managed with the pkg tool;
+     * OpenBSD ports: The infrastructure behind the binary packages on
+       OpenBSD;
+     * pkgsrc: A cross-platform package manager, with regular binary packages
+       provided for NetBSD, Linux and macOS by multiple vendors;
+     * dpkg: Used as part of Debian GNU/kFreeBSD;
+     * OpenPKG: Cross-platform package management system based on rpm;
+     * PC-BSD: Up to and including version 8.2^[6] uses files with the .pbi
+       (Push Button Installer) filename extension which, when double-clicked,
+       bring up an installation wizard program. Each PBI is self-contained
+       and uses de-duplicated private dependencies to avoid version
+       conflicts. An autobuild system tracks the FreeBSD ports collection and
+       generates new PBIs daily. PC-BSD also uses the FreeBSD pkg binary
+       package system; new packages are built approximately every two weeks
+       from both a stable and rolling release branch of the FreeBSD ports
+       tree.
+
+    macOS (OS X)
+
+   [edit]
+     * Mac App Store: Official digital distribution platform for OS X apps.
+       Part of OS X 10.7 and available as an update for OS X 10.6;
+     * Fink: A port of dpkg, it is one of the earliest package managers for
+       macOS;
+     * Homebrew: Command-Line Interface-based package manager, known for its
+       ease-of-use and extensibility.
+     * MacPorts: Formerly named DarwinPorts, based on FreeBSD Ports (as is
+       macOS);
+     * Joyent: Provides a repository of 10,000+ binary packages for macOS
+       based on pkgsrc;^[7]
+
+    Solaris, illumos
+
+   [edit]
+     * Image Packaging System (IPS, also known as "pkg(5)"): Used by Solaris,
+       OpenSolaris, and Illumos distributions like OpenIndiana and OmniOS;
+     * pkgsrc: SmartOS, OS distribution of Illumos from Joyent. Uses pkgsrc,
+       can be bootstrapped to use on OpenIndiana;^[8]
+     * OpenCSW: Community supported collection of packages in SysV format for
+       SunOS 5.8-5.11 (Solaris 8-11);
+     * OpenPKG: Cross-platform package management system based on RPM Package
+       Manager.
+
+    iOS
+
+   [edit]
+     * App Store: Official app store for iOS apps;
+     * Cydia: Frontend to a port of APT. Maintained by the jailbreak
+       community.
+
+  Windows
+
+   [edit]
+     * Microsoft Store: Official app store for Universal Windows Platform
+       apps on Windows NT and Windows 10 Mobile. As of Windows 11, it
+       distributes video games and films as well;
+     * Windows Package Manager (aka winget): Free and open-source package
+       manager designed for Microsoft Windows;
+     * Chocolatey: Open-source decentralized package manager for Windows in
+       the spirit of Yum and apt-get. Usability wrapper for NuGet;
+     * Cygwin: Free and open-source software repository for Windows NT.
+       Provides many Linux tools and an installation tool with package
+       manager;
+     * Homebrew: a port of the MacOS package manager meant for use with
+       Windows Subsystem for Linux, using the already existing Linux port as
+       its base;
+     * Ninite: Proprietary package manager for Windows NT;
+     * NuGet: A Microsoft-official free and open-source package manager for
+       Windows, available as a plug-in for Visual Studio, and extendable from
+       the command-line;
+     * Pacman: MSYS2-ported Windows version of the Arch Linux package
+       manager;
+     * Scoop Package Manager: free and open-source package manager for
+       Windows
+     * wpkg: Open-source package manager that handles Debian packages on
+       Windows. Started as a clone of dpkg, and has many apt-get like
+       features too;
+
+   Superseded:
+
+     * Windows Phone Store: Former official app store for Windows Phone. Now
+       superseded by Microsoft Store;
+
+  z/OS
+
+   [edit]
+     * SMP/E.
+
+Source code-based
+
+   [edit]
+
+   The following package management systems distribute the source code of
+   their apps. Either the user must know how to compile the packages, or they
+   come with a script that automates the compilation process. For example, in
+   GoboLinux a recipe file contains information on how to download, unpack,
+   compile and install a package using its Compile tool. In both cases, the
+   user must provide the computing power and time needed to compile the app,
+   and is legally responsible for the consequences of compiling the package.
+
+  BSD
+
+   [edit]
+     * FreeBSD Ports is an original implementation of source based software
+       management system commonly referred to as Ports collection. It gave
+       way and inspired many others systems;
+     * OpenBSD ports is a Perl based reimplementation of ports collection;
+
+  Linux
+
+   [edit]
+     * ABS is used by Arch Linux to automate binary packages building from
+       source or even other binary archives, with automatic download and
+       dependency checking;
+     * apt-build is used by distributions which use deb packages, allowing
+       automatic compiling and installation of software in a deb source
+       repository;
+     * Sorcery is Sourcemage GNU/Linux's bash based package management
+       program that automatically downloads software from their original site
+       and compiles and installs it on the local machine;
+
+  macOS (OS X)
+
+   [edit]
+     * Fink, for OS X, derives partially from dpkg/apt and partially from
+       ports;
+     * MacPorts, formerly called DarwinPorts, originated from the OpenDarwin
+       project;
+     * Homebrew, with close Git integration;
+     * pkgsrc can be used to install software directly from source-code, or
+       to use the binary packages provided by several independent vendors.
+
+Hybrid systems
+
+   [edit]
+     * Nix: Package manager that manages software in a purely functional
+       programming way, with multi-user support, atomic upgrades, and
+       rollbacks. Allows installing multiple versions or variants of software
+       at the same time. Supports macOS and cross-Linux distributions;
+     * Portage and emerge are used by Gentoo Linux, Funtoo Linux, and Sabayon
+       Linux. It is inspired by the BSD ports collection and uses text based
+       ebuilds to automatically download, customize, build, and update
+       packages from source code. It has automatic dependency checking and
+       allows installing multiple versions of a software package in different
+       slots on the same system. Has use flags to allow fully customizing a
+       software build to suit the needs of a platform in an automated way.
+       While source code distributing and customizing is the preferred
+       method, some larger packages that would take many hours to compile on
+       a typical desktop computer are also offered as pre-compiled binaries
+       to ease installing;
+     * Upkg: Package manager and build system based on Mono and XML
+       specifications. Used by paldo and formerly by ExTiX Linux;
+     * MacPorts for macOS;
+     * NetBSD's pkgsrc works on several Unix-like operating systems, with
+       regular binary packages for macOS and Linux provided by multiple
+       independent vendors;
+     * Collective Knowledge is a cross-platform package and workflow
+       framework with JSON API that can download binary packages or build
+       them from sources for Linux, Windows, macOS, and Android
+       platforms.^[9]
+
+Meta package managers
+
+   [edit]
+
+   The following unify package management for several or all Linux and
+   sometimes Unix variants. These, too, are based on the concept of a recipe
+   file.
+
+     * AppImage (formerly klik and PortableLinuxApps) aims to provide an easy
+       way to get software packages for most major distributions without the
+       dependency problems so common in many other package formats.
+     * Autopackage uses .package files.
+     * PackageKit is a set of utilities and libraries for creating
+       applications that can manage packages across multiple package managers
+       using back-ends to call the correct program.
+
+Game package managers
+
+   [edit]
+
+   Package management systems geared toward developing and distributing video
+   games.
+
+     * Steam: A cross-platform video game distribution, licensing and social
+       gameplay platform, developed and maintained by Valve. Used to shop
+       for, download, install, update, uninstall and back up video games.
+       Works on Windows NT, OS X and Linux
+     * Uplay: A cross-platform video game distribution, licensing and social
+       gameplay platform, developed and maintained by Ubisoft. Used to shop
+       for, download, install and update video games. Works on Windows NT and
+       Windows Phone, as well as PlayStation 3, PlayStation 4, Xbox 360, Xbox
+       One, Wii U, iOS and Android.
+     * Xbox Live: A cross-platform video game distribution platform by
+       Microsoft. Works on Windows NT, Windows Phone and Xbox. Initially
+       called Games for Windows – Live on Windows 7 and earlier. On Windows
+       10, the distribution function is taken over by Windows Store
+
+Proprietary software systems
+
+   [edit]
+
+   A wide variety of package management systems are in common use today by
+   proprietary software operating systems, handling the installation of both
+   proprietary and free packages.
+
+     * Software Distributor is the HP-UX package manager.
+
+Application-level package managers
+
+   [edit]
+     * Bitnami: a library of installers or software packages for web
+       applications
+     * Cargo: is Rust's build system and package manager. It downloads,
+       compiles, distributes, and uploads packages—called crates
+     * CocoaPods: a dependency manager for Swift and Objective-C Cocoa
+       projects
+     * Composer: a dependency manager for PHP
+     * Conda: a package manager for open data science platform of the Python
+       and R
+     * CPAN: a programming library and package manager for Perl
+     * CRAN: a programming library and package manager for R
+     * CTAN: a package manager for TeX
+     * Deno: a JavaScript runtime that functions as its own package manager
+     * Docker: Docker, a system for managing containers, serves as a package
+       manager for deploying containerized applications
+     * Enthought Canopy: a package manager for Python scientific and analytic
+       computing distribution and analysis environment
+     * Gradle: a build system and package manager for Groovy and other JVM
+       languages, and also C++
+     * Ivy: a package manager for Java, integrated into the Ant build tool,
+       also used by sbt
+     * Leiningen: a project automation tool for Clojure
+     * LuaRocks: a programming library and package manager for Lua
+     * Maven: a package manager and build tool for Java
+     * npm: a programming library and package manager for Node.js and
+       JavaScript
+     * NuGet: the package manager for the Microsoft development platform
+       including .NET Framework and Xamarin
+     * PAR::Repository and Perl package manager: binary package managers for
+       Perl
+     * PEAR: a programming library for PHP
+     * pip: a package manager for Python and the PyPI programming library
+     * Podman: an open source Open Container Initiative (OCI)-compliant
+       container management tool
+     * RubyGems: a package manager and repository for Ruby
+     * sbt: a build tool for Scala, uses Ivy for dependency management
+     * vcpkg:^[10] a package manager and repository for C/C++ developed by
+       Microsoft
+     * yarn: an alternative to npm for Node.js and JavaScript
+
+Meta server application-level package manager
+
+   [edit]
+     * Sonatype Nexus Repository
+     * Jfrog Artifactory
+     * Artifact Keeper
+     * RepoFlow
+     * ProGet by Inedo
+     * Cloudsmith
+     * GitHub Packages
+
+See also
+
+   [edit]
+     * Binary repository manager
+     * Package format
+     * Linux package formats
+     * List of Linux distributions
+     * App stores — The commercial version of a package manager, focusing on
+       payment and closed source software.
+
+References
+
+   [edit]
+    1. ↑ Kolks, J.; Wright, T.; Raudenbush, B. (June 2009). "Effects of video
+       game console and snack type on snack consumption during play".
+       Appetite. 52 (3): 841. doi:10.1016/j.appet.2009.04.113.
+       ISSN 0195-6663. S2CID 54404770.
+    2. ↑ "Guix README". Retrieved 22 April 2026.
+    3. ↑ GNU_Guix#Third-party_channels
+    4. ↑ "Pisi GNU/Linux - Özgürlük Şimdi Başladı". pisilinux.org. Retrieved
+       2020-10-27.
+    5. ↑ "Pardus Tarihçe" (in Turkish). Retrieved 2020-10-27.
+       Link: mw:PageProp/Category
+    6. ↑ pbiDIR
+    7. ↑ "Joyent Packages Documentation - Install On Mac OS X". Joyent.
+       2016-06-04. Archived from the original on 2018-10-06. Retrieved
+       2018-05-04.
+    8. ↑ "Joyent Packages Documentation - Install On Illumos".
+       pkgsrc.joyent.com. Retrieved 2017-02-26.
+    9. ↑ "Portable and reproducible research workflows". GitHub. 2017-03-27.
+       Retrieved 2017-03-27.
+   10. ↑ "vcpkg: A C++ package manager for Windows, Linux and MacOS".
+
+     * v                           
+     * t                           
+     * e                           
+   Package managers (format)       
+   Compiled                         
+                      * DSi Shop                                   
+                      * Nintendo eShop                             
+   Gaming console     * PlayStation Store                          
+                      * Wii Shop Channel                           
+                      * Xbox Games Store                           
+                                        * APT                      
+                                        * aptitude                 
+                    dpkg                * dselect                  
+                                        * Synaptic                 
+                                        * Ubuntu Software Center   
+                    Purely functional   * Nix                      
+                                        * Guix                     
+                                        * YUM                      
+                                        * DNF                      
+                    RPM                 * APT-RPM                  
+                                        * up2date                  
+                                        * urpmi                    
+                                        * ZYpp                     
+                                        * slapt-get                
+                    tarball             * slackpkg                 
+   Unix-like,                           * netpkg                   
+   Linux                                * swaret                   
+                                        * AppImage                 
+                                        * Autopackage              
+                                        * Flatpak                  
+                                        * Homebrew                 
+                                        * Horizon Store            
+                                        * PackageKit               
+                                        * pacman                   
+                    Other               * PBI                      
+                                        * PETget                   
+                                        * PISI                     
+                                        * Portage                  
+                                        * Snap                     
+                                        * Upkg                     
+                                        * pkgsrc                   
+                                        * Helm                     
+                      * Mac App Store                              
+   macOS              * Homebrew                                   
+                      * pkgsrc                                     
+                      * Munki                                      
+   z/OS               * SMP/E                                      
+                      * Amazon Appstore                            
+                      * App Store                                  
+                      * Aptoide                                    
+                      * Cafe Bazaar                                
+                      * Cydia                                      
+   Mobile             * F-Droid                                    
+   operating          * GetJar                                     
+   systems            * Google Play                                
+                      * Huawei AppGallery                          
+                      * Microsoft Store                            
+                      * RPM                                        
+                      * SlideME                                    
+                      * Windows Phone Store                        
+   Multi-platform     * OpenPKG                                    
+                      * pkgsrc                                     
+                      * IPS                                        
+   Solaris, illumos   * OpenCSW                                    
+                      * pkgsrc                                     
+   Web browsers       * Chrome Web Store                           
+                      * Mozilla Add-ons                            
+                      * Allmyapps                                  
+                      * Cygwin                                     
+                      * Microsoft Store                            
+                      * Npackd                                     
+                      * NSIS                                       
+   Windows            * NuGet                                      
+                      * Chocolatey                                 
+                      * ProGet                                     
+                      * Scoop                                      
+                      * Windows Package Manager                    
+                      * wpkg                                       
+   Uncompiled                      
+                * ports collection   
+   BSD          * FreeBSD Ports      
+                * pkgsrc             
+   C++          * Gradle             
+                * vcpkg              
+                * Maven              
+   Java         * Ivy                
+                * Gradle             
+   JavaScript   * npm                
+   Kubernetes   * Helm               
+                * ABS                
+                * apt-build          
+                * Compile            
+   Linux        * Portage            
+                * Sorcery            
+                * BitBake            
+                * pkgsrc             
+                * Fink               
+   macOS        * MacPorts           
+                * pkgsrc             
+   .NET         * NuGet              
+   Perl         * CPAN               
+   PHP          * PEAR               
+                * Composer           
+                * PyPI               
+   Python       * pip                
+                * Anaconda           
+                * Enthought Canopy   
+   Ruby         * RubyGems           
+   Rust         * Cargo              
+   Scala        * sbt                
+     * List                        
+     * [IMG] Commons               
+     * Category                    
+
+   Link: mw:PageProp/Category
+   Link: mw:PageProp/Category
+   Link: mw:PageProp/Category
+   Retrieved from
+   "https://en.wikipedia.org/w/index.php?title=List_of_software_package_management_systems&oldid=1374505044"
+   Categories:
+     * Computing-related lists
+     * Package management systems
+     * Software distribution
+   Hidden categories:
+     * Articles with short description
+     * Short description is different from Wikidata
+     * CS1 Turkish-language sources (tr)
+     * This page was last edited on 12 September 2026, at 13:49 (UTC).
+     * Page was rendered with Parsoid.
+     * Text is available under the Creative Commons Attribution-ShareAlike
+       4.0 License; additional terms may apply. By using this site, you agree
+       to the Terms of Use and Privacy Policy. Wikipedia® is a registered
+       trademark of the Wikimedia Foundation, Inc., a non-profit
+       organization.
+     * Privacy policy
+     * About Wikipedia
+     * Disclaimers
+     * Contact Wikipedia
+     * Legal & safety contacts
+     * Code of Conduct
+     * Developers
+     * Statistics
+     * Cookie statement
+     * Mobile view
+     * Wikimedia Foundation
+     * Powered by MediaWiki
+   Search
+   _____________________
+   Search
+   [ ] Toggle the table of contents
+   List of software package management systems
+   3 languages Add topic
