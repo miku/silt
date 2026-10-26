@@ -24,6 +24,8 @@ import (
 	"github.com/miku/silt"
 	"github.com/miku/silt/internal/config"
 	"github.com/miku/silt/internal/pipeline"
+	"github.com/miku/silt/internal/tui"
+	"github.com/miku/silt/llm/ollama"
 	"github.com/miku/silt/model"
 	"github.com/miku/silt/rank"
 	"github.com/miku/silt/verdict"
@@ -37,6 +39,7 @@ func main() {
 		stderrIsTerminal: term.IsTerminal(int(os.Stderr.Fd())),
 		lookupEnv:        os.LookupEnv,
 		loadConfig:       config.Load,
+		runTUI:           tui.Run,
 	}
 	os.Exit(run(os.Args[1:], env))
 }
@@ -49,6 +52,7 @@ type environment struct {
 	isTerminal, stderrIsTerminal bool
 	lookupEnv                    func(string) (string, bool)
 	loadConfig                   func() (config.Config, error)
+	runTUI                       func(context.Context, tui.Options) error
 }
 
 // Errors shown to users verbatim, as patent words them.
@@ -265,6 +269,19 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 		fmt.Fprintln(stderr, n)
 	}
 
+	ctx := context.Background()
+	pcfg := pipeline.Config{
+		APIBase:     b.apiBase,
+		APIKey:      b.apiKey,
+		Model:       b.model,
+		Fast:        f.fast || f.printPrompt,
+		KeywordOnly: f.keywordOnly,
+		Limit:       int(f.limit),
+		Include:     include,
+		Exclude:     exclude,
+	}
+	tuiOpts := tui.Options{Search: searcher(pcfg), Backend: backendNote(b, pcfg.Fast)}
+
 	if len(args) == 0 {
 		if f.json {
 			return 0, errJSONNeedsIdea
@@ -272,7 +289,7 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 		if !env.isTerminal {
 			return 0, errNoIdea
 		}
-		return 0, errors.New("the interactive TUI is not ported to silt yet; pass an idea")
+		return 0, env.runTUI(ctx, tuiOpts)
 	}
 	idea := args[0]
 	if err := pipeline.ValidateIdea(idea); err != nil {
@@ -287,21 +304,11 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 		fmt.Fprintln(stderr, "silt: downloading the embedding model for local semantic search (~80 MB, one-time)...")
 	}
 
-	pcfg := pipeline.Config{
-		APIBase:     b.apiBase,
-		APIKey:      b.apiKey,
-		Model:       b.model,
-		Fast:        f.fast || f.printPrompt,
-		KeywordOnly: f.keywordOnly,
-		Limit:       int(f.limit),
-		Include:     include,
-		Exclude:     exclude,
-	}
 	if env.stderrIsTerminal {
 		pcfg.Progress = downloadProgress(stderr)
 	}
 	start := time.Now()
-	res, err := pipeline.Run(context.Background(), idea, pcfg, func(msg string) { fmt.Fprintln(stderr, msg) })
+	res, err := pipeline.Run(ctx, idea, pcfg, func(msg string) { fmt.Fprintln(stderr, msg) })
 	if err != nil {
 		return 0, err
 	}
@@ -319,7 +326,10 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 	case !env.isTerminal:
 		fmt.Fprintln(stderr, "note: stdout is not a terminal — emitting JSON (pass --json to silence this).")
 	default:
-		fmt.Fprintln(stderr, "note: the TUI is not ported to silt yet — emitting JSON.")
+		// The exit code is that of this verdict, whatever is searched for
+		// in the TUI afterwards.
+		tuiOpts.Idea, tuiOpts.Result = idea, &res
+		return res.Verdict.Level.ExitCode(), env.runTUI(ctx, tuiOpts)
 	}
 	matches := res.Matches
 	if matches == nil {
@@ -332,6 +342,31 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 		return 0, err
 	}
 	return res.Verdict.Level.ExitCode(), nil
+}
+
+// searcher runs the searches started in the TUI with the settings of the
+// command line, --limit included.
+func searcher(cfg pipeline.Config) tui.SearchFunc {
+	return func(ctx context.Context, idea string, log func(string), progress rank.Progress) (pipeline.Result, error) {
+		cfg := cfg
+		cfg.Progress = progress
+		return pipeline.Run(ctx, idea, cfg, log)
+	}
+}
+
+// backendNote says how the TUI's searches get their verdict.
+func backendNote(b backend, fast bool) string {
+	model := ollama.DefaultModel
+	if b.model != nil {
+		model = *b.model
+	}
+	switch {
+	case fast:
+		return "--fast: verdicts come from the similarity data, without an LLM."
+	case b.apiBase != nil:
+		return fmt.Sprintf("Verdicts by %s, through the API at %s.", model, *b.apiBase)
+	}
+	return fmt.Sprintf("Verdicts by %s on the local Ollama.", model)
 }
 
 // downloadProgress draws the download of each model file as one line on a
