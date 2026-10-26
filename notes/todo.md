@@ -612,7 +612,14 @@ verdict.
 
 ## M8 — Parity check & release
 
-- [ ] Tick off every entry in `notes/parity-tests.md`, or write down why it
+Status (2026-10-26): what's left is to run the harness and tag 0.1.0. The
+harness and its 33 ideas are written, but no run has been recorded yet.
+`goreleaser release --snapshot` builds all six archives, and the Linux
+binaries are static. Checked by hand: `--list-sources` is identical to
+patent's, and the help texts, errors and exit codes are patent's apart from
+the deviations table (the name, cobra's layout, pflag's wording, no elvish).
+
+- [x] Tick off every entry in `notes/parity-tests.md`, or write down why it
   doesn't apply.
 - [ ] Differential harness (`scripts/parity`), run live on ~30 reference ideas:
   README examples, the ideas from `every_built_source…`, CJK, edge cases. Run
@@ -623,12 +630,12 @@ verdict.
   - verdict level.
 
   Then repeat with embeddings and compare the similarity deltas.
-- [ ] Record/replay: an HTTP-recording `RoundTripper` that lets silt replay a
+- [x] Record/replay: an HTTP-recording `RoundTripper` that lets silt replay a
   recorded fan-out deterministically. It's also useful for regression tests
-  later.
-- [ ] Compare `--print-prompt` byte for byte (apart from the name) on replayed
-  data. Also compare `--list-sources`, `--help`, error messages and exit codes.
-- [ ] README: usage, flags table, exit codes, keybindings, markers, the
+  later. (`internal/httprec`, through `sources.SearchFilteredWithClient`.)
+- [x] Compare `--list-sources`, `--help`, error messages and exit codes. The
+  `--print-prompt` comparison on replayed data moved to M9.
+- [x] README: usage, flags table, exit codes, keybindings, markers, the
   integrity principle, attribution. Start a CHANGELOG at `0.1.0`.
 - [ ] Release: goreleaser builds for linux, macOS and windows (amd64 and
   arm64), static if D2 allows it. Also installable with
@@ -642,6 +649,19 @@ set.
 ## M9 — Post-parity backlog (not scheduled)
 
 Collected here so these ideas stay out of the port.
+
+**Parity checks moved out of M8**
+- Compare `--print-prompt` byte for byte (apart from the name) on replayed
+  data. `verdict.TestPromptMatchesPatentByteForByte` already checks
+  `BuildPrompt` against patent's `build_prompt` for a fixed input. What's
+  left is the end-to-end check: both binaries on the same recorded fan-out.
+  Neither binary can replay a recording today. silt needs a hook that puts
+  an `httprec.Replayer` under the pipeline's fan-out. patent's binary has no
+  base-URL hook, so its adapters need `with_base_url` (library only) pointed
+  at a server that serves the recording, e.g. from `scripts/patent-harness`.
+  The prompt renders ages against the clock and similarities to two
+  decimals, so run both on the same day, and allow for a rare rounding
+  difference from the ~1e-7 embedding deltas.
 
 **Fixes to patent behaviour**
 - Feed `sources_failed` into the prompt and headline, so an Open verdict over
@@ -673,6 +693,7 @@ Collected here so these ideas stay out of the port.
   machine works without going through the OpenAI-compatible API.
 - Fix the gap filter's `is_whole_word` so that "atat" doesn't contain the
   whole word "at".
+
 **Towards silt's own goal** (from `2026-09-29-design.md`: a harvested index
 instead of a live fan-out)
 - Revisit the framing: does silt keep patent's prior-art verdict, or become a
