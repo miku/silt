@@ -3,7 +3,6 @@ package sources
 import (
 	"context"
 	"net/http"
-	"net/url"
 	"strings"
 
 	"github.com/miku/silt/model"
@@ -38,7 +37,7 @@ func (a *DockerHub) Search(ctx context.Context, q model.Query) ([]model.Match, e
 			StarCount        *uint64 `json:"star_count"`
 		} `json:"results"`
 	}
-	params := url.Values{"query": {strings.Join(q.Keywords, " ")}, "page_size": {"20"}}
+	params := queryParams{{"query", strings.Join(q.Keywords, " ")}, {"page_size", "20"}}
 	if err := getJSON(ctx, a.Client, a.BaseURL+"/v2/search/repositories/", params, &body); err != nil {
 		return nil, err
 	}

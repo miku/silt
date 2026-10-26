@@ -3,7 +3,6 @@ package sources
 import (
 	"context"
 	"net/http"
-	"net/url"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -43,7 +42,7 @@ func (*PyPI) ID() model.Source { return model.PyPI }
 
 // Search implements Adapter.
 func (a *PyPI) Search(ctx context.Context, q model.Query) ([]model.Match, error) {
-	params := url.Values{"q": {strings.Join(q.Keywords, " ")}}
+	params := queryParams{{"q", strings.Join(q.Keywords, " ")}}
 	resp, err := get(ctx, a.Client, a.BaseURL+"/search/", params)
 	if err != nil {
 		return nil, err

@@ -3,7 +3,6 @@ package sources
 import (
 	"context"
 	"net/http"
-	"net/url"
 	"strings"
 
 	"github.com/miku/silt/freshness"
@@ -51,7 +50,7 @@ func (a *JetBrains) Search(ctx context.Context, q model.Query) ([]model.Match, e
 		var body struct {
 			Plugins *[]jetBrainsPlugin `json:"plugins"`
 		}
-		params := url.Values{"search": {term}, "max": {"20"}}
+		params := queryParams{{"search", term}, {"max", "20"}}
 		if err := getJSON(ctx, a.Client, a.BaseURL+"/api/searchPlugins", params, &body); err != nil {
 			return nil, err
 		}

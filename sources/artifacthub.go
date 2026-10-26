@@ -3,7 +3,6 @@ package sources
 import (
 	"context"
 	"net/http"
-	"net/url"
 
 	"github.com/miku/silt/freshness"
 	"github.com/miku/silt/model"
@@ -61,7 +60,7 @@ func (a *ArtifactHub) Search(ctx context.Context, q model.Query) ([]model.Match,
 				} `json:"repository"`
 			} `json:"packages"`
 		}
-		params := url.Values{"ts_query_web": {term}, "limit": {"15"}, "facets": {"false"}}
+		params := queryParams{{"ts_query_web", term}, {"limit", "15"}, {"facets", "false"}}
 		if err := getJSON(ctx, a.Client, a.BaseURL+"/api/v1/packages/search", params, &body); err != nil {
 			return nil, err
 		}

@@ -3,7 +3,6 @@ package sources
 import (
 	"context"
 	"net/http"
-	"net/url"
 
 	"github.com/miku/silt/freshness"
 	"github.com/miku/silt/model"
@@ -42,7 +41,7 @@ func (a *CratesIO) Search(ctx context.Context, q model.Query) ([]model.Match, er
 				UpdatedAt   freshness.Lenient[string] `json:"updated_at"` // last publish of any version
 			} `json:"crates"`
 		}
-		params := url.Values{"q": {term}, "per_page": {"20"}}
+		params := queryParams{{"q", term}, {"per_page", "20"}}
 		if err := getJSON(ctx, a.Client, a.BaseURL+"/api/v1/crates", params, &body); err != nil {
 			return nil, err
 		}

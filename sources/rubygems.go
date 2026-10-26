@@ -3,7 +3,6 @@ package sources
 import (
 	"context"
 	"net/http"
-	"net/url"
 
 	"github.com/miku/silt/model"
 )
@@ -37,7 +36,7 @@ func (a *RubyGems) Search(ctx context.Context, q model.Query) ([]model.Match, er
 			ProjectURI *string `json:"project_uri"`
 			Downloads  *uint64 `json:"downloads"`
 		}
-		if err := getJSON(ctx, a.Client, a.BaseURL+"/api/v1/search.json", url.Values{"query": {term}}, &gems); err != nil {
+		if err := getJSON(ctx, a.Client, a.BaseURL+"/api/v1/search.json", queryParams{{"query", term}}, &gems); err != nil {
 			return nil, err
 		}
 		if gems == nil {

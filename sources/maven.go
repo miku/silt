@@ -3,7 +3,6 @@ package sources
 import (
 	"context"
 	"net/http"
-	"net/url"
 
 	"github.com/miku/silt/freshness"
 	"github.com/miku/silt/model"
@@ -47,7 +46,7 @@ func (a *Maven) Search(ctx context.Context, q model.Query) ([]model.Match, error
 				} `json:"docs"`
 			} `json:"response"`
 		}
-		params := url.Values{"q": {term}, "rows": {"20"}, "wt": {"json"}}
+		params := queryParams{{"q", term}, {"rows", "20"}, {"wt", "json"}}
 		if err := getJSON(ctx, a.Client, a.BaseURL+"/solrsearch/select", params, &body); err != nil {
 			return nil, err
 		}

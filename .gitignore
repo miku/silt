@@ -35,6 +35,9 @@ go.work.sum
 # The silt binary built by `make build`.
 /silt
 
+# goreleaser's output.
+/dist/
+
 # Build output of the Rust reference harness.
 /scripts/patent-harness/target/
 /scripts/patent-harness/Cargo.lock

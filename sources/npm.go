@@ -4,7 +4,6 @@ import (
 	"context"
 	"math"
 	"net/http"
-	"net/url"
 	"unicode/utf8"
 
 	"github.com/miku/silt/freshness"
@@ -78,7 +77,7 @@ func (a *Npm) Search(ctx context.Context, q model.Query) ([]model.Match, error) 
 			} `json:"score"`
 		} `json:"objects"`
 	}
-	params := url.Values{"text": {npmSearchText(q)}, "size": {"20"}}
+	params := queryParams{{"text", npmSearchText(q)}, {"size", "20"}}
 	if err := getJSON(ctx, a.Client, a.BaseURL+"/-/v1/search", params, &body); err != nil {
 		return nil, err
 	}

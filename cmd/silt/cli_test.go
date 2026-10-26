@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -22,6 +23,9 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 	siltBin = filepath.Join(dir, "silt")
+	if runtime.GOOS == "windows" {
+		siltBin += ".exe" // exec finds nothing else there
+	}
 	if out, err := exec.CommandContext(context.Background(), "go", "build", "-o", siltBin, ".").CombinedOutput(); err != nil {
 		fmt.Fprintf(os.Stderr, "building silt: %v\n%s", err, out)
 		os.Exit(1)
@@ -35,7 +39,9 @@ func TestMain(m *testing.M) {
 func runSilt(t *testing.T, args ...string) (stdout, stderr string, exitCode int) {
 	t.Helper()
 	cmd := exec.CommandContext(t.Context(), siltBin, args...)
-	cmd.Env = append(os.Environ(), "NO_COLOR=1", "XDG_CONFIG_HOME="+t.TempDir())
+	// No config file: the user config directory on Linux and on Windows.
+	config := t.TempDir()
+	cmd.Env = append(os.Environ(), "NO_COLOR=1", "XDG_CONFIG_HOME="+config, "AppData="+config)
 	var out, errOut bytes.Buffer
 	cmd.Stdout, cmd.Stderr = &out, &errOut
 	err := cmd.Run()

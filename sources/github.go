@@ -3,7 +3,6 @@ package sources
 import (
 	"context"
 	"net/http"
-	"net/url"
 	"os"
 	"strings"
 
@@ -40,9 +39,9 @@ func (a *GitHub) Search(ctx context.Context, q model.Query) ([]model.Match, erro
 	// does the final semantic ordering; popularity stays an informational
 	// signal, not a gate on inclusion. A wider page (50) deepens the candidate
 	// pool for the long tail.
-	params := url.Values{
-		"q":        {strings.Join(q.Keywords, " ") + " in:description,readme"},
-		"per_page": {"50"},
+	params := queryParams{
+		{"q", strings.Join(q.Keywords, " ") + " in:description,readme"},
+		{"per_page", "50"},
 	}
 	req, err := newRequest(ctx, http.MethodGet, a.BaseURL+"/search/repositories", params, nil)
 	if err != nil {

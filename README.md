@@ -36,6 +36,46 @@ The exit code is the verdict, so scripts can gate on it: 0 Open, 1 Crowded,
 2 Saturated. Errors exit 1, argument errors 2. Output that isn't a terminal
 gets JSON.
 
+Binaries for Linux, macOS and Windows are on the
+[releases page](https://github.com/miku/silt/releases).
+
+## Flags
+
+| Flag | |
+|---|---|
+| `IDEA` | the idea to search for; without it, silt asks in the TUI |
+| `--limit N` | how many matches to keep after ranking (default 50) |
+| `--keyword-only` | rank by keyword overlap instead of with the embedding model |
+| `--fast` | skip the LLM: the verdict comes from the similarity data alone |
+| `--model NAME` | the LLM for the verdict: `qwen3.5` on Ollama by default, required with `--api-base` |
+| `--api-base URL` | an OpenAI-compatible API instead of Ollama, e.g. `https://api.openai.com/v1` |
+| `--api-key KEY` | the key for `--api-base`; omit it for servers without auth |
+| `--sources LIST` | search only these sources, comma-separated, instead of picking them from the idea |
+| `--exclude LIST` | leave these sources out |
+| `--json` | print JSON instead of opening the TUI |
+| `--print-prompt` | print the verdict prompt, for your own agent, and exit |
+| `--list-sources` | list the source names and exit |
+| `--completions SHELL` | print completions for bash, fish, powershell or zsh |
+| `-V`, `--version` | print the version |
+| `-h`, `--help` | print the help |
+
+## Configuration
+
+`--model`, `--api-base` and `--api-key` can also be set with `SILT_MODEL`,
+`SILT_API_BASE` and `SILT_API_KEY`, or in `config.toml` in silt's config
+directory: `~/.config/silt` on Linux, `~/Library/Application Support/silt`
+on macOS, `%AppData%\silt` on Windows.
+
+```toml
+model = "gpt-4o-mini"
+api_base = "https://api.openai.com/v1"
+api_key = "sk-..."
+```
+
+A flag beats the environment, which beats the file. The key falls back to
+`OPENAI_API_KEY` last. `GITHUB_TOKEN`, if set, lifts GitHub's rate limit,
+and `NO_COLOR` turns off colour in the TUI.
+
 ## TUI
 
 | Key | Action |
@@ -64,6 +104,7 @@ $ go run ./scripts/fetchmodel   # once: the model for the embedding tests
 $ make test                     # hermetic, no network
 $ make test-live                # smoke tests against the real registries
 $ make lint
+$ go run ./scripts/parity       # side by side with patent 0.14.1, live
 ```
 
 ## License

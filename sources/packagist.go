@@ -3,7 +3,6 @@ package sources
 import (
 	"context"
 	"net/http"
-	"net/url"
 
 	"github.com/miku/silt/model"
 )
@@ -42,7 +41,7 @@ func (a *Packagist) Search(ctx context.Context, q model.Query) ([]model.Match, e
 				Favers    *uint64 `json:"favers"`    // stars
 			} `json:"results"`
 		}
-		params := url.Values{"q": {term}, "per_page": {"15"}}
+		params := queryParams{{"q", term}, {"per_page", "15"}}
 		if err := getJSON(ctx, a.Client, a.BaseURL+"/search.json", params, &body); err != nil {
 			return nil, err
 		}

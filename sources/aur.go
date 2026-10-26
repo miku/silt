@@ -4,7 +4,6 @@ import (
 	"cmp"
 	"context"
 	"net/http"
-	"net/url"
 	"slices"
 	"strings"
 
@@ -63,7 +62,7 @@ func (a *AUR) rpc(ctx context.Context, arg, by string) (hits []aurPackage, refus
 		Error   *string      `json:"error"`
 		Results []aurPackage `json:"results"`
 	}
-	params := url.Values{"v": {"5"}, "type": {"search"}, "by": {by}, "arg": {arg}}
+	params := queryParams{{"v", "5"}, {"type", "search"}, {"by", by}, {"arg", arg}}
 	if err := getJSON(ctx, a.Client, a.BaseURL+"/rpc/", params, &body); err != nil {
 		return nil, false, err
 	}

@@ -4,7 +4,6 @@ import (
 	"cmp"
 	"context"
 	"net/http"
-	"net/url"
 	"slices"
 	"strings"
 
@@ -59,7 +58,7 @@ func (a *Hex) Search(ctx context.Context, q model.Query) ([]model.Match, error) 
 			// The last release — RFC 3339 with microsecond precision.
 			UpdatedAt freshness.Lenient[string] `json:"updated_at"`
 		}
-		params := url.Values{"search": {term}, "page": {"1"}}
+		params := queryParams{{"search", term}, {"page", "1"}}
 		if err := getJSON(ctx, a.Client, a.BaseURL+"/api/packages", params, &pkgs); err != nil {
 			return nil, err
 		}

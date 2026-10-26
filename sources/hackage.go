@@ -4,7 +4,6 @@ import (
 	"context"
 	"io"
 	"net/http"
-	"net/url"
 	"strings"
 	"sync"
 	"unicode"
@@ -40,7 +39,7 @@ func (*Hackage) ID() model.Source { return model.Hackage }
 
 // Search implements Adapter.
 func (a *Hackage) Search(ctx context.Context, q model.Query) ([]model.Match, error) {
-	req, err := newRequest(ctx, http.MethodGet, a.BaseURL+"/packages/search", url.Values{"terms": {strings.Join(q.Keywords, " ")}}, nil)
+	req, err := newRequest(ctx, http.MethodGet, a.BaseURL+"/packages/search", queryParams{{"terms", strings.Join(q.Keywords, " ")}}, nil)
 	if err != nil {
 		return nil, err
 	}

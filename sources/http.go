@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/miku/silt"
@@ -47,14 +48,29 @@ func (t userAgentTransport) RoundTrip(req *http.Request) (*http.Response, error)
 	return t.base.RoundTrip(req)
 }
 
+// queryParams are the parameters of a query string, in the order patent's
+// adapters send them. url.Values would sort them by key, and the order can
+// matter: pkg.go.dev ranks the results for "q=…&m=package" differently from
+// "m=package&q=…".
+type queryParams [][2]string
+
+// encode is url.Values.Encode without the sorting.
+func (p queryParams) encode() string {
+	parts := make([]string, len(p))
+	for i, kv := range p {
+		parts[i] = url.QueryEscape(kv[0]) + "=" + url.QueryEscape(kv[1])
+	}
+	return strings.Join(parts, "&")
+}
+
 // newRequest builds a request for rawURL with params as its query string.
-func newRequest(ctx context.Context, method, rawURL string, params url.Values, body io.Reader) (*http.Request, error) {
+func newRequest(ctx context.Context, method, rawURL string, params queryParams, body io.Reader) (*http.Request, error) {
 	u, err := url.Parse(rawURL)
 	if err != nil {
 		return nil, &silt.HTTPError{Err: err}
 	}
 	if params != nil {
-		u.RawQuery = params.Encode()
+		u.RawQuery = params.encode()
 	}
 	req, err := http.NewRequestWithContext(ctx, method, u.String(), body)
 	if err != nil {
@@ -106,7 +122,7 @@ func checkStatus(resp *http.Response) error {
 }
 
 // get sends a GET request for rawURL with params.
-func get(ctx context.Context, client *http.Client, rawURL string, params url.Values) (*http.Response, error) {
+func get(ctx context.Context, client *http.Client, rawURL string, params queryParams) (*http.Response, error) {
 	req, err := newRequest(ctx, http.MethodGet, rawURL, params, nil)
 	if err != nil {
 		return nil, err
@@ -116,7 +132,7 @@ func get(ctx context.Context, client *http.Client, rawURL string, params url.Val
 
 // getJSON sends a GET request for rawURL with params and decodes the JSON
 // response into v.
-func getJSON(ctx context.Context, client *http.Client, rawURL string, params url.Values, v any) error {
+func getJSON(ctx context.Context, client *http.Client, rawURL string, params queryParams, v any) error {
 	resp, err := get(ctx, client, rawURL, params)
 	if err != nil {
 		return err

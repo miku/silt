@@ -66,6 +66,7 @@ func TestLoad(t *testing.T) {
 	dir := t.TempDir()
 	t.Setenv("XDG_CONFIG_HOME", dir) // os.UserConfigDir on Linux
 	t.Setenv("HOME", dir)            // ... and on macOS
+	t.Setenv("AppData", dir)         // ... and on Windows
 
 	// A missing file is fine.
 	if cfg, err := Load(); err != nil || cfg.Model != nil {

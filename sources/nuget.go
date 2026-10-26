@@ -3,7 +3,6 @@ package sources
 import (
 	"context"
 	"net/http"
-	"net/url"
 
 	"github.com/miku/silt/model"
 )
@@ -40,7 +39,7 @@ func (a *NuGet) Search(ctx context.Context, q model.Query) ([]model.Match, error
 				TotalDownloads *uint64 `json:"totalDownloads"`
 			} `json:"data"`
 		}
-		params := url.Values{"q": {term}, "take": {"20"}}
+		params := queryParams{{"q", term}, {"take", "20"}}
 		if err := getJSON(ctx, a.Client, a.BaseURL+"/query", params, &body); err != nil {
 			return nil, err
 		}

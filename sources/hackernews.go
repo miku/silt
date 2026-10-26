@@ -3,7 +3,6 @@ package sources
 import (
 	"context"
 	"net/http"
-	"net/url"
 	"slices"
 	"strconv"
 	"strings"
@@ -55,7 +54,7 @@ func (a *HackerNews) Search(ctx context.Context, q model.Query) ([]model.Match, 
 				Points    *uint64 `json:"points"`
 			} `json:"hits"`
 		}
-		params := url.Values{"query": {term}, "hitsPerPage": {"20"}, "tags": {"story"}}
+		params := queryParams{{"query", term}, {"hitsPerPage", "20"}, {"tags", "story"}}
 		if err := getJSON(ctx, a.Client, a.BaseURL+"/api/v1/search", params, &body); err != nil {
 			return nil, err
 		}

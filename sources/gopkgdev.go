@@ -3,7 +3,6 @@ package sources
 import (
 	"context"
 	"net/http"
-	"net/url"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -45,7 +44,7 @@ func (a *GoPkgDev) Search(ctx context.Context, q model.Query) ([]model.Match, er
 	// 100+.
 	var matches []model.Match
 	for _, term := range narrowingCandidates(q, 2) {
-		resp, err := get(ctx, a.Client, a.BaseURL+"/search", url.Values{"q": {term}, "m": {"package"}})
+		resp, err := get(ctx, a.Client, a.BaseURL+"/search", queryParams{{"q", term}, {"m", "package"}})
 		if err != nil {
 			return nil, err
 		}

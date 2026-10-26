@@ -11,9 +11,11 @@ permissions:
 jobs:
   test:
     strategy:
+      fail-fast: false
       matrix:
         # amd64 runs the AVX2 kernel, both arm64 runners the NEON one.
-        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest]
+        # Windows, for the release binaries built for it.
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
@@ -27,6 +29,7 @@ jobs:
           path: |
             ~/.cache/silt
             ~/Library/Caches/silt
+            ~/AppData/Local/silt
           key: minilm-5f1b8cd
       - run: go run ./scripts/fetchmodel
       - run: go vet ./...
