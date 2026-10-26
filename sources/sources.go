@@ -339,7 +339,14 @@ func SearchAll(ctx context.Context, q model.Query) Outcome {
 // hash set, so its order — and which duplicate wins in [Dedup] — changes from
 // run to run.)
 func SearchFiltered(ctx context.Context, q model.Query, include, exclude []model.Source) Outcome {
-	client := NewHTTPClient()
+	return SearchFilteredWithClient(ctx, NewHTTPClient(), q, include, exclude)
+}
+
+// SearchFilteredWithClient is [SearchFiltered] with client for every
+// adapter, such as one that records or replays the responses
+// (internal/httprec). Homebrew still caches its catalog for the whole
+// process, whichever client fetched it.
+func SearchFilteredWithClient(ctx context.Context, client *http.Client, q model.Query, include, exclude []model.Source) Outcome {
 	var adapters []Adapter
 	for _, id := range selectSources(q.Idea, include, exclude) {
 		adapters = append(adapters, newAdapter(id, client))
