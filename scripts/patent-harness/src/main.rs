@@ -2,6 +2,7 @@
 //! Go port can be compared against them byte for byte.
 use patent::model::{Match, Query, Source};
 use serde::{Deserialize, Serialize};
+use std::future::Future;
 use std::time::Instant;
 
 #[derive(Deserialize)]
@@ -77,6 +78,79 @@ fn to_matches(inputs: &[MatchInput]) -> Vec<Match> {
 
 fn read_inputs(path: &str) -> EmbedInputs {
     serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap()
+}
+
+/// testdata/patent/assess-cases.json
+#[derive(Deserialize)]
+struct AssessCases {
+    sources_checked: Vec<Source>,
+    sources_failed: Vec<Source>,
+    match_sets: std::collections::BTreeMap<String, Vec<Match>>,
+    cases: Vec<AssessCase>,
+}
+
+#[derive(Deserialize)]
+struct AssessCase {
+    name: String,
+    matches: String,
+    response: String,
+}
+
+/// testdata/patent/assess.json: one verdict or error per case.
+#[derive(Serialize)]
+struct AssessOutcome {
+    name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    verdict: Option<patent::Verdict>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    error: Option<String>,
+}
+
+/// An Llm that answers every prompt with the same response.
+struct Canned(String);
+
+#[async_trait::async_trait]
+impl patent::Llm for Canned {
+    async fn generate(&self, _prompt: &str) -> patent::Result<String> {
+        Ok(self.0.clone())
+    }
+
+    fn label(&self) -> &str {
+        "canned"
+    }
+}
+
+/// `assess <assess-cases.json>`: verdict::assess on each canned response. It
+/// never waits: Canned answers at once, and assess only sleeps before a
+/// retry, which a successful answer never triggers.
+fn assess(path: &str) {
+    let input: AssessCases = serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
+    let query = Query { idea: "a cli to kill processes on a port".into(), keywords: vec!["kill".into(), "port".into()] };
+    let outcomes: Vec<AssessOutcome> = input
+        .cases
+        .into_iter()
+        .map(|c| {
+            let matches = &input.match_sets[&c.matches];
+            let llm = Canned(c.response);
+            let fut = patent::verdict::assess(
+                &llm,
+                &query,
+                matches,
+                input.sources_checked.clone(),
+                input.sources_failed.clone(),
+            );
+            let mut fut = std::pin::pin!(fut);
+            let mut cx = std::task::Context::from_waker(std::task::Waker::noop());
+            let std::task::Poll::Ready(result) = fut.as_mut().poll(&mut cx) else {
+                panic!("{}: assess waited", c.name);
+            };
+            match result {
+                Ok(v) => AssessOutcome { name: c.name, verdict: Some(v), error: None },
+                Err(e) => AssessOutcome { name: c.name, verdict: None, error: Some(e.to_string()) },
+            }
+        })
+        .collect();
+    println!("{}", serde_json::to_string_pretty(&outcomes).unwrap());
 }
 
 /// `embed <inputs.json> <tokenizer.json>`
@@ -159,6 +233,7 @@ fn main() {
     match args[1].as_str() {
         "embed" => return embed(read_inputs(&args[2]), &args[3]),
         "bench" => return bench(read_inputs(&args[2]), args[3].parse().unwrap(), args.get(4).is_some_and(|a| a == "long")),
+        "assess" => return assess(&args[2]),
         _ => {}
     }
     let fixture: Fixture =

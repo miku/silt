@@ -3,7 +3,11 @@ package pipeline
 import (
 	"cmp"
 	"context"
+	"encoding/json"
 	"errors"
+	"net/http"
+	"net/http/httptest"
+	"os"
 	"reflect"
 	"slices"
 	"strings"
@@ -172,19 +176,141 @@ func TestRunSkipsTheVerdictBelowMinRelevance(t *testing.T) {
 	}
 }
 
-func TestRunFallsBackToSearchOnlyVerdictWhenTheLLMFails(t *testing.T) {
-	fakeSearch(t, sources.Outcome{Matches: []model.Match{match("kill-port", "kill a port")}, Reached: []model.Source{model.Npm}})
+func TestMain(m *testing.M) {
+	// No test may reach a real Ollama on this machine: a test that needs one
+	// serves it with fakeOllama.
+	ollamaEndpoint = "http://127.0.0.1:1"
+	os.Exit(m.Run())
+}
+
+func ptr[T any](v T) *T { return &v }
+
+// fakeOllama points the default LLM backend at a server running h for the
+// duration of a test.
+func fakeOllama(t *testing.T, h http.HandlerFunc) {
+	t.Helper()
+	srv := httptest.NewServer(h)
+	t.Cleanup(srv.Close)
+	orig := ollamaEndpoint
+	ollamaEndpoint = srv.URL
+	t.Cleanup(func() { ollamaEndpoint = orig })
+}
+
+func writeJSON(w http.ResponseWriter, status int, v any) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(v) //nolint:errcheck // a test response
+}
+
+const modelVerdict = `{"level": "Crowded", "headline": "kill-port and fkill already do this.", "gaps": ["a Windows build"]}`
+
+// killPortSearch finds two matches for "kill process port" that rank above
+// the relevance gate.
+func killPortSearch(t *testing.T) {
+	fakeSearch(t, sources.Outcome{
+		Matches: []model.Match{match("kill-port", "kill the process on a port"), match("fkill", "kill processes on a port")},
+		Reached: []model.Source{model.Npm},
+		Failed:  []model.Source{model.PyPI},
+	})
+}
+
+func TestRunGeneratesTheVerdictViaOllamaByDefault(t *testing.T) {
+	killPortSearch(t)
+	var req struct{ Model, Prompt string }
+	fakeOllama(t, func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/generate" {
+			t.Errorf("path = %q", r.URL.Path)
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			t.Error(err)
+		}
+		writeJSON(w, 200, map[string]any{"response": modelVerdict, "done": true})
+	})
 	var logs []string
-	res, err := Run(context.Background(), "kill process port", Config{KeywordOnly: true, Limit: 50},
+	res, err := Run(context.Background(), "kill process port", Config{KeywordOnly: true, Limit: 1},
 		func(s string) { logs = append(logs, s) })
 	if err != nil {
 		t.Fatal(err)
 	}
-	if res.Verdict.Headline != "Verdict unavailable — results are ranked by semantic similarity only." {
-		t.Errorf("headline = %q", res.Verdict.Headline)
+	if req.Model != "qwen3.5" || !strings.Contains(req.Prompt, "for existing implementations: npm.\n") ||
+		!strings.Contains(req.Prompt, "**fkill**") {
+		t.Errorf("request = %+v; want the default model and a prompt with all ranked matches and the reached sources", req)
 	}
-	if got := logs[len(logs)-1]; got != "   showing results without an AI verdict." {
+	want := model.Verdict{
+		Level:          model.Crowded,
+		Headline:       "kill-port and fkill already do this.",
+		Gaps:           []string{"a Windows build"},
+		SourcesChecked: []model.Source{model.Npm},
+		SourcesFailed:  []model.Source{model.PyPI},
+		Caveat:         verdict.Caveat,
+	}
+	if !reflect.DeepEqual(res.Verdict, want) || len(res.Matches) != 1 {
+		t.Errorf("result = %+v", res)
+	}
+	if got := logs[len(logs)-2]; got != "Generating verdict via Ollama (qwen3.5)..." {
 		t.Errorf("log = %q", got)
+	}
+	if got := logs[len(logs)-1]; !strings.HasPrefix(got, "   verdict in ") {
+		t.Errorf("log = %q", got)
+	}
+}
+
+func TestRunUsesTheOpenAICompatibleAPIWhenAPIBaseIsSet(t *testing.T) {
+	killPortSearch(t)
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/v1/chat/completions" || r.Header.Get("Authorization") != "Bearer sk-test" {
+			t.Errorf("path %q, Authorization %q", r.URL.Path, r.Header.Get("Authorization"))
+		}
+		var req struct{ Model string }
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Model != "gpt-4o-mini" {
+			t.Errorf("model %q, %v", req.Model, err)
+		}
+		writeJSON(w, 200, map[string]any{"choices": []any{map[string]any{"message": map[string]any{"content": modelVerdict}}}})
+	}))
+	t.Cleanup(srv.Close)
+	var logs []string
+	cfg := Config{KeywordOnly: true, Limit: 50, APIBase: ptr(srv.URL + "/v1"), APIKey: ptr("sk-test"), Model: ptr("gpt-4o-mini")}
+	res, err := Run(context.Background(), "kill process port", cfg, func(s string) { logs = append(logs, s) })
+	if err != nil {
+		t.Fatal(err)
+	}
+	if res.Verdict.Headline != "kill-port and fkill already do this." {
+		t.Errorf("verdict = %+v", res.Verdict)
+	}
+	if got := logs[len(logs)-2]; got != "Generating verdict via OpenAI API (gpt-4o-mini)..." {
+		t.Errorf("log = %q", got)
+	}
+}
+
+func TestRunFallsBackToSearchOnlyVerdictWhenTheLLMFails(t *testing.T) {
+	killPortSearch(t)
+	fakeOllama(t, func(w http.ResponseWriter, _ *http.Request) {
+		writeJSON(w, 404, map[string]any{"error": "model 'qwen2.5:3b' not found"})
+	})
+	var logs []string
+	res, err := Run(context.Background(), "kill process port", Config{KeywordOnly: true, Limit: 50, Model: ptr("qwen2.5:3b")},
+		func(s string) { logs = append(logs, s) })
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := model.Verdict{
+		Level:          model.Open,
+		Headline:       "Verdict unavailable — results are ranked by semantic similarity only.",
+		Gaps:           []string{},
+		SourcesChecked: []model.Source{model.Npm},
+		SourcesFailed:  []model.Source{model.PyPI},
+		Caveat:         verdict.Caveat,
+	}
+	if !reflect.DeepEqual(res.Verdict, want) || len(res.Matches) != 2 {
+		t.Errorf("result = %+v", res)
+	}
+	wantLogs := []string{
+		"Generating verdict via Ollama (qwen2.5:3b)...",
+		"warning: model 'qwen2.5:3b' not found (model `qwen2.5:3b`). Run `ollama pull qwen2.5:3b`.",
+		"   showing results without an AI verdict.",
+	}
+	if got := logs[len(logs)-3:]; !reflect.DeepEqual(got, wantLogs) {
+		t.Errorf("logs = %q\nwant %q", got, wantLogs)
 	}
 }
 

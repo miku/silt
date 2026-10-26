@@ -13,13 +13,20 @@ searches all 19 of patent's sources (crates.io, npm, PyPI, GitHub, Go, Maven,
 NuGet, RubyGems, Docker Hub, Homebrew, Packagist, Hex, Artifact Hub, AUR,
 Hackage, Nixpkgs, the VS Code and JetBrains marketplaces, Hacker News), ranks
 matches by semantic similarity (all-MiniLM-L6-v2 in pure Go, downloaded once,
-about 90 MB) or by keyword overlap, and gives a verdict from the similarity
-data. LLM verdicts and the TUI are still to come.
+about 90 MB) or by keyword overlap, and asks an LLM for the verdict: a local
+Ollama (`qwen3.5` by default) or any OpenAI-compatible API. The verdict's
+level never drops below what the similarity data shows, and a headline or
+gap that claims something doesn't exist is replaced or dropped. If the model
+fails, or with `--fast`, the verdict comes from the similarity data alone.
+The TUI is still to come.
 
 ```shell
 $ go install github.com/miku/silt/cmd/silt@latest
-$ silt --fast --json "cli tool that kills a process on a given port"
-$ silt --keyword-only --fast --json "react component for infinite scroll"   # no model
+$ silt --json "cli tool that kills a process on a given port"            # verdict via local Ollama
+$ silt --json --api-base https://api.openai.com/v1 --model gpt-4o-mini "embedded vector database for mobile apps"
+$ silt --fast --json "cli tool that kills a process on a given port"     # no LLM
+$ silt --keyword-only --fast --json "react component for infinite scroll"   # no model at all
+$ silt --print-prompt "kubernetes log viewer with live filtering"   # the verdict prompt, for your own agent
 $ silt --list-sources
 ```
 

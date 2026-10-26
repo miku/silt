@@ -6,6 +6,8 @@
 //	prompt.txt          verdict::build_prompt, at 2026-10-25T23:27Z
 //	from-data.json      verdict::from_data
 //	rank-keywords.json  rank::rank_by_keywords with limit 50
+//	assess-cases.json   canned model responses and the matches to judge them by
+//	assess.json         verdict::assess on each, with an Llm that returns it
 package patenttest
 
 import (
@@ -52,13 +54,19 @@ func Read(t *testing.T, name string) []byte {
 	return b
 }
 
+// Decode unmarshals the JSON file name in testdata/patent into v.
+func Decode(t *testing.T, name string, v any) {
+	t.Helper()
+	if err := json.Unmarshal(Read(t, name), v); err != nil {
+		t.Fatalf("%s: %v", name, err)
+	}
+}
+
 // Load decodes fixture.json.
 func Load(t *testing.T) Fixture {
 	t.Helper()
 	var f Fixture
-	if err := json.Unmarshal(Read(t, "fixture.json"), &f); err != nil {
-		t.Fatal(err)
-	}
+	Decode(t, "fixture.json", &f)
 	return f
 }
 

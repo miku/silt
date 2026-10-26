@@ -41,6 +41,10 @@ var manual = map[string][]string{
 	"tests/sources.rs::test_homebrew_happy_path":    {"sources.TestHomebrewHappyPath"},
 	"tests/sources.rs::test_homebrew_empty_results": {"sources.TestHomebrewEmptyResults"},
 	"tests/sources.rs::test_homebrew_server_error":  {"sources.TestHomebrewServerError"},
+	// Both backends have a test of this name, and names alone would match
+	// both to whichever is found first.
+	"tests/ollama.rs::generate_maps_connection_error_to_llm_unreachable": {"ollama.TestGenerateMapsConnectionErrorToLLMUnreachable"},
+	"tests/openai.rs::generate_maps_connection_error_to_llm_unreachable": {"openai.TestGenerateMapsConnectionErrorToLLMUnreachable"},
 }
 
 var (

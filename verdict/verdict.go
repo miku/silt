@@ -1,9 +1,12 @@
 // Package verdict turns ranked matches into an integrity-scoped verdict.
 //
-// [BuildPrompt] asks an LLM backend for a verdict, and the prompt forbids
-// claiming non-existence: results are always phrased as "found in the sources
-// checked", and a clean result means "keep looking before committing", never
-// a green light. [FromData] derives a verdict from the similarity data alone.
+// [Assess] asks an LLM backend for a verdict with the prompt [BuildPrompt]
+// builds, and the prompt forbids claiming non-existence: results are always
+// phrased as "found in the sources checked", and a clean result means "keep
+// looking before committing", never a green light. The model's answer is not
+// trusted on that: its level is floored against the similarity data, and a
+// headline or gap that claims absence is replaced or dropped. [FromData]
+// derives a verdict from the similarity data alone.
 package verdict
 
 import (

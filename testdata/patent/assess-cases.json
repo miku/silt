@@ -1,0 +1,954 @@
+{
+ "sources_checked": [
+  "npm",
+  "crates-io"
+ ],
+ "sources_failed": [
+  "pypi"
+ ],
+ "match_sets": {
+  "none": [],
+  "sample": [
+   {
+    "name": "kill-port",
+    "source": "npm",
+    "url": "https://example.com/kill-port",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.85,
+    "last_updated": null
+   },
+   {
+    "name": "fkill-cli",
+    "source": "npm",
+    "url": "https://example.com/fkill-cli",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.6,
+    "last_updated": null
+   }
+  ],
+  "one-close": [
+   {
+    "name": "patent",
+    "source": "npm",
+    "url": "https://example.com/patent",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.57,
+    "last_updated": null
+   }
+  ],
+  "very-strong": [
+   {
+    "name": "twin",
+    "source": "npm",
+    "url": "https://example.com/twin",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.72,
+    "last_updated": null
+   }
+  ],
+  "saturated": [
+   {
+    "name": "s0",
+    "source": "npm",
+    "url": "https://example.com/s0",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.9,
+    "last_updated": null
+   },
+   {
+    "name": "s1",
+    "source": "npm",
+    "url": "https://example.com/s1",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.8,
+    "last_updated": null
+   },
+   {
+    "name": "s2",
+    "source": "npm",
+    "url": "https://example.com/s2",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.7,
+    "last_updated": null
+   },
+   {
+    "name": "s3",
+    "source": "npm",
+    "url": "https://example.com/s3",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.65,
+    "last_updated": null
+   },
+   {
+    "name": "s4",
+    "source": "npm",
+    "url": "https://example.com/s4",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.6,
+    "last_updated": null
+   },
+   {
+    "name": "s5",
+    "source": "npm",
+    "url": "https://example.com/s5",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.6,
+    "last_updated": null
+   }
+  ],
+  "weak": [
+   {
+    "name": "weak",
+    "source": "npm",
+    "url": "https://example.com/weak",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.4,
+    "last_updated": null
+   }
+  ],
+  "names": [
+   {
+    "name": "at",
+    "source": "npm",
+    "url": "https://example.com/at",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.8,
+    "last_updated": null
+   },
+   {
+    "name": "go",
+    "source": "npm",
+    "url": "https://example.com/go",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.79,
+    "last_updated": null
+   },
+   {
+    "name": "C#",
+    "source": "npm",
+    "url": "https://example.com/C#",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.78,
+    "last_updated": null
+   },
+   {
+    "name": "ÜNÏCODE-TOOL",
+    "source": "npm",
+    "url": "https://example.com/ÜNÏCODE-TOOL",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.77,
+    "last_updated": null
+   },
+   {
+    "name": "node.js",
+    "source": "npm",
+    "url": "https://example.com/node.js",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.76,
+    "last_updated": null
+   },
+   {
+    "name": "",
+    "source": "npm",
+    "url": "https://example.com/",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.75,
+    "last_updated": null
+   },
+   {
+    "name": "kill port",
+    "source": "npm",
+    "url": "https://example.com/kill port",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.74,
+    "last_updated": null
+   },
+   {
+    "name": "İstanbul",
+    "source": "npm",
+    "url": "https://example.com/İstanbul",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.73,
+    "last_updated": null
+   },
+   {
+    "name": "ΣΙΣΥΦΟΣ",
+    "source": "npm",
+    "url": "https://example.com/ΣΙΣΥΦΟΣ",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.7200000000000001,
+    "last_updated": null
+   },
+   {
+    "name": "x",
+    "source": "npm",
+    "url": "https://example.com/x",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.7100000000000001,
+    "last_updated": null
+   },
+   {
+    "name": "eleventh",
+    "source": "npm",
+    "url": "https://example.com/eleventh",
+    "description": "",
+    "popularity": null,
+    "similarity": 0.7000000000000001,
+    "last_updated": null
+   }
+  ]
+ },
+ "cases": [
+  {
+   "name": "plain",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Several tools turned up in the sources checked.\", \"gaps\": [\"a gap\"]}"
+  },
+  {
+   "name": "fenced json",
+   "matches": "sample",
+   "response": "```json\n{\"level\": \"Crowded\", \"headline\": \"Several tools turned up in the sources checked.\", \"gaps\": [\"a gap\"]}\n```"
+  },
+  {
+   "name": "fenced bare",
+   "matches": "sample",
+   "response": "```\n{\"level\": \"Crowded\", \"headline\": \"Several tools turned up in the sources checked.\", \"gaps\": [\"a gap\"]}\n```"
+  },
+  {
+   "name": "fenced json no newline",
+   "matches": "sample",
+   "response": "```json{\"level\": \"Crowded\", \"headline\": \"Several tools turned up in the sources checked.\", \"gaps\": [\"a gap\"]}```"
+  },
+  {
+   "name": "fenced uppercase tag",
+   "matches": "sample",
+   "response": "```JSON\n{\"level\": \"Crowded\", \"headline\": \"Several tools turned up in the sources checked.\", \"gaps\": [\"a gap\"]}\n```"
+  },
+  {
+   "name": "fenced jsonl tag",
+   "matches": "sample",
+   "response": "```jsonl\n{\"level\": \"Crowded\", \"headline\": \"Several tools turned up in the sources checked.\", \"gaps\": [\"a gap\"]}\n```"
+  },
+  {
+   "name": "prose around fence",
+   "matches": "sample",
+   "response": "Here you go:\n```json\n{\"level\": \"Crowded\", \"headline\": \"Several tools turned up in the sources checked.\", \"gaps\": [\"a gap\"]}\n```\nHope this helps!"
+  },
+  {
+   "name": "unclosed fence",
+   "matches": "sample",
+   "response": "```json\n{\"level\": \"Crowded\", \"headline\": \"Several tools turned up in the sources checked.\", \"gaps\": [\"a gap\"]}"
+  },
+  {
+   "name": "two fences",
+   "matches": "sample",
+   "response": "```json\n{\"level\": \"Crowded\", \"headline\": \"Several tools turned up in the sources checked.\", \"gaps\": [\"a gap\"]}\n```\n```json\n{\"level\": \"Open\", \"headline\": \"second\", \"gaps\": []}\n```"
+  },
+  {
+   "name": "think draft",
+   "matches": "none",
+   "response": "<think>Let me draft: ```json\n{\"level\": \"Saturated\", \"headline\": \"Draft from the trace.\", \"gaps\": []}\n```\nNo, answer Open.</think>\n{\"level\": \"Open\", \"headline\": \"Nothing found in the sources checked.\", \"gaps\": []}"
+  },
+  {
+   "name": "think closer only",
+   "matches": "none",
+   "response": "Searching.</think>\n{\"level\": \"Open\", \"headline\": \"Nothing found.\", \"gaps\": []}"
+  },
+  {
+   "name": "think unterminated",
+   "matches": "none",
+   "response": "<think>Let me consider the crates.io results"
+  },
+  {
+   "name": "think twice",
+   "matches": "sample",
+   "response": "<think>a</think> {\"level\": \"Open\", \"headline\": \"draft\", \"gaps\": []} </think>\n{\"level\": \"Crowded\", \"headline\": \"Several tools turned up in the sources checked.\", \"gaps\": [\"a gap\"]}"
+  },
+  {
+   "name": "think then fence",
+   "matches": "sample",
+   "response": "<think>{\"level\": \"Saturated\", \"headline\": \"draft\", \"gaps\": []}</think>\n```json\n{\"level\": \"Crowded\", \"headline\": \"Several tools turned up in the sources checked.\", \"gaps\": [\"a gap\"]}\n```"
+  },
+  {
+   "name": "unicode whitespace",
+   "matches": "sample",
+   "response": " \n{\"level\": \"Crowded\", \"headline\": \"Several tools turned up in the sources checked.\", \"gaps\": [\"a gap\"]}　 "
+  },
+  {
+   "name": "byte order mark",
+   "matches": "sample",
+   "response": "﻿{\"level\": \"Crowded\", \"headline\": \"Several tools turned up in the sources checked.\", \"gaps\": [\"a gap\"]}"
+  },
+  {
+   "name": "trailing prose",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Several tools turned up in the sources checked.\", \"gaps\": [\"a gap\"]} Hope this helps!"
+  },
+  {
+   "name": "garbage",
+   "matches": "none",
+   "response": "I don't know what JSON is"
+  },
+  {
+   "name": "empty",
+   "matches": "none",
+   "response": ""
+  },
+  {
+   "name": "null",
+   "matches": "none",
+   "response": "null"
+  },
+  {
+   "name": "array",
+   "matches": "none",
+   "response": "[]"
+  },
+  {
+   "name": "string",
+   "matches": "none",
+   "response": "\"Open\""
+  },
+  {
+   "name": "empty object",
+   "matches": "none",
+   "response": "{}"
+  },
+  {
+   "name": "nested verdict",
+   "matches": "sample",
+   "response": "{\"verdict\": {\"level\": \"Crowded\", \"headline\": \"Several tools turned up in the sources checked.\", \"gaps\": [\"a gap\"]}}"
+  },
+  {
+   "name": "level 'open'",
+   "matches": "sample",
+   "response": "{\"level\": \"open\", \"headline\": \"x\", \"gaps\": []}"
+  },
+  {
+   "name": "level 'OPEN'",
+   "matches": "sample",
+   "response": "{\"level\": \"OPEN\", \"headline\": \"x\", \"gaps\": []}"
+  },
+  {
+   "name": "level 'Saturated '",
+   "matches": "sample",
+   "response": "{\"level\": \"Saturated \", \"headline\": \"x\", \"gaps\": []}"
+  },
+  {
+   "name": "level ''",
+   "matches": "sample",
+   "response": "{\"level\": \"\", \"headline\": \"x\", \"gaps\": []}"
+  },
+  {
+   "name": "level 'Öffen'",
+   "matches": "sample",
+   "response": "{\"level\": \"Öffen\", \"headline\": \"x\", \"gaps\": []}"
+  },
+  {
+   "name": "level 'Ope\"n\\\\'",
+   "matches": "sample",
+   "response": "{\"level\": \"Ope\\\"n\\\\\", \"headline\": \"x\", \"gaps\": []}"
+  },
+  {
+   "name": "level 'a\\nb'",
+   "matches": "sample",
+   "response": "{\"level\": \"a\\nb\", \"headline\": \"x\", \"gaps\": []}"
+  },
+  {
+   "name": "level number",
+   "matches": "sample",
+   "response": "{\"level\": 2, \"headline\": \"x\"}"
+  },
+  {
+   "name": "level null",
+   "matches": "sample",
+   "response": "{\"level\": null, \"headline\": \"x\"}"
+  },
+  {
+   "name": "level missing",
+   "matches": "sample",
+   "response": "{\"headline\": \"x\"}"
+  },
+  {
+   "name": "headline missing",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\"}"
+  },
+  {
+   "name": "headline null",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": null}"
+  },
+  {
+   "name": "headline number",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": 5}"
+  },
+  {
+   "name": "headline empty",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"\", \"gaps\": []}"
+  },
+  {
+   "name": "headline markup",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"<b>kill-port</b> & fkill-cli \\\"cover\\\" this\", \"gaps\": []}"
+  },
+  {
+   "name": "duplicate keys",
+   "matches": "sample",
+   "response": "{\"level\": \"Open\", \"level\": \"Saturated\", \"headline\": \"a\", \"headline\": \"b\"}"
+  },
+  {
+   "name": "extra fields",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"x\", \"gaps\": [], \"confidence\": 0.9, \"notes\": [\"n\"]}"
+  },
+  {
+   "name": "gaps missing",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"x\"}"
+  },
+  {
+   "name": "gaps not a list",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"x\", \"gaps\": \"none\"}"
+  },
+  {
+   "name": "gaps mixed",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"x\", \"gaps\": [1, \"kept\", null, {\"a\": 1}, [\"b\"], \"\"]}"
+  },
+  {
+   "name": "floor open to crowded",
+   "matches": "sample",
+   "response": "{\"level\": \"Open\", \"headline\": \"This is a brand-new idea about a testing framework.\", \"gaps\": []}"
+  },
+  {
+   "name": "floor keeps a higher level",
+   "matches": "sample",
+   "response": "{\"level\": \"Saturated\", \"headline\": \"A benign headline.\", \"gaps\": []}"
+  },
+  {
+   "name": "floor crowded to saturated",
+   "matches": "saturated",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"A benign headline.\", \"gaps\": []}"
+  },
+  {
+   "name": "floor single very strong",
+   "matches": "very-strong",
+   "response": "{\"level\": \"Open\", \"headline\": \"A benign headline.\", \"gaps\": []}"
+  },
+  {
+   "name": "model raises weak",
+   "matches": "weak",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"A benign headline.\", \"gaps\": []}"
+  },
+  {
+   "name": "open nothing close",
+   "matches": "none",
+   "response": "{\"level\": \"Open\", \"headline\": \"A benign headline.\", \"gaps\": []}"
+  },
+  {
+   "name": "open weak",
+   "matches": "weak",
+   "response": "{\"level\": \"Open\", \"headline\": \"A benign headline.\", \"gaps\": []}"
+  },
+  {
+   "name": "open one close",
+   "matches": "one-close",
+   "response": "{\"level\": \"Open\", \"headline\": \"A benign headline.\", \"gaps\": []}"
+  },
+  {
+   "name": "not software",
+   "matches": "none",
+   "response": "{\"level\": \"Open\", \"headline\": \"This does not appear to be a software tool idea — patent searches developer tool registries only.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'does not exist'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but does not exist here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline \"doesn't exist\"",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but doesn't exist here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'do not exist'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but do not exist here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline \"don't exist\"",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but don't exist here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'no prior art'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but no prior art here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'nothing exists'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but nothing exists here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'nothing like this'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but nothing like this here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'never been built'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but never been built here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'never been made'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but never been made here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'never been implemented'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but never been implemented here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'has not been built'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but has not been built here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline \"hasn't been built\"",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but hasn't been built here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'has not been implemented'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but has not been implemented here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline \"hasn't been implemented\"",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but hasn't been implemented here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'not been implemented'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but not been implemented here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'no one has built'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but no one has built here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'no one has made'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but no one has made here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'no one else'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but no one else here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'nobody else'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but nobody else here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'no one is doing'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but no one is doing here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'no such tool'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but no such tool here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'no existing tool'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but no existing tool here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'no existing solution'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but no existing solution here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'no existing implementation'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but no existing implementation here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'no similar tool'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but no similar tool here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'no similar project'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but no similar project here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'no comparable'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but no comparable here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'no competitors'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but no competitors here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'no alternatives'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but no alternatives here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'no equivalent'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but no equivalent here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'there is no tool'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but there is no tool here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'there are no tools'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but there are no tools here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'there is no existing'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but there is no existing here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'there is no software'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but there is no software here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'there is no prior'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but there is no prior here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'completely novel'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but completely novel here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'entirely new'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but entirely new here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'brand new concept'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but brand new concept here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'first of its kind'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but first of its kind here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'unprecedented'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but unprecedented here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'greenfield'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but greenfield here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'wide open'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but wide open here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'untapped'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but untapped here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'gap in the market'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but gap in the market here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'we found zero'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but we found zero here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'zero implementations'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but zero implementations here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'zero results'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but zero results here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'no one is solving'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but no one is solving here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'no maintained'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but no maintained here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'no actively developed'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but no actively developed here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'nothing maintained'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but nothing maintained here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline 'no up-to-date'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, but no up-to-date here.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence headline uppercase",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"THIS DOES NOT EXIST.\", \"gaps\": []}"
+  },
+  {
+   "name": "hedged headline 'actively'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"There is no actively maintained tool.\", \"gaps\": []}"
+  },
+  {
+   "name": "hedged headline 'currently'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"There is no currently maintained tool.\", \"gaps\": []}"
+  },
+  {
+   "name": "hedged headline 'still'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"There is no still maintained tool.\", \"gaps\": []}"
+  },
+  {
+   "name": "hedged headline 'truly'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"There is no truly maintained tool.\", \"gaps\": []}"
+  },
+  {
+   "name": "hedged headline 'genuinely'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"There is no genuinely maintained tool.\", \"gaps\": []}"
+  },
+  {
+   "name": "hedged headline 'really'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"There is no really maintained tool.\", \"gaps\": []}"
+  },
+  {
+   "name": "hedged headline 'properly'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"There is no properly maintained tool.\", \"gaps\": []}"
+  },
+  {
+   "name": "hedged headline 'widely'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"There is no widely maintained tool.\", \"gaps\": []}"
+  },
+  {
+   "name": "hedge stripped from phrase",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"No developed tool covers this.\", \"gaps\": []}"
+  },
+  {
+   "name": "hedge inside a word",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"We distill no maintained ideas.\", \"gaps\": []}"
+  },
+  {
+   "name": "honest unmaintained note",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded — fkill-cli covers this, though it is no longer maintained.\", \"gaps\": []}"
+  },
+  {
+   "name": "absence gaps",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"x\", \"gaps\": [\"gap 0: does not exist\", \"gap 1: doesn't exist\", \"gap 2: do not exist\", \"gap 3: don't exist\", \"gap 4: no prior art\", \"gap 5: nothing exists\", \"gap 6: nothing like this\", \"gap 7: never been built\", \"gap 8: never been made\", \"gap 9: never been implemented\", \"gap 10: has not been built\", \"gap 11: hasn't been built\", \"gap 12: has not been implemented\", \"gap 13: hasn't been implemented\", \"gap 14: not been implemented\", \"gap 15: no one has built\", \"gap 16: no one has made\", \"gap 17: no one else\", \"gap 18: nobody else\", \"gap 19: no one is doing\", \"gap 20: no such tool\", \"gap 21: no existing tool\", \"gap 22: no existing solution\", \"gap 23: no existing implementation\", \"gap 24: no similar tool\", \"gap 25: no similar project\", \"gap 26: no comparable\", \"gap 27: no competitors\", \"gap 28: no alternatives\", \"gap 29: no equivalent\", \"gap 30: there is no tool\", \"gap 31: there are no tools\", \"gap 32: there is no existing\", \"gap 33: there is no software\", \"gap 34: there is no prior\", \"gap 35: completely novel\", \"gap 36: entirely new\", \"gap 37: brand new concept\", \"gap 38: first of its kind\", \"gap 39: unprecedented\", \"gap 40: greenfield\", \"gap 41: wide open\", \"gap 42: untapped\", \"gap 43: gap in the market\", \"gap 44: we found zero\", \"gap 45: zero implementations\", \"gap 46: zero results\", \"gap 47: no one is solving\", \"gap 48: no maintained\", \"gap 49: no actively developed\", \"gap 50: nothing maintained\", \"gap 51: no up-to-date\", \"none of the matches offer an async API\"]}"
+  },
+  {
+   "name": "hedged gaps",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"x\", \"gaps\": [\"no actively maintained tool offers a TUI\", \"no currently maintained tool offers a TUI\", \"no still maintained tool offers a TUI\", \"no truly maintained tool offers a TUI\", \"no genuinely maintained tool offers a TUI\", \"no really maintained tool offers a TUI\", \"no properly maintained tool offers a TUI\", \"no widely maintained tool offers a TUI\", \"a clean gap\"]}"
+  },
+  {
+   "name": "no-match one close 'no direct match'",
+   "matches": "one-close",
+   "response": "{\"level\": \"Open\", \"headline\": \"No direct match in the sources checked.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match crowded 'no direct match'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, though no direct match.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match one close 'no close match'",
+   "matches": "one-close",
+   "response": "{\"level\": \"Open\", \"headline\": \"No close match in the sources checked.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match crowded 'no close match'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, though no close match.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match one close 'no matching'",
+   "matches": "one-close",
+   "response": "{\"level\": \"Open\", \"headline\": \"No matching in the sources checked.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match crowded 'no matching'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, though no matching.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match one close 'no matches found'",
+   "matches": "one-close",
+   "response": "{\"level\": \"Open\", \"headline\": \"No matches found in the sources checked.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match crowded 'no matches found'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, though no matches found.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match one close 'no match found'",
+   "matches": "one-close",
+   "response": "{\"level\": \"Open\", \"headline\": \"No match found in the sources checked.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match crowded 'no match found'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, though no match found.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match one close 'no relevant match'",
+   "matches": "one-close",
+   "response": "{\"level\": \"Open\", \"headline\": \"No relevant match in the sources checked.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match crowded 'no relevant match'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, though no relevant match.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match one close 'no clear match'",
+   "matches": "one-close",
+   "response": "{\"level\": \"Open\", \"headline\": \"No clear match in the sources checked.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match crowded 'no clear match'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, though no clear match.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match one close 'no exact match'",
+   "matches": "one-close",
+   "response": "{\"level\": \"Open\", \"headline\": \"No exact match in the sources checked.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match crowded 'no exact match'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, though no exact match.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match one close 'nothing closely related'",
+   "matches": "one-close",
+   "response": "{\"level\": \"Open\", \"headline\": \"Nothing closely related in the sources checked.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match crowded 'nothing closely related'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, though nothing closely related.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match one close 'no direct prior art'",
+   "matches": "one-close",
+   "response": "{\"level\": \"Open\", \"headline\": \"No direct prior art in the sources checked.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match crowded 'no direct prior art'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, though no direct prior art.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match one close \"couldn't find any\"",
+   "matches": "one-close",
+   "response": "{\"level\": \"Open\", \"headline\": \"Couldn't find any in the sources checked.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match crowded \"couldn't find any\"",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, though couldn't find any.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match one close 'could not find any'",
+   "matches": "one-close",
+   "response": "{\"level\": \"Open\", \"headline\": \"Could not find any in the sources checked.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match crowded 'could not find any'",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"Crowded, though could not find any.\", \"gaps\": []}"
+  },
+  {
+   "name": "no-match weak",
+   "matches": "weak",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"No close match turned up.\", \"gaps\": []}"
+  },
+  {
+   "name": "gaps naming matches",
+   "matches": "names",
+   "response": "{\"level\": \"Saturated\", \"headline\": \"x\", \"gaps\": [\"automatically handles port conflicts\", \"at startup it reads config\", \"atat is not a word\", \"golang bindings\", \"Go bindings\", \"c# bindings missing\", \"better c#-interop\", \"abc# something\", \"ünïcode-tool lacks docs\", \"node.js port\", \"nodejs port\", \"kill port helpers\", \"killport helpers\", \"istanbul coverage\", \"i̇stanbul coverage\", \"σισυφος game\", \"σισυφοσ game\", \"x marks the spot\", \"eleventh is fine\", \"\"]}"
+  },
+  {
+   "name": "gaps naming sample",
+   "matches": "sample",
+   "response": "{\"level\": \"Crowded\", \"headline\": \"x\", \"gaps\": [\"kill-port does not support IPv6\", \"KILL-PORT lacks Windows\", \"fkill-cli-like UI\", \"a fkill-clix fork\", \"none of the tools support Windows arm64\"]}"
+  }
+ ]
+}

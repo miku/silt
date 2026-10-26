@@ -15,9 +15,11 @@
 //
 // The root package holds the error types shared by the library packages:
 // [sources] fans out to the registries, rank orders matches, and [verdict]
-// turns them into an integrity-scoped [model.Verdict].
+// turns them into an integrity-scoped [model.Verdict] through any [llm.LLM]
+// backend (a local Ollama or an OpenAI-compatible API).
 //
 // [sources]: https://pkg.go.dev/github.com/miku/silt/sources
 // [verdict]: https://pkg.go.dev/github.com/miku/silt/verdict
 // [model.Verdict]: https://pkg.go.dev/github.com/miku/silt/model#Verdict
+// [llm.LLM]: https://pkg.go.dev/github.com/miku/silt/llm#LLM
 package silt

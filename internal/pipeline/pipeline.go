@@ -4,11 +4,13 @@ package pipeline
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
 
+	"github.com/miku/silt/llm"
+	"github.com/miku/silt/llm/ollama"
+	"github.com/miku/silt/llm/openai"
 	"github.com/miku/silt/model"
 	"github.com/miku/silt/rank"
 	"github.com/miku/silt/sources"
@@ -43,18 +45,15 @@ type Result struct {
 	Matches []model.Match
 }
 
-// errLLMNotPorted stands in for the LLM verdict, which silt has not ported
-// yet (M6 in notes/todo.md).
-var errLLMNotPorted = errors.New("LLM verdicts are not ported to silt yet; pass --fast for a verdict from the similarity data")
-
 // ranker is what Run needs of a *rank.Ranker.
 type ranker interface {
 	EmbedQuery(idea string) []float32
 	RankWith(queryEmb []float32, matches []model.Match, limit int) []model.Match
 }
 
-// searchFiltered runs the fan-out and newRanker loads the embedding model;
-// tests replace them to stay off the network.
+// searchFiltered runs the fan-out, newRanker loads the embedding model, and
+// ollamaEndpoint is where the default LLM backend listens; tests replace them
+// to stay off the network and away from a local Ollama.
 var (
 	searchFiltered = sources.SearchFiltered
 	newRanker      = func(ctx context.Context, progress rank.Progress) (ranker, error) {
@@ -64,6 +63,7 @@ var (
 		}
 		return r, nil
 	}
+	ollamaEndpoint = ollama.DefaultEndpoint
 )
 
 func sourceNames(ss []model.Source) string {
@@ -160,11 +160,26 @@ func Run(ctx context.Context, idea string, cfg Config, log func(string)) (Result
 			"The query may not describe a recognized software tool — " +
 			"try rephrasing with specific technical terms.")
 	default:
-		// As for any LLM failure, fall back to the search-only verdict
-		// rather than aborting.
-		log("warning: " + errLLMNotPorted.Error())
-		log("   showing results without an AI verdict.")
-		v = fallback("Verdict unavailable — results are ranked by semantic similarity only.")
+		modelName := ollama.DefaultModel
+		if cfg.Model != nil {
+			modelName = *cfg.Model
+		}
+		var backend llm.LLM = ollama.New(ollamaEndpoint, modelName)
+		if cfg.APIBase != nil {
+			backend = openai.New(*cfg.APIBase, modelName, cfg.APIKey)
+		}
+		verdictStart := time.Now()
+		log(fmt.Sprintf("Generating verdict via %s (%s)...", backend.Label(), modelName))
+		var err error
+		if v, err = verdict.Assess(ctx, backend, q, ranked, out.Reached, out.Failed); err != nil {
+			// A failing LLM degrades the run to the search-only verdict
+			// rather than aborting it.
+			log("warning: " + err.Error())
+			log("   showing results without an AI verdict.")
+			v = fallback("Verdict unavailable — results are ranked by semantic similarity only.")
+		} else {
+			log(fmt.Sprintf("   verdict in %.1fs", time.Since(verdictStart).Seconds()))
+		}
 	}
 
 	return Result{Verdict: v, Matches: ranked[:min(cfg.Limit, len(ranked))]}, nil
