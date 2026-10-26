@@ -63,6 +63,9 @@ func (a *Hex) Search(ctx context.Context, q model.Query) ([]model.Match, error) 
 		if err := getJSON(ctx, a.Client, a.BaseURL+"/api/packages", params, &pkgs); err != nil {
 			return nil, err
 		}
+		if pkgs == nil {
+			return nil, missingField("packages") // a JSON null, not a list
+		}
 		for _, p := range pkgs {
 			if p.Name == nil {
 				return nil, missingField("name")
@@ -72,12 +75,12 @@ func (a *Hex) Search(ctx context.Context, q model.Query) ([]model.Match, error) 
 			}
 			seen[*p.Name] = true
 			m := model.Match{
-				Name:   *p.Name,
-				Source: model.Hex,
-				// Prefer the registry's own web link.
+				Name:        *p.Name,
+				Source:      model.Hex,
 				URL:         a.BaseURL + "/packages/" + *p.Name,
 				LastUpdated: rfc3339Date(p.UpdatedAt),
 			}
+			// Prefer the registry's own web link.
 			if p.HTMLURL != nil && strings.TrimSpace(*p.HTMLURL) != "" {
 				m.URL = *p.HTMLURL
 			}

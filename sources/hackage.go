@@ -31,7 +31,9 @@ type Hackage struct {
 }
 
 // NewHackage returns an adapter for the live Hackage.
-func NewHackage(client *http.Client) *Hackage { return &Hackage{Client: client, BaseURL: hackageBaseURL} }
+func NewHackage(client *http.Client) *Hackage {
+	return &Hackage{Client: client, BaseURL: hackageBaseURL}
+}
 
 // ID implements Adapter.
 func (*Hackage) ID() model.Source { return model.Hackage }
@@ -52,6 +54,9 @@ func (a *Hackage) Search(ctx context.Context, q model.Query) ([]model.Match, err
 	}
 	if err := decodeJSON(resp, &results); err != nil {
 		return nil, err
+	}
+	if results == nil {
+		return nil, missingField("results") // a JSON null, not a list
 	}
 	var names []string
 	for _, r := range results {

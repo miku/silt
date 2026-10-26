@@ -289,10 +289,13 @@ func TestSelectSourcesUsesStableOrderAndFilters(t *testing.T) {
 	}
 }
 
-func TestUnportedSourcesFailAsUnavailable(t *testing.T) {
-	_, err := newAdapter(model.Nixpkgs, NewHTTPClient()).Search(context.Background(), query())
-	if err == nil || silt.IsRetryable(err) {
-		t.Errorf("err = %v; an unported source must fail without a retry", err)
+func TestEverySourceHasAnAdapterForTheLiveService(t *testing.T) {
+	client := NewHTTPClient()
+	for _, id := range model.All() {
+		a := newAdapter(id, client)
+		if a.ID() != id {
+			t.Errorf("adapter for %v reports %v", id, a.ID())
+		}
 	}
 }
 

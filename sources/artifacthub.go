@@ -55,9 +55,9 @@ func (a *ArtifactHub) Search(ctx context.Context, q model.Query) ([]model.Match,
 				// Publish time of this version, in epoch seconds.
 				TS         freshness.Lenient[int64] `json:"ts"`
 				Repository *struct {
-					Name *string  `json:"name"`
-					Kind *uint32  `json:"kind"`
-					URL  *string  `json:"url"`
+					Name *string `json:"name"`
+					Kind *uint32 `json:"kind"`
+					URL  *string `json:"url"`
 				} `json:"repository"`
 			} `json:"packages"`
 		}
@@ -84,7 +84,7 @@ func (a *ArtifactHub) Search(ctx context.Context, q model.Query) ([]model.Match,
 			}
 			// The canonical package page for a known kind; for a kind added
 			// since, the repository's own URL rather than a broken link.
-			if k := int(*p.Repository.Kind); k < len(artifactHubKinds) {
+			if k := *p.Repository.Kind; k < uint32(len(artifactHubKinds)) {
 				m.URL = a.BaseURL + "/packages/" + artifactHubKinds[k] + "/" + *p.Repository.Name + "/" + *p.Name
 			} else if p.Repository.URL != nil {
 				m.URL = *p.Repository.URL

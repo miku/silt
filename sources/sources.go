@@ -270,29 +270,49 @@ func detectSources(idea string) map[model.Source]bool {
 	return selected
 }
 
-// newAdapter builds the adapter for id.
+// newAdapter builds the adapter for id, against the live service.
 func newAdapter(id model.Source, client *http.Client) Adapter {
 	switch id {
 	case model.CratesIO:
 		return NewCratesIO(client)
 	case model.GitHub:
 		return NewGitHub(client)
+	case model.Npm:
+		return NewNpm(client)
+	case model.PyPI:
+		return NewPyPI(client)
 	case model.HackerNews:
 		return NewHackerNews(client)
-	default:
-		return unported(id)
+	case model.Go:
+		return NewGoPkgDev(client)
+	case model.Maven:
+		return NewMaven(client)
+	case model.RubyGems:
+		return NewRubyGems(client)
+	case model.DockerHub:
+		return NewDockerHub(client)
+	case model.VSCodeMarketplace:
+		return NewVSCodeMarketplace(client)
+	case model.JetBrains:
+		return NewJetBrains(client)
+	case model.NuGet:
+		return NewNuGet(client)
+	case model.Homebrew:
+		return NewHomebrew(client)
+	case model.Packagist:
+		return NewPackagist(client)
+	case model.Hex:
+		return NewHex(client)
+	case model.ArtifactHub:
+		return NewArtifactHub(client)
+	case model.AUR:
+		return NewAUR(client)
+	case model.Hackage:
+		return NewHackage(client)
+	case model.Nixpkgs:
+		return NewNixpkgs(client)
 	}
-}
-
-// unported stands in for a source whose adapter has not been ported from
-// patent yet. It fails as unavailable, so the source is reported as not
-// reached — never silently dropped, which would overstate coverage.
-type unported model.Source
-
-func (u unported) ID() model.Source { return model.Source(u) }
-
-func (u unported) Search(context.Context, model.Query) ([]model.Match, error) {
-	return nil, &silt.UnavailableError{Msg: fmt.Sprintf("%s is not supported by silt yet", model.Source(u))}
+	panic(fmt.Sprintf("sources: no adapter for %v", id))
 }
 
 // Outcome is the result of a fan-out: deduped matches, the sources that

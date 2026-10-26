@@ -74,6 +74,9 @@ func (a *Homebrew) fetchCatalog(ctx context.Context) ([]brewPackage, error) {
 	if err := a.getCatalog(ctx, "/api/formula.json", &formulae); err != nil {
 		return nil, err
 	}
+	if formulae == nil {
+		return nil, missingField("formulae") // a JSON null, not a list
+	}
 	var casks []struct {
 		Token    *string `json:"token"`
 		Desc     string  `json:"desc"`
@@ -81,6 +84,9 @@ func (a *Homebrew) fetchCatalog(ctx context.Context) ([]brewPackage, error) {
 	}
 	if err := a.getCatalog(ctx, "/api/cask.json", &casks); err != nil {
 		return nil, err
+	}
+	if casks == nil {
+		return nil, missingField("casks")
 	}
 	pkgs := make([]brewPackage, 0, len(formulae)+len(casks))
 	add := func(name, desc, homepage string) {
@@ -114,13 +120,7 @@ func (a *Homebrew) getCatalog(ctx context.Context, path string, v any) error {
 	if err != nil {
 		return err
 	}
-	if err := decodeJSON(resp, v); err != nil {
-		return err
-	}
-	if v == nil {
-		return missingField(path)
-	}
-	return nil
+	return decodeJSON(resp, v)
 }
 
 // Search implements Adapter.

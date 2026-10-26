@@ -41,7 +41,9 @@ type Nixpkgs struct {
 }
 
 // NewNixpkgs returns an adapter for the live search.nixos.org.
-func NewNixpkgs(client *http.Client) *Nixpkgs { return &Nixpkgs{Client: client, BaseURL: nixpkgsBaseURL} }
+func NewNixpkgs(client *http.Client) *Nixpkgs {
+	return &Nixpkgs{Client: client, BaseURL: nixpkgsBaseURL}
+}
 
 // ID implements Adapter.
 func (*Nixpkgs) ID() model.Source { return model.Nixpkgs }
