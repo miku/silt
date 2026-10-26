@@ -43,7 +43,7 @@ func (a *CratesIO) Search(ctx context.Context, q model.Query) ([]model.Match, er
 			} `json:"crates"`
 		}
 		params := url.Values{"q": {term}, "per_page": {"20"}}
-		if err := getJSON(ctx, a.Client, a.BaseURL+"/api/v1/crates", params, nil, &body); err != nil {
+		if err := getJSON(ctx, a.Client, a.BaseURL+"/api/v1/crates", params, &body); err != nil {
 			return nil, err
 		}
 		if body.Crates == nil {

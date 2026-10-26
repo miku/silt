@@ -105,21 +105,37 @@ func checkStatus(resp *http.Response) error {
 	}
 }
 
-// getJSON sends a GET request for rawURL with params and decodes the JSON
-// response into v.
-func getJSON(ctx context.Context, client *http.Client, rawURL string, params url.Values, header http.Header, v any) error {
+// get sends a GET request for rawURL with params.
+func get(ctx context.Context, client *http.Client, rawURL string, params url.Values) (*http.Response, error) {
 	req, err := newRequest(ctx, http.MethodGet, rawURL, params, nil)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	for k, vs := range header {
-		req.Header[k] = vs
-	}
-	resp, err := send(client, req)
+	return send(client, req)
+}
+
+// getJSON sends a GET request for rawURL with params and decodes the JSON
+// response into v.
+func getJSON(ctx context.Context, client *http.Client, rawURL string, params url.Values, v any) error {
+	resp, err := get(ctx, client, rawURL, params)
 	if err != nil {
 		return err
 	}
 	return decodeJSON(resp, v)
+}
+
+// readText closes resp.Body after checking for a 2xx status and reading the
+// whole body.
+func readText(resp *http.Response) (string, error) {
+	defer resp.Body.Close()
+	if err := checkStatus(resp); err != nil {
+		return "", err
+	}
+	b, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", &silt.HTTPError{StatusCode: resp.StatusCode, Err: err}
+	}
+	return string(b), nil
 }
 
 // missingField is the error for a response that lacks a field patent's serde

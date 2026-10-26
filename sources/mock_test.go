@@ -1,6 +1,7 @@
 package sources
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"sync"
@@ -90,4 +91,42 @@ func deref[T any](p *T) any {
 		return nil
 	}
 	return *p
+}
+
+// mustSearch runs a.Search with q and fails the test on an error.
+func mustSearch(t *testing.T, a Adapter, q model.Query) []model.Match {
+	t.Helper()
+	m, err := a.Search(context.Background(), q)
+	if err != nil {
+		t.Fatalf("%v: %v", a.ID(), err)
+	}
+	return m
+}
+
+// wantSearchError checks that a.Search with q fails.
+func wantSearchError(t *testing.T, a Adapter, q model.Query) {
+	t.Helper()
+	if m, err := a.Search(context.Background(), q); err == nil {
+		t.Errorf("%v: want an error, got %d matches", a.ID(), len(m))
+	}
+}
+
+// requested returns the values of the query parameter name, request by
+// request.
+func requested(srv *mockServer, name string) []string {
+	var vs []string
+	for _, r := range srv.Requests() {
+		vs = append(vs, r.URL.Query().Get(name))
+	}
+	return vs
+}
+
+// narrowingServer answers each query in empty with emptyBody and found with
+// body, on path, by the query parameter param.
+func narrowingServer(t *testing.T, path, param string, empty []string, emptyBody, found, body string) *mockServer {
+	routes := map[string]http.Handler{found: respond(200, body)}
+	for _, q := range empty {
+		routes[q] = respond(200, emptyBody)
+	}
+	return newMockServer(t, onPath(path, byParam(param, routes)))
 }

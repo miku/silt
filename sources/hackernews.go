@@ -56,7 +56,7 @@ func (a *HackerNews) Search(ctx context.Context, q model.Query) ([]model.Match, 
 			} `json:"hits"`
 		}
 		params := url.Values{"query": {term}, "hitsPerPage": {"20"}, "tags": {"story"}}
-		if err := getJSON(ctx, a.Client, a.BaseURL+"/api/v1/search", params, nil, &body); err != nil {
+		if err := getJSON(ctx, a.Client, a.BaseURL+"/api/v1/search", params, &body); err != nil {
 			return nil, err
 		}
 		if body.Hits == nil {
