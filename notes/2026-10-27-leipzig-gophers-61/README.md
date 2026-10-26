@@ -1,7 +1,7 @@
 # Software Discovery
 
-> Lightning Talk, [Leipzig Gophers #61](https://golangleipzig.space/), Halle
-> (Saale), 27 October 2026, [Martin Czygan](mailto:martin.czygan@gmail.com)
+> Lightning Talk, Leipzig Gophers #61, Halle (Saale), 27 October 2026,
+> [Martin Czygan](mailto:martin.czygan@gmail.com)
 
 **silt**: a prior-art search for code ideas, ported from Rust to Go.
 
@@ -51,7 +51,7 @@ Build or buy, 2026 edition:
 * **16.2M packages** in the 117 registries [ecosyste.ms](https://ecosyste.ms)
   tracks (Linux distribution snapshots included).
 * Hugging Face models now rank 6th, ahead of Maven Central.
-* Counts disagree: PyPI itself says **925,817** projects, ecosyste.ms 945,180.
+* Counts disagree: PyPI itself says **925,843** projects, ecosyste.ms 945,180.
 
 ---
 
@@ -59,7 +59,13 @@ Build or buy, 2026 edition:
 
 ![Average new packages per month](img/growth.png)
 
-GROWTH_BULLETS
+* **crates.io:** about **17,700 new crates a month** since June 2026, 6.6×
+  the rate of 2024 (2,700).
+* **PyPI:** 925,843 projects, 206,475 of them new this year: more than in
+  any full year before.
+* **Packagist** (PHP), for comparison: 2,050 a month in 2024, 3,790 this
+  year (1.8×).
+* My guess, not proven: agentic coding makes publishing a package cheap.
 
 No registry publishes its history, so the counts come from Wayback Machine
 snapshots of the crates.io API, the PyPI front page and Packagist's
@@ -300,13 +306,19 @@ func BenchmarkKernel(b *testing.B) {
 ```
 
 ```
-$ go test -run '^$' -bench '^BenchmarkKernel$' -count 6 ./internal/minilm > bench.txt
-$ benchstat -col /kernel bench.txt
-BENCHSTAT_OUTPUT
+$ go test -run '^$' -bench '^BenchmarkKernel$' -count 10 ./internal/minilm > bench.txt
+$ benchstat -col /kernel -filter '/kernel:(go OR asm)' bench.txt
+         │      go       │                 asm                 │
+         │    sec/op     │   sec/op     vs base                │
+Kernel-8   3572.5m ± 18%   611.3m ± 8%  -82.89% (p=0.000 n=10)
 ```
 
-* **`-count 6` and benchstat:** a median, a ± range and a p-value, not one
-  lucky number. `-col /kernel` turns the sub-benchmark key into columns.
+* **`-count` and benchstat:** a median, a ± range and a p-value, not one
+  lucky number. `-col /kernel` turns the sub-benchmark key into columns;
+  all four kernels: [data/benchstat.txt](data/benchstat.txt).
+* **Interleave:** `-count` runs each sub-benchmark n times in a row, so on a
+  laptop that heats up, the later kernels lose. Tonight that gave ±44%;
+  [scripts/bench.sh](scripts/bench.sh) runs whole rounds instead.
 * **One session, one machine:** on another day the same pair measured 5.4 s
   and 0.9 s.
 * **Correct first:** the golden tests run on every kernel. Under `-race` they
@@ -331,7 +343,13 @@ for p := range k {
 
 ![Embedding 300 texts, per kernel](img/bench.png)
 
-ARCHSIMD_BULLETS
+* **Correct:** the same golden-test results as the assembly.
+* **Fast, but not yet fast enough:** 3–3.6× faster than plain Go, while the
+  assembly is still 1.6–1.9× ahead.
+* **Why:** in the 4 × 24 tile the compiler spills two of the twelve
+  accumulators to the stack; the 4 × 16 tile has no spills. In both, the
+  slice bounds checks stay in the inner loop
+  (`go build -gcflags=-d=ssa/check_bce`).
 
 An experiment, not part of silt: [archsimd.patch](archsimd.patch), run by
 `make bench`.
@@ -364,7 +382,7 @@ rerun the idea, or replay a recording.
 | **Hex** | a multi-word query returns the whole catalogue, so silt searches each keyword on its own |
 | **AUR** | HTTP 200 with `{"type":"error"}` is a refusal, not an empty result |
 | **Nixpkgs** | search.nixos.org is Elasticsearch, with credentials shipped to every browser |
-| **Docker Hub** | more words, more hits: "kubernetes logging" DOCKER_SHORT, "container kubernetes logging" DOCKER_LONG |
+| **Docker Hub** | more words, more hits: "kubernetes logging" 51,864, "container kubernetes logging" 176,430 |
 | **qwen3.5 via Ollama's OpenAI API** | spends all 2048 tokens thinking and returns an empty answer |
 
 ---
@@ -388,7 +406,7 @@ Fast, cheap and deterministic. Mostly.
   side by side, not merged into one number.
 * **Which level?** Reuse and discovery of a function, a package, or a whole
   tool?
-* **Why discover?** With CRATES_PER_MONTH new crates a month, is finding still
+* **Why discover?** With 17,700 new crates a month, is finding still
   cheaper than generating?
 
 **Thank you!** [github.com/miku/silt](https://github.com/miku/silt) ·
