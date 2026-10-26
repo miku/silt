@@ -612,16 +612,32 @@ verdict.
 
 ## M8 — Parity check & release
 
-Status (2026-10-26): what's left is to run the harness and tag 0.1.0. The
-harness and its 33 ideas are written, but no run has been recorded yet.
-`goreleaser release --snapshot` builds all six archives, and the Linux
-binaries are static. Checked by hand: `--list-sources` is identical to
-patent's, and the help texts, errors and exit codes are patent's apart from
-the deviations table (the name, cobra's layout, pflag's wording, no elvish).
+Status (2026-10-26): only the release is left. `goreleaser release
+--snapshot` builds all six archives, and the Linux binaries are static.
+Checked by hand: `--list-sources` is identical to patent's, and the help
+texts, errors and exit codes are patent's apart from the deviations table
+(the name, cobra's layout, pflag's wording, no elvish).
+
+The harness ran live on its 33 ideas, keyword-only and with embeddings. The
+verdict levels agree on every idea, the similarities differ by at most
+8.9e-7, and no match came from a different source in patent. Two ideas
+differed in each run, each time because a registry answered the two tools
+differently at the same moment:
+- GitHub sent patent 35 results and silt 27 for idea 22 (embeddings; it
+  usually sends 50). Both said Saturated, but with different counts in the
+  headline (13 and 8). For idea 25 (keyword-only), it sent patent one
+  match that it didn't send to silt.
+- Algolia sent patent 17 stories and silt 19 for idea 17 (embeddings).
+- One of silt's Hackage `.cabal` fetches failed for idea 22 (keyword-only),
+  so one match lost its homepage and synopsis, as it would in patent.
+
+Rerun separately, both tools got identical results each time. GitHub also
+failed for both tools on idea 17 in the keyword-only run, and both reported
+it. The harness counts registry noise like this as a difference and exits 1.
 
 - [x] Tick off every entry in `notes/parity-tests.md`, or write down why it
   doesn't apply.
-- [ ] Differential harness (`scripts/parity`), run live on ~30 reference ideas:
+- [x] Differential harness (`scripts/parity`), run live on ~30 reference ideas:
   README examples, the ideas from `every_built_source…`, CJK, edge cases. Run
   `patent --json --fast --keyword-only` and `silt …` at the same time and
   compare:
