@@ -316,8 +316,9 @@ Kernel-8   3572.5m ± 18%   611.3m ± 8%  -82.89% (p=0.000 n=10)
 * **`-count` and benchstat:** a median, a ± range and a p-value, not one
   lucky number. `-col /kernel` turns the sub-benchmark key into columns;
   all four kernels: [data/benchstat.txt](data/benchstat.txt).
-* **Interleave:** `-count` runs each sub-benchmark n times in a row, so on a
-  laptop that heats up, the later kernels lose. Tonight that gave ±44%;
+* **Watch the ±:** a warm laptop drifts. Tonight, two runs came back with
+  ±36% and ±44%, the third with ±8–18%. `-count` runs each sub-benchmark n
+  times in a row, so the drift hits the kernels unevenly;
   [scripts/bench.sh](scripts/bench.sh) runs whole rounds instead.
 * **One session, one machine:** on another day the same pair measured 5.4 s
   and 0.9 s.
@@ -344,8 +345,8 @@ for p := range k {
 ![Embedding 300 texts, per kernel](img/bench.png)
 
 * **Correct:** the same golden-test results as the assembly.
-* **Fast, but not yet fast enough:** 3–3.6× faster than plain Go, while the
-  assembly is still 1.6–1.9× ahead.
+* **Fast, but not yet fast enough:** 3.1–3.6× faster than plain Go, while
+  the assembly is still 1.6–1.9× ahead.
 * **Why:** in the 4 × 24 tile the compiler spills two of the twelve
   accumulators to the stack; the 4 × 16 tile has no spills. In both, the
   slice bounds checks stay in the inner loop

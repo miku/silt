@@ -32,7 +32,7 @@ GOEXPERIMENT=simd go test -run '^TestEmbeddingsMatchPatentWithKernel$' -v ./inte
 # rounds instead, all kernels in each, from one test binary.
 GOEXPERIMENT=simd go test -c -o "$tmp/minilm.test" ./internal/minilm/
 cd internal/minilm
-for i in $(seq "$count"); do
+for _ in $(seq "$count"); do
 	"$tmp/minilm.test" -test.run '^$' -test.bench '^BenchmarkKernel$' -test.count 1 | grep -v '^PASS$'
 done | tee "$here/data/bench.txt"
 
