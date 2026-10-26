@@ -18,10 +18,12 @@ Ollama (`qwen3.5` by default) or any OpenAI-compatible API. The verdict's
 level never drops below what the similarity data shows, and a headline or
 gap that claims something doesn't exist is replaced or dropped. If the model
 fails, or with `--fast`, the verdict comes from the similarity data alone.
-The TUI is still to come.
+On a terminal, the results open in a TUI.
 
 ```shell
 $ go install github.com/miku/silt/cmd/silt@latest
+$ silt                                                                   # search interactively
+$ silt "cli tool that kills a process on a given port"                   # results in the TUI
 $ silt --json "cli tool that kills a process on a given port"            # verdict via local Ollama
 $ silt --json --api-base https://api.openai.com/v1 --model gpt-4o-mini "embedded vector database for mobile apps"
 $ silt --fast --json "cli tool that kills a process on a given port"     # no LLM
@@ -31,7 +33,29 @@ $ silt --list-sources
 ```
 
 The exit code is the verdict, so scripts can gate on it: 0 Open, 1 Crowded,
-2 Saturated. Errors exit 1, argument errors 2.
+2 Saturated. Errors exit 1, argument errors 2. Output that isn't a terminal
+gets JSON.
+
+## TUI
+
+| Key | Action |
+|---|---|
+| `↑`/`k`, `↓`/`j` | previous / next match |
+| `g`/`Home`, `G`/`End`, `PgUp`, `PgDn` | first / last match, page up / down |
+| `Enter` | details: description, popularity, last update, URL |
+| `o` | open the URL in the browser |
+| `y` | copy the URL |
+| `/`, `Esc` | filter by name or description, clear the filter |
+| `s` | sort by similarity, popularity or name |
+| `n` | new search |
+| `?` | help |
+| `q`, `Ctrl+C` | quit |
+
+The mouse wheel scrolls, a click selects a match, a second click opens it.
+`⚑` marks a match with no update in 2+ years, and only where the source
+reports a date, so its absence is not a claim of freshness. The verdict's
+caveat is always shown in full: on a terminal too small for it, silt asks
+for a larger one instead of showing a verdict without it.
 
 ## Development
 

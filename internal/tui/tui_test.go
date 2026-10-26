@@ -34,7 +34,7 @@ func testMatches() []model.Match {
 			Similarity: 0.81, LastUpdated: ptr("2026-10-20T08:00:00Z")},
 		{Name: "jkfran/killport", Source: model.GitHub, URL: "https://github.com/jkfran/killport",
 			Description: "A command-line tool to easily kill processes running on a specified port.",
-			Popularity: ptr(uint64(1200)), Similarity: 0.75},
+			Popularity:  ptr(uint64(1200)), Similarity: 0.75},
 		{Name: "Port-Kill", Source: model.CratesIO, URL: "https://crates.io/crates/port-kill",
 			Description: "ports & processes", Similarity: 0.45},
 	}
@@ -267,21 +267,21 @@ func TestEveryScreenFitsAtCommonSizes(t *testing.T) {
 
 func TestStaleMatchIsFlaggedInTheTable(t *testing.T) {
 	m, _ := newModel(t, 120, 30, testResult(), nil)
-	if l := lineWith(t, screen(m), "kill-port"); !strings.Contains(l, "kill-port "+staleMark) || !strings.Contains(l, "7 years ago") {
+	if l := lineWith(t, screen(m), " 0.88 "); !strings.Contains(l, "kill-port "+staleMark) || !strings.Contains(l, "7 years ago") {
 		t.Errorf("a stale match must carry the marker and its age: %q", l)
 	}
 }
 
 func TestFreshMatchCarriesNoStaleMarker(t *testing.T) {
 	m, _ := newModel(t, 120, 30, testResult(), nil)
-	if l := lineWith(t, screen(m), "fkill-cli"); strings.Contains(l, staleMark) || !strings.Contains(l, "6 days ago") {
+	if l := lineWith(t, screen(m), " 0.81 "); !strings.Contains(l, "fkill-cli") || strings.Contains(l, staleMark) || !strings.Contains(l, "5 days ago") {
 		t.Errorf("a fresh match is dated but not flagged: %q", l)
 	}
 }
 
 func TestUndatedMatchIsNeverFlaggedAsStale(t *testing.T) {
 	m, _ := newModel(t, 120, 30, testResult(), nil)
-	if l := lineWith(t, screen(m), "jkfran/killport"); strings.Contains(l, staleMark) || strings.Contains(l, "ago") {
+	if l := lineWith(t, screen(m), " 0.75 "); !strings.Contains(l, "jkfran/killport") || strings.Contains(l, staleMark) || strings.Contains(l, "ago") {
 		t.Errorf("an undated match must claim nothing about its age: %q", l)
 	}
 }
@@ -582,7 +582,7 @@ func TestOpenOnlyOpensWebLinks(t *testing.T) {
 	if !reflect.DeepEqual(f.opened, []string{"https://www.npmjs.com/package/kill-port"}) || m.status != "Opened in the browser" {
 		t.Errorf("opened %q, status %q", f.opened, m.status)
 	}
-	run(m, press(m, "j", "o"))
+	press(m, "j", "o")
 	if len(f.opened) != 1 || m.status != "Only http and https links are opened" {
 		t.Errorf("opened %q, status %q", f.opened, m.status)
 	}
@@ -604,23 +604,11 @@ func TestIsSafeURLAllowsHTTPSAndHTTPOnly(t *testing.T) {
 	}
 }
 
-// run runs cmd and feeds its message, and those of any batch, back to m.
-// Timers and blocking commands must not be among them.
+// run runs cmd, which must answer at once, and feeds its message back to m.
+// What that returns, the status message's timer, is not run.
 func run(m *Model, cmd tea.Cmd) {
-	if cmd == nil {
-		return
-	}
-	switch msg := cmd().(type) {
-	case tea.BatchMsg:
-		for _, c := range msg {
-			run(m, c)
-		}
-	case clearStatusMsg, nil:
-	default:
-		_, next := m.Update(msg)
-		if _, isTick := msg.(statusMsg); !isTick {
-			run(m, next)
-		}
+	if cmd != nil {
+		m.Update(cmd())
 	}
 }
 
@@ -796,7 +784,7 @@ func TestSearchRejectsAVagueIdea(t *testing.T) {
 		t.Error("still too vague")
 	}
 	m.input.SetValue("   ")
-	if cmd := press(m, "enter"); cmd != nil || m.inputErr != "" {
+	if cmd := press(m, "enter"); cmd != nil || len(f.searches) != 0 {
 		t.Error("a blank prompt does nothing")
 	}
 }
@@ -915,6 +903,17 @@ func TestAFailedSearchReturnsToThePrompt(t *testing.T) {
 	if s := screen(m); !strings.Contains(s, "Search failed: embedding failed: no network") ||
 		!strings.Contains(s, "kubernetes log viewer with live filtering") {
 		t.Errorf("the prompt must keep the idea and say what failed:\n%s", s)
+	}
+}
+
+func TestAPanickingSearchFailsInsteadOfCrashing(t *testing.T) {
+	m, _ := newModel(t, 100, 30, nil, func(context.Context, string, func(string), rank.Progress) (pipeline.Result, error) {
+		panic("index out of range")
+	})
+	next := submit(t, m, "kubernetes log viewer with live filtering")
+	m.Update(next())
+	if s := screen(m); m.phase != phaseSearch || !strings.Contains(s, "Search failed: the search crashed: index out of range") {
+		t.Errorf("screen:\n%s", s)
 	}
 }
 

@@ -16,6 +16,8 @@ internal/textutil/   Rust's char classes and lowercasing
 scripts/paritytests/ generates notes/parity-tests.md
 ```
 
+The TUI became one package, `internal/tui`, in M7 (D7).
+
 The root package holds only the error types and `Version()`, so the library
 packages can import it without a cycle. `internal/textutil` was added during
 M1: patent's tokenizing relies on `char::is_alphanumeric` and
@@ -130,6 +132,58 @@ Adopted as proposed, with these details:
 
 `charmbracelet/bubbletea` + `lipgloss` + `bubbles`, `atotto/clipboard`,
 `pkg/browser`. Not exercised until M7; revisit then.
+
+2026-10-26, adopted for M7 with the v2 line, which is stable and lives under
+`charm.land`: bubbletea v2.1.0, lipgloss v2.0.6 (its layers draw the popups
+over the results), bubbles v2.2.1 (the prompt's text input and the spinner).
+`atotto/clipboard` stays, with OSC 52 through the terminal as a fallback when
+no clipboard tool is installed, e.g. over SSH; the status line says which was
+used. `pkg/browser` is dropped for a 20-line opener (`xdg-open`, `open`,
+`rundll32`), which, unlike `pkg/browser`, can't write the opener's output
+over the TUI.
+
+## D7 The TUI is silt's own, inspired by patent's (2026-10-26)
+
+Decided with the user at the start of M7: the TUI does not have to follow
+patent 1:1. patent's 105 TUI tests test its state machine and its ratatui
+renderer, so most of them don't apply; the 20 that test behaviour silt shares
+have namesakes in `internal/tui`, and the rest are n/a in
+`notes/parity-tests.md`. D1's `tui/` + `internal/ui` became one package,
+`internal/tui`: a bubbletea model is already testable headless (send it
+messages, read its view), so a separate state machine buys nothing.
+
+Kept from patent: the screen (the idea, the sources checked, the sources not
+reached, the verdict, the table), the keys, filter, sort, details, open,
+copy, help, new search and the mouse, and its integrity rules:
+
+- The caveat is never clipped. The verdict gets all the room it needs, then
+  the table what is left; on a short terminal the idea and the sources
+  checked go first. If the verdict still doesn't fit, or the terminal is
+  narrower than 30 columns, no verdict is shown at all ("Enlarge the
+  terminal").
+- The sources not reached are named whenever the verdict is shown.
+- ⚑ marks a match only where its source reports a date.
+
+Different on purpose:
+
+- The interactive search validates the idea, as the CLI does, and respects
+  `--limit`. patent skips the first and keeps 50.
+- Esc on the progress screen cancels the pipeline; patent stops waiting and
+  lets it run. The progress screen shows the pipeline's progress lines and
+  the model download, since an LLM verdict can take a minute.
+- A failed search returns to the prompt with the idea and the error, rather
+  than showing the error as a verdict headline.
+- No "show more" page of 20: the table scrolls, with PgUp/PgDn, and has an
+  "Updated" and a popularity column where the width allows.
+- Names, descriptions, URLs and the model's text are stripped of escape
+  sequences and other control characters before they are drawn.
+
+Tested in two ways: `internal/tui` drives the model with key and mouse
+messages and checks the views (every screen at common and tiny sizes fits
+exactly; the caveat test runs 0–6 gaps at five sizes), and the real binary
+was driven in a pseudo-terminal through the `pyte` emulator. pyte lacks
+scroll-up (`CSI n S`), which bubbletea's renderer uses, so a frame can keep
+stale lines there; a forced full repaint showed silt's frame is right.
 
 ## D5 Smaller libraries (2026-10-25)
 

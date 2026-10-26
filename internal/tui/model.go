@@ -300,8 +300,11 @@ func (m *Model) startSearch(idea string) tea.Cmd {
 	events := make(chan tea.Msg)
 	next := func() tea.Msg { return <-events }
 	// A canceled search stops sending, so it never blocks on a channel
-	// nobody reads any more.
+	// nobody reads any more, and never delivers an outcome after all.
 	send := func(msg tea.Msg) {
+		if ctx.Err() != nil {
+			return
+		}
 		select {
 		case events <- msg:
 		case <-ctx.Done():
@@ -323,6 +326,13 @@ func (m *Model) startSearch(idea string) tea.Cmd {
 	}
 	search := m.search
 	go func() {
+		// bubbletea restores the terminal after a panic in its own
+		// goroutines, not in this one, so a panic becomes a failed search.
+		defer func() {
+			if r := recover(); r != nil {
+				send(doneMsg{id: id, idea: idea, err: fmt.Errorf("the search crashed: %v", r)})
+			}
+		}()
 		res, err := search(ctx, idea, func(line string) { send(logMsg{id, line, next}) }, progress)
 		send(doneMsg{id, idea, res, err})
 	}()

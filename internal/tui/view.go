@@ -255,11 +255,18 @@ type resultsLayout struct {
 // footerHeight is the status and hints line.
 const footerHeight = 1
 
+// minWidth is the narrowest results screen: enough for the label and the
+// longest name on the "Not reached" line.
+const minWidth = 30
+
 // resultsLayout gives the verdict all the room it needs, caveat included,
 // and the table what is left. On a short terminal the idea and the sources
 // checked go first; the sources that were not reached stay with the
 // verdict.
 func (m *Model) resultsLayout() resultsLayout {
+	if m.width < minWidth {
+		return resultsLayout{tooSmall: true}
+	}
 	header, notReached, verdict := m.headerLines(), m.notReachedLines(), m.verdictLines()
 	var l resultsLayout
 	switch {

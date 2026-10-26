@@ -1,11 +1,15 @@
 package main
 
 import (
+	"context"
+	"errors"
+	"io"
 	"reflect"
 	"strings"
 	"testing"
 
 	"github.com/miku/silt/internal/config"
+	"github.com/miku/silt/internal/tui"
 )
 
 func str(s string) *string { return &s }
@@ -109,6 +113,61 @@ func TestListValueSplitsOnEveryCommaAndAccumulates(t *testing.T) {
 	}
 	if want := []string{"npm", "crates-io", "github", "", "x", ""}; !reflect.DeepEqual([]string(l), want) {
 		t.Errorf("list = %q, want %q", l, want)
+	}
+}
+
+// tuiEnv is an environment on a terminal whose TUI records its options and
+// returns err.
+func tuiEnv(stderr io.Writer, opened *[]tui.Options, err error) environment {
+	return environment{
+		stdout:     io.Discard,
+		stderr:     stderr,
+		isTerminal: true,
+		lookupEnv:  env(nil),
+		loadConfig: func() (config.Config, error) { return config.Config{}, nil },
+		runTUI: func(_ context.Context, o tui.Options) error {
+			*opened = append(*opened, o)
+			return err
+		},
+	}
+}
+
+func TestNoIdeaOnATerminalOpensTheInteractiveTUI(t *testing.T) {
+	var opened []tui.Options
+	if code := run([]string{"--model", "llama3"}, tuiEnv(io.Discard, &opened, nil)); code != 0 {
+		t.Errorf("exit %d", code)
+	}
+	if len(opened) != 1 || opened[0].Result != nil || opened[0].Search == nil ||
+		opened[0].Backend != "Verdicts by llama3 on the local Ollama." {
+		t.Errorf("opened %+v", opened)
+	}
+
+	var stderr strings.Builder
+	if code := run(nil, tuiEnv(&stderr, &opened, errors.New("no tty"))); code != 1 || stderr.String() != "Error: no tty\n" {
+		t.Errorf("exit %d, stderr %q", code, stderr.String())
+	}
+	// --json still needs an idea, on a terminal too.
+	if code := run([]string{"--json"}, tuiEnv(io.Discard, &opened, nil)); code != 1 || len(opened) != 2 {
+		t.Errorf("exit %d, %d TUIs", code, len(opened))
+	}
+}
+
+func TestBackendNote(t *testing.T) {
+	for _, tc := range []struct {
+		b    backend
+		fast bool
+		want string
+	}{
+		{backend{}, false, "Verdicts by qwen3.5 on the local Ollama."},
+		{backend{model: str("llama3")}, false, "Verdicts by llama3 on the local Ollama."},
+		{backend{apiBase: str("https://api.openai.com/v1"), model: str("gpt-4o-mini")}, false,
+			"Verdicts by gpt-4o-mini, through the API at https://api.openai.com/v1."},
+		{backend{apiBase: str("https://api.openai.com/v1"), model: str("gpt-4o-mini")}, true,
+			"--fast: verdicts come from the similarity data, without an LLM."},
+	} {
+		if got := backendNote(tc.b, tc.fast); got != tc.want {
+			t.Errorf("backendNote(%+v, %v) = %q", tc.b, tc.fast, got)
+		}
 	}
 }
 
