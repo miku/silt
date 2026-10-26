@@ -1,0 +1,22 @@
+interactive cli to kill whatever's on a port
+CLI tool that kills a process on a given port
+react component for infinite scroll
+kubernetes log viewer
+a vector database for embeddings
+a fast async runtime for rust
+an ide plugin that highlights spelling mistakes in code comments
+a python pandas data pipeline
+a typescript react frontend component
+a golang microservice framework
+a java spring boot service
+a ruby on rails gem for pagination
+a docker container for kubernetes logging
+a vscode extension for markdown preview
+a macos homebrew tool for managing dotfiles
+a php composer package for laravel queues
+an elixir phoenix library for caching
+a helm chart to deploy a kubernetes operator
+a haskell cabal library for parsing json
+a nix flake for building containers
+端口杀手命令行工具
+a terminal ui for exploring large json documents with jq-style filters and fuzzy search

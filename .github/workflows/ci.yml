@@ -10,14 +10,30 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # amd64 runs the AVX2 kernel, both arm64 runners the NEON one.
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
+      # The embedding model (90 MB) for the golden tests, which never
+      # download it themselves. The key is the pinned model revision.
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/silt
+            ~/Library/Caches/silt
+          key: minilm-5f1b8cd
+      - run: go run ./scripts/fetchmodel
       - run: go vet ./...
+      - run: go test ./...
       - run: go test -race ./...
+      - name: benchmark the embedding model
+        run: go test -run XXX -bench Embed300 -benchtime 3x ./internal/minilm/
 
   lint:
     runs-on: ubuntu-latest

@@ -1,14 +1,18 @@
 package pipeline
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"reflect"
+	"slices"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/miku/silt"
 	"github.com/miku/silt/model"
+	"github.com/miku/silt/rank"
 	"github.com/miku/silt/sources"
 	"github.com/miku/silt/verdict"
 )
@@ -184,11 +188,92 @@ func TestRunFallsBackToSearchOnlyVerdictWhenTheLLMFails(t *testing.T) {
 	}
 }
 
-func TestRunWithoutKeywordOnlyNeedsTheEmbedder(t *testing.T) {
-	fakeSearch(t, sources.Outcome{})
+// fakeRanker scores a match by a similarity looked up by name.
+type fakeRanker struct{ sims map[string]float32 }
+
+func (fakeRanker) EmbedQuery(string) []float32 { return []float32{1} }
+
+func (f fakeRanker) RankWith(_ []float32, matches []model.Match, limit int) []model.Match {
+	for i := range matches {
+		matches[i].Similarity = f.sims[matches[i].Name]
+	}
+	slices.SortStableFunc(matches, func(a, b model.Match) int { return cmp.Compare(b.Similarity, a.Similarity) })
+	return matches[:min(limit, len(matches))]
+}
+
+// fakeModel replaces the model loader for the duration of a test.
+func fakeModel(t *testing.T, load func(context.Context, rank.Progress) (ranker, error)) {
+	t.Helper()
+	orig := newRanker
+	newRanker = load
+	t.Cleanup(func() { newRanker = orig })
+}
+
+func TestRunRanksSemanticallyWithTheModel(t *testing.T) {
+	fakeSearch(t, sources.Outcome{
+		Matches: []model.Match{match("weak", "x"), match("close", "y"), match("closer", "z")},
+		Reached: []model.Source{model.Npm},
+	})
+	fakeModel(t, func(context.Context, rank.Progress) (ranker, error) {
+		return fakeRanker{map[string]float32{"weak": 0.2, "close": 0.6, "closer": 0.75}}, nil
+	})
+	var logs []string
+	res, err := Run(context.Background(), "kill process port", Config{Fast: true, Limit: 2},
+		func(s string) { logs = append(logs, s) })
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(res.Matches) != 2 || res.Matches[0].Name != "closer" || res.Matches[1].Name != "close" {
+		t.Errorf("matches = %+v", res.Matches)
+	}
+	// Two at >= 0.55, judged on all three before the limit applies.
+	if res.Verdict.Level != model.Crowded {
+		t.Errorf("level = %v", res.Verdict.Level)
+	}
+	if !strings.HasPrefix(logs[1], "Ranked to top 3 in ") {
+		t.Errorf("logs = %q", logs)
+	}
+}
+
+func TestRunFailsWhenTheModelCannotBeLoaded(t *testing.T) {
+	fakeSearch(t, sources.Outcome{Matches: []model.Match{match("a", "b")}})
+	fakeModel(t, func(context.Context, rank.Progress) (ranker, error) {
+		return nil, &silt.EmbeddingError{Msg: "downloading model.onnx: no network"}
+	})
 	_, err := Run(context.Background(), "kill process port", Config{Fast: true, Limit: 50}, nil)
 	var embedding *silt.EmbeddingError
 	if !errors.As(err, &embedding) {
-		t.Errorf("err = %v, want an EmbeddingError until M5", err)
+		t.Errorf("err = %v, want the EmbeddingError", err)
+	}
+}
+
+func TestRunLoadsTheModelWhileTheSourcesSearch(t *testing.T) {
+	// The search waits for the model load to begin, and the load waits for
+	// the search to begin: run one after the other, they would deadlock.
+	loading, searching := make(chan struct{}), make(chan struct{})
+	orig := searchFiltered
+	searchFiltered = func(context.Context, model.Query, []model.Source, []model.Source) sources.Outcome {
+		close(searching)
+		<-loading
+		return sources.Outcome{}
+	}
+	t.Cleanup(func() { searchFiltered = orig })
+	fakeModel(t, func(context.Context, rank.Progress) (ranker, error) {
+		close(loading)
+		<-searching
+		return fakeRanker{}, nil
+	})
+	done := make(chan error, 1)
+	go func() {
+		_, err := Run(context.Background(), "kill process port", Config{Fast: true, Limit: 50}, nil)
+		done <- err
+	}()
+	select {
+	case err := <-done:
+		if err != nil {
+			t.Fatal(err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("the model load and the search did not overlap")
 	}
 }

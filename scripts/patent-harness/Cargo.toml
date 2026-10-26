@@ -7,6 +7,14 @@
 #   cargo run --release -- rank-keywords ../../testdata/patent/fixture.json > ../../testdata/patent/rank-keywords.json
 #
 # Then update patenttest.Now to the time prompt.txt was generated at.
+#
+# The embedding golden test (internal/minilm) uses patent's cached model:
+#
+#   python3 -I gen_inputs.py > ../../testdata/embeddings/inputs.json
+#   cargo run --release -- embed ../../testdata/embeddings/inputs.json \
+#     ~/.cache/patent/fastembed/models--Qdrant--all-MiniLM-L6-v2-onnx/snapshots/*/tokenizer.json \
+#     > ../../testdata/embeddings/golden.json
+#   cargo run --release -- bench ../../testdata/embeddings/inputs.json 300   # patent's speed
 [package]
 name = "patent-harness"
 version = "0.1.0"
@@ -18,3 +26,5 @@ publish = false
 patent = { git = "https://github.com/r14dd/patent", rev = "8d741bd273306a4f2cb20a9583a1a94b19546255" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+# The tokenizer fastembed uses (same version), to record token ids.
+tokenizers = { version = "0.23", default-features = false, features = ["onig"] }

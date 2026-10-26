@@ -2,6 +2,7 @@ package main
 
 import (
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/miku/silt/internal/config"
@@ -108,5 +109,21 @@ func TestListValueSplitsOnEveryCommaAndAccumulates(t *testing.T) {
 	}
 	if want := []string{"npm", "crates-io", "github", "", "x", ""}; !reflect.DeepEqual([]string(l), want) {
 		t.Errorf("list = %q, want %q", l, want)
+	}
+}
+
+func TestDownloadProgressDrawsOneLinePerFile(t *testing.T) {
+	var b strings.Builder
+	p := downloadProgress(&b)
+	for _, done := range []int64{0, 1, 2, 500_000, 500_001, 1_000_000} {
+		p("model.onnx", done, 1_000_000)
+	}
+	p("tokenizer.json", 10, 10)
+	want := "\r   model.onnx:   0% of 1.0 MB" +
+		"\r   model.onnx:  50% of 1.0 MB" +
+		"\r   model.onnx: 100% of 1.0 MB\n" +
+		"\r   tokenizer.json: 100% of 0.0 MB\n"
+	if b.String() != want {
+		t.Errorf("progress = %q\nwant       %q", b.String(), want)
 	}
 }

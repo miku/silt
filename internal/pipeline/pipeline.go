@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miku/silt"
 	"github.com/miku/silt/model"
 	"github.com/miku/silt/rank"
 	"github.com/miku/silt/sources"
@@ -33,6 +32,9 @@ type Config struct {
 	// Include, if not nil, replaces the auto-detected sources.
 	Include []model.Source
 	Exclude []model.Source
+	// Progress, if not nil, follows the download of the embedding model on
+	// the first run.
+	Progress rank.Progress
 }
 
 // Result is a run's verdict and ranked matches.
@@ -41,15 +43,28 @@ type Result struct {
 	Matches []model.Match
 }
 
-// errEmbeddingNotPorted and errLLMNotPorted stand in for the parts of patent
-// that silt has not ported yet (M5 and M6 in notes/todo.md).
-var (
-	errEmbeddingNotPorted = &silt.EmbeddingError{Msg: "semantic ranking is not ported to silt yet; pass --keyword-only"}
-	errLLMNotPorted       = errors.New("LLM verdicts are not ported to silt yet; pass --fast for a verdict from the similarity data")
-)
+// errLLMNotPorted stands in for the LLM verdict, which silt has not ported
+// yet (M6 in notes/todo.md).
+var errLLMNotPorted = errors.New("LLM verdicts are not ported to silt yet; pass --fast for a verdict from the similarity data")
 
-// searchFiltered runs the fan-out; tests replace it to stay off the network.
-var searchFiltered = sources.SearchFiltered
+// ranker is what Run needs of a *rank.Ranker.
+type ranker interface {
+	EmbedQuery(idea string) []float32
+	RankWith(queryEmb []float32, matches []model.Match, limit int) []model.Match
+}
+
+// searchFiltered runs the fan-out and newRanker loads the embedding model;
+// tests replace them to stay off the network.
+var (
+	searchFiltered = sources.SearchFiltered
+	newRanker      = func(ctx context.Context, progress rank.Progress) (ranker, error) {
+		r, err := rank.NewRanker(ctx, progress)
+		if err != nil {
+			return nil, err
+		}
+		return r, nil
+	}
+)
 
 func sourceNames(ss []model.Source) string {
 	names := make([]string, len(ss))
@@ -68,22 +83,56 @@ func Run(ctx context.Context, idea string, cfg Config, log func(string)) (Result
 	}
 	q := BuildQuery(idea)
 
-	// ── Phase 1: search sources ─────────────────────────────────────────
-	if !cfg.KeywordOnly {
-		return Result{}, errEmbeddingNotPorted
-	}
-	start := time.Now()
-	out := searchFiltered(ctx, q, cfg.Include, cfg.Exclude)
-	log(fmt.Sprintf("   %d matches from %d sources in %.1fs: %s",
-		len(out.Matches), len(out.Reached), time.Since(start).Seconds(), sourceNames(out.Reached)))
-
-	// ── Phase 2: rank ───────────────────────────────────────────────────
+	// ── Phase 1: search sources (+ load the embedding model if needed) ──
 	// Rank to max(limit, DefaultLimit) so that the floor and the verdict
 	// prompt see enough data to make an accurate call even when the limit is
 	// small. The result is truncated to the limit after the verdict.
-	rankStart := time.Now()
-	ranked := rank.ByKeywords(q, out.Matches, max(cfg.Limit, rank.DefaultLimit))
-	log(fmt.Sprintf("Keyword-ranked to top %d in %.1fs", len(ranked), time.Since(rankStart).Seconds()))
+	start := time.Now()
+	evalLimit := max(cfg.Limit, rank.DefaultLimit)
+	logSearch := func(out sources.Outcome) {
+		log(fmt.Sprintf("   %d matches from %d sources in %.1fs: %s",
+			len(out.Matches), len(out.Reached), time.Since(start).Seconds(), sourceNames(out.Reached)))
+	}
+
+	var (
+		out    sources.Outcome
+		ranked []model.Match
+	)
+	if cfg.KeywordOnly {
+		out = searchFiltered(ctx, q, cfg.Include, cfg.Exclude)
+		logSearch(out)
+		rankStart := time.Now()
+		ranked = rank.ByKeywords(q, out.Matches, evalLimit)
+		log(fmt.Sprintf("Keyword-ranked to top %d in %.1fs", len(ranked), time.Since(rankStart).Seconds()))
+	} else {
+		// The model load (and, on the first run, its download) overlaps the
+		// I/O-bound fan-out.
+		type loaded struct {
+			r        ranker
+			queryEmb []float32
+			err      error
+		}
+		ch := make(chan loaded, 1)
+		go func() {
+			r, err := newRanker(ctx, cfg.Progress)
+			if err != nil {
+				ch <- loaded{err: err}
+				return
+			}
+			ch <- loaded{r: r, queryEmb: r.EmbedQuery(q.Idea)}
+		}()
+		out = searchFiltered(ctx, q, cfg.Include, cfg.Exclude)
+		l := <-ch
+		if l.err != nil {
+			return Result{}, l.err
+		}
+		logSearch(out)
+
+		// ── Phase 2: rank (embed the matches + cosine sort) ─────────────
+		rankStart := time.Now()
+		ranked = l.r.RankWith(l.queryEmb, out.Matches, evalLimit)
+		log(fmt.Sprintf("Ranked to top %d in %.1fs", len(ranked), time.Since(rankStart).Seconds()))
+	}
 
 	// ── Phase 3: relevance gate + verdict ───────────────────────────────
 	fallback := func(headline string) model.Verdict {

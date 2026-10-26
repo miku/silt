@@ -31,11 +31,12 @@ import (
 
 func main() {
 	env := environment{
-		stdout:     os.Stdout,
-		stderr:     os.Stderr,
-		isTerminal: term.IsTerminal(int(os.Stdout.Fd())),
-		lookupEnv:  os.LookupEnv,
-		loadConfig: config.Load,
+		stdout:           os.Stdout,
+		stderr:           os.Stderr,
+		isTerminal:       term.IsTerminal(int(os.Stdout.Fd())),
+		stderrIsTerminal: term.IsTerminal(int(os.Stderr.Fd())),
+		lookupEnv:        os.LookupEnv,
+		loadConfig:       config.Load,
 	}
 	os.Exit(run(os.Args[1:], env))
 }
@@ -43,10 +44,11 @@ func main() {
 // environment is what silt reads from and writes to besides its arguments.
 type environment struct {
 	stdout, stderr io.Writer
-	// isTerminal reports whether stdout is a terminal.
-	isTerminal bool
-	lookupEnv  func(string) (string, bool)
-	loadConfig func() (config.Config, error)
+	// isTerminal reports whether stdout is a terminal, stderrIsTerminal the
+	// same of stderr.
+	isTerminal, stderrIsTerminal bool
+	lookupEnv                    func(string) (string, bool)
+	loadConfig                   func() (config.Config, error)
 }
 
 // Errors shown to users verbatim, as patent words them.
@@ -281,6 +283,10 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 	fmt.Fprintf(stderr, "Searching for prior art: \"%s\"\n", idea)
 	fmt.Fprintf(stderr, "   keywords: %s\n", strings.Join(q.Keywords, ", "))
 
+	if !f.keywordOnly && !rank.ModelIsCached() {
+		fmt.Fprintln(stderr, "silt: downloading the embedding model for local semantic search (~80 MB, one-time)...")
+	}
+
 	pcfg := pipeline.Config{
 		APIBase:     b.apiBase,
 		APIKey:      b.apiKey,
@@ -290,6 +296,9 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 		Limit:       int(f.limit),
 		Include:     include,
 		Exclude:     exclude,
+	}
+	if env.stderrIsTerminal {
+		pcfg.Progress = downloadProgress(stderr)
 	}
 	start := time.Now()
 	res, err := pipeline.Run(context.Background(), idea, pcfg, func(msg string) { fmt.Fprintln(stderr, msg) })
@@ -323,4 +332,21 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 		return 0, err
 	}
 	return res.Verdict.Level.ExitCode(), nil
+}
+
+// downloadProgress draws the download of each model file as one line on a
+// terminal, updated in place whenever the percentage changes.
+func downloadProgress(w io.Writer) rank.Progress {
+	lastFile, lastPct := "", -1
+	return func(file string, done, total int64) {
+		pct := int(done * 100 / max(total, 1))
+		if file == lastFile && pct == lastPct {
+			return
+		}
+		lastFile, lastPct = file, pct
+		fmt.Fprintf(w, "\r   %s: %3d%% of %.1f MB", file, pct, float64(total)/1e6)
+		if done >= total {
+			fmt.Fprintln(w)
+		}
+	}
 }

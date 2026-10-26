@@ -11,8 +11,11 @@ GOLANGCI_LINT ?= go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v
 build:
 	go build -ldflags "$(LDFLAGS)" -o silt ./cmd/silt
 
+# Twice: the numeric golden tests are skipped under the race detector, which
+# slows instrumented float loops many times over.
 .PHONY: test
 test:
+	go test ./...
 	go test -race ./...
 
 # Live smoke tests against the real registries; never part of `make test`.

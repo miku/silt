@@ -81,8 +81,8 @@ M4, M5, M6 and M7 can run in parallel once M3 is in.
 
 Record each decision briefly in `notes/decisions.md`.
 
-Status (2026-10-25): done except the D2 spike, which only has to land before
-M5.
+Status (2026-10-26): done. D2 chose a hand-written pure-Go backend
+(`internal/minilm`); the numbers are in `notes/decisions.md`.
 
 - [x] **D1 Package layout.** Library packages live at the module root, since
   patent ships a reusable lib. The binary goes under `cmd/silt`.
@@ -101,7 +101,7 @@ M5.
   internal/config/     config.toml                               ← src/bin/patent/config.rs
   internal/ui/         terminal rendering                        ← src/bin/patent/tui.rs
   ```
-- [ ] **D2 Embedding backend.** This is the biggest risk, so spike it before M5.
+- [x] **D2 Embedding backend.** This is the biggest risk, so spike it before M5.
   The Go side has to run the same model as fastembed's `AllMiniLML6V2`, with the
   same tokenizer, truncation, pooling and normalisation, so that cosine values
   land within about 1e-3 of patent's. The thresholds (0.35 relevance gate;
@@ -122,13 +122,15 @@ M5.
   - [x] Read how fastembed 7 sets up `AllMiniLML6V2` (in
     `~/.cargo/registry/src/*/fastembed-7*`): HF repo, files, max length,
     pooling, normalisation. Recorded in `notes/decisions.md`.
-  - [ ] Write a small Rust harness on top of patent's `Ranker` that dumps
+  - [x] Write a small Rust harness on top of patent's `Ranker` that dumps
     embeddings and pairwise cosines for ~50 fixed strings (ideas and match
     texts, including long, empty, CJK and emoji ones) to
     `testdata/embeddings/golden.json`. Extend `scripts/patent-harness`, which
     already links patent at the reference commit.
-  - [ ] Spike hugot (pure Go), then a hand-written forward pass; record the
-    accuracy and speed numbers.
+  - [x] Spike hugot (pure Go), then a hand-written forward pass; record the
+    accuracy and speed numbers. hugot: 15× slower than patent, and two
+    tokenizer bugs. Hand-written: within 7.4e-7, 300 texts in 0.9 s
+    (patent 1.1–1.4 s).
 - [x] **D3 CLI library.** Requirements: an optional positional idea, comma
   lists, a range check on `--limit`, env fallbacks, and `--completions <shell>`.
   Proposal: `spf13/cobra` + pflag, which has completion generators built in.
@@ -436,35 +438,54 @@ Rules for all adapters:
 
 ## M5 — Semantic ranking
 
-- [ ] `rank.Embedder` (`EmbedQuery`, `Embed([]string)`), implemented with the
-  D2 backend.
-- [ ] Model cache at `os.UserCacheDir()/silt/<model>/`:
+- [x] `rank.Embedder` (`EmbedQuery`, `Embed([]string)`), implemented with
+  `internal/minilm` (D2).
+- [x] Model cache at `os.UserCacheDir()/silt/<model>/`, with the files fastembed
+  uses, pinned: HF `Qdrant/all-MiniLM-L6-v2-onnx` at revision `5f1b8cd`,
+  `model.onnx` (90387630 bytes, SHA-256 `bbd7b466…46f0c5`) and `tokenizer.json`
+  (711661 bytes, SHA-256 `da0e7993…2c62a0`):
   - download once, with progress on stderr;
   - write to a temp file and rename, and verify a checksum;
   - `ModelIsCached()` requires a non-empty model file, so a partial download
     doesn't count.
-- [ ] Load the model concurrently with the source fan-out. patent uses
+- [x] Load the model concurrently with the source fan-out. patent uses
   `tokio::join!` + `spawn_blocking`; in Go, a goroutine and a channel.
-- [ ] Text embedded per match: `"name: description"`, or just `name` when the
+- [x] Text embedded per match: `"name: description"`, or just `name` when the
   description is empty.
-- [ ] `scoreSortLimit`:
+- [x] `scoreSortLimit`:
   - cosine similarity, 0 for zero vectors;
   - sort descending (stable), drop negatives, truncate;
   - similarity only, age never affects the score (keep patent's comment that
     explains why).
-- [ ] First-run notice in the CLI: "downloading the embedding model … (~80 MB,
+- [x] First-run notice in the CLI: "downloading the embedding model … (~80 MB,
   one-time)".
-- [ ] Golden test against `testdata/embeddings/golden.json`: each pairwise
-  cosine within 1e-3.
-- [ ] Differential test: save `patent --fast --json` output for ~20 ideas. For
+- [x] Golden test against `testdata/embeddings/golden.json`: each pairwise
+  cosine within 1e-3. Done in D2: `minilm.TestEmbeddingsMatchPatent` (7.4e-7),
+  plus token ids and `rank_with` similarities.
+- [x] arm64 (Apple Silicon included) runs the plain-Go matrix product, 5×
+  slower (5.4 s for 300 texts). Add a NEON kernel next to
+  `matmul_amd64.s`, tested like `TestMatmulKernelMatchesGo`.
+- [x] Find the model for tests in silt's own cache as well as patent's (today
+  `SILT_MINILM_DIR` or patent's cache), and cache it in CI so the golden
+  tests run there.
+- [x] Differential test: save `patent --fast --json` output for ~20 ideas. For
   every match, recompute the similarity in Go from its name and description and
   compare it with patent's stored value.
-- [ ] Port `rank.rs` (16). Share one loaded model across tests with
+- [x] Port `rank.rs` (16). Share one loaded model across tests with
   `sync.OnceValue`. Model-dependent tests are skipped unless the model is
   cached; CI caches the model directory.
 
 **Done when** the golden and differential tests pass, and `silt --fast --json`
 gives the same verdict level as patent on the recorded matches.
+
+Done (2026-10-26): `rank.TestSimilaritiesMatchPatentOnRecordedSearches`
+recomputes the 1095 similarities patent returned for 22 ideas (recorded live
+into `testdata/embeddings/differential.jsonl` by
+`scripts/patent-harness/record-differential.sh`): worst delta 6.6e-7, and all
+22 verdict levels and headlines are patent's. The NEON kernel passes the
+golden tests on arm64 under qemu; CI runs them natively on Linux and macOS
+arm64, where its speed is still to be seen. `rank.Ranker` has `EmbedQuery` and
+`RankWith`, as patent's does; no separate `Embedder` interface was needed.
 
 ## M6 — LLM backends & verdict
 
@@ -601,7 +622,12 @@ Collected here so these ideas stay out of the port.
   panics when an offset moves a date out of years 0000–9999 (e.g.
   `9999-12-31T23:00:00-02:00`), taking down the whole run. silt returns "no
   date" (see the deviations table).
-
+- The first-run notice and the --keyword-only help say the model is ~80 MB;
+  the files are 91 MB. Kept verbatim during the port.
+- Report upstream: `rank_with` pads its whole batch to the longest text, so
+  one long description makes every match cost 512 tokens. With one 720-word
+  description among 300 matches, ranking takes 17–25 s instead of 1.2 s.
+  silt doesn't pad, so this is speed only, not a deviation.
 **Towards silt's own goal** (from `2026-09-29-design.md`: a harvested index
 instead of a live fan-out)
 - Revisit the framing: does silt keep patent's prior-art verdict, or become a

@@ -27,22 +27,76 @@ Adapters are structs with exported `Client` and `BaseURL` fields plus a
 `NewX(client)` constructor for the live host, the Go equivalent of patent's
 `new` / `with_base_url`.
 
-## D2 Embedding backend — pending; facts gathered (2026-10-25)
+## D2 Embedding backend — hand-written pure Go + AVX2 kernel (2026-10-26)
 
-The spike itself (hugot pure-Go, then a hand-written forward pass) has not run
-yet. What fastembed 7.5.0 does for `AllMiniLML6V2`, read from
-`~/.cargo/registry/src/*/fastembed-7.5.0`, which the Go side must reproduce:
+**Decision:** candidate 2, a hand-written forward pass and WordPiece
+tokenizer in `internal/minilm`, with one AVX2/FMA assembly kernel for the
+matrix products. No cgo, so binaries stay static; no new dependencies apart
+from `golang.org/x/text` (NFD) and `golang.org/x/sys/cpu`.
+
+Measured against `testdata/embeddings/golden.json` (51 texts and 3 rankings,
+recorded from patent's own `Ranker` by `scripts/patent-harness`), on an Intel
+Core Ultra 7 258V (8 cores):
+
+| | accuracy | 300 texts | load |
+|---|---|---|---|
+| patent (fastembed, ONNX Runtime) | — | 1.13–1.44 s | 0.21 s |
+| hugot 0.8.3, pure-Go backend | 2 of 51 texts wrong, see below | 14.6–17.1 s | 0.06 s |
+| silt, plain Go | pairwise cosines within 7.7e-7 | 5.4 s | 0.09 s |
+| silt, AVX2/FMA kernel | pairwise cosines within 7.4e-7 | **0.86–0.92 s** | 0.09 s |
+
+Accuracy, all texts: token ids identical to Hugging Face `tokenizers`;
+1 − cos(silt, patent) ≤ 2.5e-12 per text; pairwise cosines within 7.4e-7 (the
+bar was 1e-3); `rank_with` similarities within 4.4e-7. Embedding one idea
+takes 14 ms.
+
+- **hugot** has the arithmetic right (48 texts within 1e-5), but its Go
+  tokenizer splits words at a zero-width space instead of dropping it
+  (1 − cos = 0.45 for that text), and it does not truncate, so a text over
+  512 tokens fails in the model. It is also 15× slower than patent and pulls
+  in GoMLX and the onnxruntime bindings. Rejected.
+- **silt never pads.** fastembed pads a batch to its longest text and masks
+  the padding. Each text running at its own length computes the same thing,
+  and it avoids a patent slowdown: with one 720-word description among 300
+  matches, patent ranks for 17–25 s, because every text then costs 512
+  tokens.
+- **Numerics.** float32 throughout. GELU uses a float32 erf (Abramowitz and
+  Stegun 7.1.26, error below 5e-7) over a Cephes-style `expf`; `math.Erf`
+  took a third of the time. The matrix kernel computes 4×24 output tiles with
+  12 accumulators; a 4×16 tile with 8 was 10% slower. Rows are padded to a
+  multiple of 4 inside the forward pass, and the padding rows stay zero.
+- **Weights** come from the same `model.onnx` fastembed loads. The PyTorch
+  export is unoptimised, and each linear layer's MatMul node keeps its module
+  path (`/encoder/layer.0/attention/self/query/MatMul`), so `onnx.go`, about
+  200 lines of protobuf reading, maps the weights without an ONNX runtime. Every shape is
+  checked on load.
+- **arm64** (Apple Silicon included) has a NEON kernel (4×16 tiles, 16
+  accumulators) since M5. It passes the golden tests under qemu, and CI runs
+  them on native arm64 Linux and macOS; its speed there is not measured
+  yet. Without it, arm64 would run the plain-Go path, 5× slower. Under `-race` the golden tests are
+  skipped, because instrumented float loops run about 30× slower, so `make test`
+  runs the suite with and without the race detector.
+
+What fastembed 7.5.0 does for `AllMiniLML6V2`, read from
+`~/.cargo/registry/src/*/fastembed-7.5.0`, which the Go side reproduces:
 
 - **Model:** HF repo `Qdrant/all-MiniLM-L6-v2-onnx` (patent's cache has
   snapshot `5f1b8cd`), file `model.onnx`, fp32, 384 dimensions. The cache is
   87 MB on disk, tokenizer included.
 - **Tokenizer:** `tokenizer.json`, a BERT WordPiece tokenizer
-  (`do_lower_case`, `tokenize_chinese_chars`, `strip_accents: null`).
+  (`do_lower_case`, `tokenize_chinese_chars`, `strip_accents: null`). From
+  the `tokenizers` 0.23 source: the normaliser drops NUL, U+FFFD and Cc/Cf/Co
+  characters (so a zero-width space vanishes), maps whitespace to spaces,
+  pads CJK ideographs with spaces, strips accents (NFD, drop Mn) and
+  lowercases per character. The pre-tokeniser splits on whitespace and
+  isolates ASCII and Unicode punctuation. WordPiece makes words over 100
+  characters `[UNK]`. Added tokens such as `[CLS]` match in the raw text
+  first.
 - **Truncation:** `min(512, model_max_length = 512)` = 512 tokens. fastembed
   overrides the tokenizer config's own `max_length: 128`.
 - **Padding:** `BatchLongest` with `[PAD]` (id 0); batches of 256. Mean
   pooling over the attention mask makes the padding irrelevant, up to float
-  noise.
+  noise; silt doesn't pad at all.
 - **Inputs:** `input_ids`, `attention_mask`, and `token_type_ids` (all zeros)
   if the graph declares them.
 - **Pooling:** mean over the attention mask.
