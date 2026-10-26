@@ -31,8 +31,16 @@ var manual = map[string][]string{
 	"tests/sources.rs::a_malformed_date_never_fails_its_source": {
 		"sources.TestCratesIOMalformedDateNeverFailsTheSource",
 		"sources.TestGitHubMalformedDateNeverFailsTheSource",
-		"(npm, Hex, Maven, AUR, Artifact Hub, Go, JetBrains: M4)",
+		"sources.TestNpmMalformedDateNeverFailsTheSource",
+		"sources.TestHexMalformedDateNeverFailsTheSource",
+		"sources.TestMavenMalformedDateNeverFailsTheSource",
+		"sources.TestAURMalformedDateNeverFailsTheSource",
+		"sources.TestArtifactHubMalformedDateNeverFailsTheSource",
+		"sources.TestJetBrainsWrongTypeCdateDegradesToNoneNotError",
 	},
+	"tests/sources.rs::test_homebrew_happy_path":    {"sources.TestHomebrewHappyPath"},
+	"tests/sources.rs::test_homebrew_empty_results": {"sources.TestHomebrewEmptyResults"},
+	"tests/sources.rs::test_homebrew_server_error":  {"sources.TestHomebrewServerError"},
 }
 
 var (

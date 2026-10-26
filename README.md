@@ -9,11 +9,12 @@ and the first step towards a tool for exploring code projects.
 > checked", and sources that were selected but failed are reported as such.
 
 **Status:** work in progress; see [notes/todo.md](notes/todo.md). Today silt
-searches crates.io, GitHub and Hacker News, ranks matches by semantic
-similarity (all-MiniLM-L6-v2 in pure Go, downloaded once, about 90 MB) or by
-keyword overlap, and gives a verdict from the similarity data. The other 16
-sources are reported as not reached until they are ported, and LLM verdicts
-and the TUI are still to come.
+searches all 19 of patent's sources (crates.io, npm, PyPI, GitHub, Go, Maven,
+NuGet, RubyGems, Docker Hub, Homebrew, Packagist, Hex, Artifact Hub, AUR,
+Hackage, Nixpkgs, the VS Code and JetBrains marketplaces, Hacker News), ranks
+matches by semantic similarity (all-MiniLM-L6-v2 in pure Go, downloaded once,
+about 90 MB) or by keyword overlap, and gives a verdict from the similarity
+data. LLM verdicts and the TUI are still to come.
 
 ```shell
 $ go install github.com/miku/silt/cmd/silt@latest

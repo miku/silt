@@ -292,7 +292,9 @@ func TestVSCodeSendsTheGalleryQuery(t *testing.T) {
 	}
 	srv := newMockServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		got.Method, got.Accept, got.ContentType = r.Method, r.Header.Get("Accept"), r.Header.Get("Content-Type")
-		json.NewDecoder(r.Body).Decode(&got.Body)
+		if err := json.NewDecoder(r.Body).Decode(&got.Body); err != nil {
+			t.Error(err)
+		}
 		respond(200, vscodeBody)(w, r)
 	}))
 	mustSearch(t, vscodeFor(srv), query())

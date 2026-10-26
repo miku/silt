@@ -160,5 +160,9 @@ Adopted as proposed, with these details:
   when one is nil, so drift reads as "not reached", never as "no prior art".
   The same goes for trailing garbage after the JSON value: bodies go through
   `json.Unmarshal`, not a streaming decoder.
+- One serde case is not reproduced: a field patent defaults when missing
+  (`#[serde(default)] Vec<T>`, a defaulted struct) is also accepted when it
+  is `null`, where serde rejects it. Top-level lists (RubyGems, Hex,
+  Hackage, the Homebrew catalogs) do reject `null`, as patent does.
 - Building a `net/http` client cannot fail, so `HTTPClientError` is never
   returned today. It exists so the taxonomy and `IsRetryable` stay complete.

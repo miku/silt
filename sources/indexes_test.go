@@ -262,7 +262,7 @@ func TestHomebrewRetriesAFailedCatalogFetch(t *testing.T) {
 }
 
 func TestNewHomebrewSharesItsCatalog(t *testing.T) {
-	if NewHomebrew(nil).catalog != NewHomebrew(nil).catalog {
+	if a, b := NewHomebrew(nil), NewHomebrew(nil); a.catalog != b.catalog {
 		t.Error("live adapters must share one catalog")
 	}
 }
@@ -793,7 +793,9 @@ func TestNixpkgsSendsAuthorizationHeader(t *testing.T) {
 func TestNixpkgsSendsTheFrontendsQueryWithOr(t *testing.T) {
 	var got map[string]any
 	srv := newMockServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		json.NewDecoder(r.Body).Decode(&got)
+		if err := json.NewDecoder(r.Body).Decode(&got); err != nil {
+			t.Error(err)
+		}
 		respond(200, nixpkgsBody)(w, r)
 	}))
 	mustSearch(t, nixpkgsFor(srv), query())

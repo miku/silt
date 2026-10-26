@@ -350,17 +350,17 @@ Rules for all adapters:
 - a non-2xx response is a retryable HTTP error;
 - popularity 0 becomes `null` wherever patent filters it out.
 
-- [ ] **npm**
+- [x] **npm**
   - Endpoint: `registry.npmjs.org/-/v1/search?text=&size=20`.
   - Query: the idea verbatim if it's at most 64 chars; otherwise the longest
     keywords that fit; as a last resort the idea cut to 64 chars.
   - Popularity: `score.detail.popularity × 1e6`. Date: `package.date`.
   - URL: `npmjs.com/package/<name>`.
-- [ ] **PyPI** (scrape)
+- [x] **PyPI** (scrape)
   - Endpoint: `pypi.org/search/?q=<keywords>`.
   - A 403 is Unavailable. A page over 2000 bytes with no `a.package-snippet` is
     also Unavailable. A small empty page is a genuine empty result.
-- [ ] **Go** (scrape)
+- [x] **Go** (scrape)
   - Endpoint: `pkg.go.dev/search?q=&m=package`, narrowing with min 2.
   - Parse `.SearchSnippet` entries, capped at 20. The name is the direct text
     nodes of the first `a[href]` (not the nested module path), with whitespace
@@ -369,64 +369,64 @@ Rules for all adapters:
   - A `gopher-message` element means a genuine empty result. Otherwise a page
     over 2000 bytes with no results is drift: return a `ParseError`, which is
     retryable.
-- [ ] **Maven**
+- [x] **Maven**
   - Endpoint: `search.maven.org/solrsearch/select?rows=20&wt=json`, narrowing
     with min 1.
   - No descriptions. No popularity (`versionCount` is deliberately unused).
     Date: `timestamp` in milliseconds.
-- [ ] **RubyGems**
+- [x] **RubyGems**
   - Endpoint: `rubygems.org/api/v1/search.json?query=`, narrowing with min 2,
     take 20.
   - Popularity: downloads. No date.
-- [ ] **Docker Hub**
+- [x] **Docker Hub**
   - Endpoint: `hub.docker.com/v2/search/repositories/`.
   - Popularity: `star_count`. No date (the v3 catalog has dates; patent
     deliberately doesn't use it).
   - URL: `hub.docker.com/r/<repo>`.
-- [ ] **VS Code Marketplace**
+- [x] **VS Code Marketplace**
   - Endpoint: POST `/_apis/public/gallery/extensionquery` with filterType 8 =
     `Microsoft.VisualStudio.Code` and filterType 10 = the query.
   - The request needs `flags: 914`, or `lastUpdated` is silently dropped.
   - Popularity: installs. Date: `lastUpdated`.
-- [ ] **JetBrains**
+- [x] **JetBrains**
   - Endpoint: `plugins.jetbrains.com/api/searchPlugins`, narrowing with min 2.
   - Popularity: downloads. Date: `cdate` in milliseconds.
-- [ ] **NuGet**
+- [x] **NuGet**
   - Endpoint: `azuresearch-usnc.nuget.org/query?q=&take=20`, narrowing with
     min 1.
   - Popularity: `totalDownloads`. No date.
-- [ ] **Homebrew**
+- [x] **Homebrew**
   - Fetches the full `api/formula.json` and `api/cask.json` catalogs and caches
     them per adapter instance.
   - Narrowing with min 2: every term must appear in the name or the
     description. Take 20.
   - URL: the homepage, or `<base>/formula/<name>` when there is none.
-- [ ] **Packagist**
+- [x] **Packagist**
   - Endpoint: `packagist.org/search.json?q=&per_page=15`, narrowing with min 2.
   - Popularity: downloads, falling back to favers; never 0.
-- [ ] **Hex**
+- [x] **Hex**
   - Endpoint: `hex.pm/api/packages?search=`.
   - Search each of the 3 longest keywords separately and merge the results; a
     multi-word query returns the whole catalogue.
   - Popularity: `downloads.all`. Date: `updated_at`.
-- [ ] **Artifact Hub**
+- [x] **Artifact Hub**
   - Endpoint: `artifacthub.io/api/v1/packages/search?limit=15`, narrowing with
     min 1.
   - The URL needs the numeric `repository.kind` mapped to a slug (`helm`,
     `olm`, `krew`, …).
   - Popularity: stars. Date: `ts` in seconds.
-- [ ] **AUR**
+- [x] **AUR**
   - Endpoint: `aur.archlinux.org/rpc/?v=5&type=search` with `by=name-desc`,
     falling back to `by=name` when that is refused. Narrowing with min 1.
   - An HTTP 200 with `{"type":"error"}` is a refusal, not an empty result.
   - URL: `/packages/<Name>`. Popularity: `NumVotes`. Date: `LastModified` in
     seconds.
-- [ ] **Hackage**
+- [x] **Hackage**
   - `/packages/search` returns names only, so fetch
     `/package/<n>/<n>.cabal` in parallel (max 20) to get the synopsis and
     homepage.
   - No date: the last-modified header isn't a release date.
-- [ ] **Nixpkgs**
+- [x] **Nixpkgs**
   - POST to the Elasticsearch backend behind `search.nixos.org`, channel
     `unstable`, size 20, using the public credentials the site ships to every
     browser.
@@ -435,6 +435,14 @@ Rules for all adapters:
 
 **Done when** all 19 sources pass their mocked tests, `--list-sources` lists
 19, and the live smoke tests pass (or fail as expected for PyPI).
+
+Done (2026-10-26): all 161 tests of patent's `tests/sources.rs` and its 21 live
+tests are ported. Live, 20 pass and PyPI is walled as expected. Side by side with
+`patent --fast --json` on 5 ideas, silt selected, reached and failed the same
+sources and gave the same levels; the match URLs were identical for 4 ideas.
+The fifth differed by one Docker Hub result, because Docker Hub's search returns
+different results for identical calls (seen in 1 of 4 direct calls), which the
+M8 harness has to allow for. Scraping uses goquery (D5).
 
 ## M5 — Semantic ranking
 
