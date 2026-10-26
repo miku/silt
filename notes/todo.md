@@ -618,22 +618,13 @@ Checked by hand: `--list-sources` is identical to patent's, and the help
 texts, errors and exit codes are patent's apart from the deviations table
 (the name, cobra's layout, pflag's wording, no elvish).
 
-The harness ran live on its 33 ideas, keyword-only and with embeddings. The
-verdict levels agree on every idea, the similarities differ by at most
-8.9e-7, and no match came from a different source in patent. Two ideas
-differed in each run, each time because a registry answered the two tools
-differently at the same moment:
-- GitHub sent patent 35 results and silt 27 for idea 22 (embeddings; it
-  usually sends 50). Both said Saturated, but with different counts in the
-  headline (13 and 8). For idea 25 (keyword-only), it sent patent one
-  match that it didn't send to silt.
-- Algolia sent patent 17 stories and silt 19 for idea 17 (embeddings).
-- One of silt's Hackage `.cabal` fetches failed for idea 22 (keyword-only),
-  so one match lost its homepage and synopsis, as it would in patent.
-
-Rerun separately, both tools got identical results each time. GitHub also
-failed for both tools on idea 17 in the keyword-only run, and both reported
-it. The harness counts registry noise like this as a difference and exits 1.
+The harness ran live on its 33 ideas, keyword-only and with embeddings; the
+report is in [2026-10-26-parity.md](2026-10-26-parity.md). The verdict
+levels agree on every idea, and the similarities differ by at most 8.9e-7.
+Two ideas differed in each run, each time because GitHub, Algolia or
+Hackage answered the two tools differently at the same moment; rerun
+separately, both tools got identical results. The harness counts registry
+noise like this as a difference and exits 1.
 
 - [x] Tick off every entry in `notes/parity-tests.md`, or write down why it
   doesn't apply.
