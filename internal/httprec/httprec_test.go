@@ -19,7 +19,7 @@ type reply struct {
 
 func do(t *testing.T, client *http.Client, method, url, body string) (reply, error) {
 	t.Helper()
-	req, err := http.NewRequest(method, url, strings.NewReader(body))
+	req, err := http.NewRequestWithContext(t.Context(), method, url, strings.NewReader(body))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -46,7 +46,7 @@ func registry(t *testing.T) *httptest.Server {
 			return
 		}
 		b, _ := io.ReadAll(r.Body)
-		io.WriteString(w, r.Method+" "+r.URL.RequestURI()+" "+string(b))
+		w.Write([]byte(r.Method + " " + r.URL.RequestURI() + " " + string(b)))
 	}))
 	t.Cleanup(srv.Close)
 	return srv
