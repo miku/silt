@@ -1,0 +1,18 @@
+{
+  "level": "saturated",
+  "headline": "Saturated — 7 closely-related tools turned up in the sources checked.",
+  "gaps": [],
+  "sources_checked": [
+    "crates-io",
+    "github",
+    "npm",
+    "hacker-news",
+    "vscode-marketplace",
+    "docker-hub"
+  ],
+  "sources_failed": [
+    "pypi",
+    "go"
+  ],
+  "caveat": "Not proof it doesn't exist — only that nothing close turned up in the sources checked. Keep looking (web, app stores, niche communities) before committing."
+}

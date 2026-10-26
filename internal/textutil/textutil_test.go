@@ -15,11 +15,11 @@ func TestIsAlphanumeric(t *testing.T) {
 		{'Ⅻ', true},      // Nl
 		{'½', true},      // No
 		{'ⓐ', true},      // So, but Other_Lowercase
-		{'ͅ', true}, // Mn, but Other_Alphabetic
+		{'\u0345', true}, // Mn, but Other_Alphabetic
 		{'-', false},
 		{'#', false},
 		{' ', false},
-		{'́', false}, // combining acute: Mn, not alphabetic
+		{'\u0301', false}, // combining acute: Mn, not alphabetic
 	} {
 		if got := IsAlphanumeric(tc.r); got != tc.want {
 			t.Errorf("IsAlphanumeric(%q) = %v, want %v", tc.r, got, tc.want)
@@ -32,13 +32,13 @@ func TestToLower(t *testing.T) {
 		{"", ""},
 		{"Hello, World", "hello, world"},
 		{"CLI Tool", "cli tool"},
-		{"İstanbul", "i̇stanbul"},
+		{"İstanbul", "i\u0307stanbul"},
 		{"ΣΑΣ", "σας"},
 		{"ΟΔΟΣ ΣΟΦΙΑΣ", "οδος σοφιας"},
-		{"Σ", "σ"},         // not preceded by a cased letter
-		{"ΑΣ'", "ας'"},     // the apostrophe is case-ignorable
-		{"ΑΣ'Α", "ασ'α"},   // ... and a cased letter follows it
-		{"ΑΣ́", "ας́"},
+		{"Σ", "σ"},       // not preceded by a cased letter
+		{"ΑΣ'", "ας'"},   // the apostrophe is case-ignorable
+		{"ΑΣ'Α", "ασ'α"}, // ... and a cased letter follows it
+		{"ΑΣ\u0301", "ας\u0301"},
 	} {
 		if got := ToLower(tc.in); got != tc.want {
 			t.Errorf("ToLower(%q) = %q, want %q", tc.in, got, tc.want)

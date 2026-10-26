@@ -101,6 +101,16 @@ func TestEpochRangeEdges(t *testing.T) {
 	}
 }
 
+func TestOffsetsThatLeaveTheRenderableRangeYieldNone(t *testing.T) {
+	// patent returns None for the first and panics on the second (a
+	// documented deviation): both leave the years 0000–9999 once in UTC.
+	for _, ts := range []string{"0000-01-01T00:30:00+01:00", "9999-12-31T23:00:00-02:00"} {
+		if s, ok := FromRFC3339(ts); ok {
+			t.Errorf("FromRFC3339(%q) = %q", ts, s)
+		}
+	}
+}
+
 func TestGoDateParsingIsAsStrictAsPatent(t *testing.T) {
 	for in, want := range map[string]string{
 		"  Feb 28, 2026  ":       "2026-02-28T00:00:00Z",

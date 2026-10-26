@@ -202,11 +202,13 @@ type Lenient[T any] struct {
 
 // UnmarshalJSON implements json.Unmarshaler.
 func (l *Lenient[T]) UnmarshalJSON(b []byte) error {
-	var v T
-	if bytes.Equal(bytes.TrimSpace(b), []byte("null")) || json.Unmarshal(b, &v) != nil {
-		*l = Lenient[T]{}
+	*l = Lenient[T]{}
+	if bytes.Equal(bytes.TrimSpace(b), []byte("null")) {
 		return nil
 	}
-	*l = Lenient[T]{V: v, OK: true}
+	var v T
+	if json.Unmarshal(b, &v) == nil {
+		*l = Lenient[T]{V: v, OK: true}
+	}
 	return nil
 }

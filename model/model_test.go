@@ -25,7 +25,7 @@ func TestExitCodeGraduated(t *testing.T) {
 }
 
 func TestSaturationIsOrdered(t *testing.T) {
-	if !(Open < Crowded && Crowded < Saturated) {
+	if Open >= Crowded || Crowded >= Saturated {
 		t.Fatal("want Open < Crowded < Saturated")
 	}
 	if got := max(Crowded, Open); got != Crowded {

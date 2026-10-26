@@ -1,0 +1,26 @@
+{
+  "idea": "interactive cli to kill whatever's on a port",
+  "keywords": ["interactive", "cli", "kill", "whatevers", "port"],
+  "sources_checked": ["crates-io", "github", "npm", "hacker-news", "vscode-marketplace", "docker-hub"],
+  "sources_failed": ["pypi", "go"],
+  "matches": [
+    {"name": "kill-port", "source": "npm", "url": "https://www.npmjs.com/package/kill-port", "description": "Kill the process running on a given port", "popularity": 2100000, "similarity": 0.875, "last_updated": "2024-02-29T12:00:00Z"},
+    {"name": "fkill-cli", "source": "npm", "url": "https://www.npmjs.com/package/fkill-cli", "description": "Fabulously kill processes. Cross-platform.", "popularity": 98000, "similarity": 0.8125, "last_updated": "2026-10-20T08:00:00Z"},
+    {"name": "jkfran/killport", "source": "github", "url": "https://github.com/jkfran/killport", "description": "A command-line tool to easily kill processes running on a specified port.", "popularity": 1200, "similarity": 0.75, "last_updated": "2026-01-15T00:00:00Z"},
+    {"name": "killport", "source": "crates-io", "url": "https://crates.io/crates/killport", "description": "A command-line tool to easily kill processes running on a specified port.", "popularity": 45000, "similarity": 0.625, "last_updated": "2026-10-25T23:59:59Z"},
+    {"name": "Show HN: portkill – kill whatever is on a port", "source": "hacker-news", "url": "https://news.ycombinator.com/item?id=1", "description": "Show HN: portkill – kill whatever is on a port", "popularity": 42, "similarity": 0.6, "last_updated": null},
+    {"name": "port-kill", "source": "vscode-marketplace", "url": "https://marketplace.visualstudio.com/items?itemName=x.port-kill", "description": "Ports & processes — <kill> them \"fast\"", "popularity": null, "similarity": 0.5625, "last_updated": "2026-09-27T00:00:00Z"},
+    {"name": "homeless", "source": "crates-io", "url": "   ", "description": "", "popularity": 0, "similarity": 0.55, "last_updated": "2016-10-26T00:00:00Z"},
+    {"name": "üñíçødé-tool", "source": "docker-hub", "url": "https://hub.docker.com/r/u/tool", "description": "日本語の説明 with emoji 🚀", "popularity": 7, "similarity": 0.5, "last_updated": "2026-08-26T00:00:00Z"},
+    {"name": "m9", "source": "github", "url": "https://github.com/x/m9", "description": "nine", "popularity": 9, "similarity": 0.375, "last_updated": null},
+    {"name": "m10", "source": "github", "url": "https://github.com/x/m10", "description": "ten", "popularity": 10, "similarity": 0.3333333, "last_updated": null},
+    {"name": "m11", "source": "github", "url": "https://github.com/x/m11", "description": "eleven", "popularity": 11, "similarity": 0.3125, "last_updated": null},
+    {"name": "m12", "source": "github", "url": "https://github.com/x/m12", "description": "twelve", "popularity": 12, "similarity": 0.25, "last_updated": null},
+    {"name": "m13", "source": "github", "url": "https://github.com/x/m13", "description": "thirteen", "popularity": 13, "similarity": 0.2, "last_updated": null},
+    {"name": "m14", "source": "github", "url": "https://github.com/x/m14", "description": "fourteen", "popularity": 14, "similarity": 0.125, "last_updated": null},
+    {"name": "m15", "source": "github", "url": "https://github.com/x/m15", "description": "fifteen", "popularity": 15, "similarity": 0.1, "last_updated": null},
+    {"name": "m16", "source": "github", "url": "https://github.com/x/m16", "description": "sixteen", "popularity": 16, "similarity": 0.05, "last_updated": null},
+    {"name": "m17", "source": "github", "url": "https://github.com/x/m17", "description": "seventeen", "popularity": 17, "similarity": 0.025, "last_updated": null},
+    {"name": "m18", "source": "github", "url": "https://github.com/x/m18", "description": "eighteen", "popularity": 18, "similarity": 0.0, "last_updated": null}
+  ]
+}

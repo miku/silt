@@ -22,7 +22,7 @@ func IsAlphanumeric(r rune) bool {
 
 // ToLower lowercases s like Rust's str::to_lowercase. It differs from
 // strings.ToLower in the two places Rust applies full case mapping: U+0130
-// (İ) becomes "i̇" (i plus a combining dot), not "i", and a capital sigma at
+// (İ) becomes "i\u0307" (i plus a combining dot), not "i", and a capital sigma at
 // the end of a word becomes the final form ς, not σ.
 func ToLower(s string) string {
 	var b strings.Builder
@@ -36,7 +36,7 @@ func ToLower(s string) string {
 				b.WriteRune('σ')
 			}
 		case 'İ':
-			b.WriteString("i̇")
+			b.WriteString("i\u0307")
 		default:
 			b.WriteRune(unicode.ToLower(r))
 		}

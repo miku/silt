@@ -31,3 +31,10 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+
+# The silt binary built by `make build`.
+/silt
+
+# Build output of the Rust reference harness.
+/scripts/patent-harness/target/
+/scripts/patent-harness/Cargo.lock

@@ -1,0 +1,56 @@
+[
+  {
+    "name": "kill-port",
+    "source": "npm",
+    "url": "https://www.npmjs.com/package/kill-port",
+    "description": "Kill the process running on a given port",
+    "popularity": 2100000,
+    "similarity": 0.4,
+    "last_updated": "2024-02-29T12:00:00Z"
+  },
+  {
+    "name": "fkill-cli",
+    "source": "npm",
+    "url": "https://www.npmjs.com/package/fkill-cli",
+    "description": "Fabulously kill processes. Cross-platform.",
+    "popularity": 98000,
+    "similarity": 0.4,
+    "last_updated": "2026-10-20T08:00:00Z"
+  },
+  {
+    "name": "jkfran/killport",
+    "source": "github",
+    "url": "https://github.com/jkfran/killport",
+    "description": "A command-line tool to easily kill processes running on a specified port.",
+    "popularity": 1200,
+    "similarity": 0.4,
+    "last_updated": "2026-01-15T00:00:00Z"
+  },
+  {
+    "name": "killport",
+    "source": "crates-io",
+    "url": "https://crates.io/crates/killport",
+    "description": "A command-line tool to easily kill processes running on a specified port.",
+    "popularity": 45000,
+    "similarity": 0.4,
+    "last_updated": "2026-10-25T23:59:59Z"
+  },
+  {
+    "name": "Show HN: portkill – kill whatever is on a port",
+    "source": "hacker-news",
+    "url": "https://news.ycombinator.com/item?id=1",
+    "description": "Show HN: portkill – kill whatever is on a port",
+    "popularity": 42,
+    "similarity": 0.4,
+    "last_updated": null
+  },
+  {
+    "name": "port-kill",
+    "source": "vscode-marketplace",
+    "url": "https://marketplace.visualstudio.com/items?itemName=x.port-kill",
+    "description": "Ports & processes — <kill> them \"fast\"",
+    "popularity": null,
+    "similarity": 0.4,
+    "last_updated": "2026-09-27T00:00:00Z"
+  }
+]
