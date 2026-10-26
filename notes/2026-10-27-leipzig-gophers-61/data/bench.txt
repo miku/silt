@@ -1,0 +1,80 @@
+goos: linux
+goarch: amd64
+pkg: github.com/miku/silt/internal/minilm
+cpu: Intel(R) Core(TM) Ultra 7 258V
+BenchmarkKernel/kernel=go-8         	       1	2566290011 ns/op
+BenchmarkKernel/kernel=asm-8        	       2	 561785378 ns/op
+BenchmarkKernel/kernel=archsimd16-8 	       2	 812509558 ns/op
+BenchmarkKernel/kernel=archsimd24-8 	       1	1039080952 ns/op
+goos: linux
+goarch: amd64
+pkg: github.com/miku/silt/internal/minilm
+cpu: Intel(R) Core(TM) Ultra 7 258V
+BenchmarkKernel/kernel=go-8         	       1	2925059670 ns/op
+BenchmarkKernel/kernel=asm-8        	       2	 534672232 ns/op
+BenchmarkKernel/kernel=archsimd16-8 	       2	 957992990 ns/op
+BenchmarkKernel/kernel=archsimd24-8 	       1	1103378683 ns/op
+goos: linux
+goarch: amd64
+pkg: github.com/miku/silt/internal/minilm
+cpu: Intel(R) Core(TM) Ultra 7 258V
+BenchmarkKernel/kernel=go-8         	       1	3500601538 ns/op
+BenchmarkKernel/kernel=asm-8        	       2	 604364543 ns/op
+BenchmarkKernel/kernel=archsimd16-8 	       2	 991623149 ns/op
+BenchmarkKernel/kernel=archsimd24-8 	       1	1135803052 ns/op
+goos: linux
+goarch: amd64
+pkg: github.com/miku/silt/internal/minilm
+cpu: Intel(R) Core(TM) Ultra 7 258V
+BenchmarkKernel/kernel=go-8         	       1	3441946560 ns/op
+BenchmarkKernel/kernel=asm-8        	       2	 614101462 ns/op
+BenchmarkKernel/kernel=archsimd16-8 	       2	 974607550 ns/op
+BenchmarkKernel/kernel=archsimd24-8 	       1	1282926636 ns/op
+goos: linux
+goarch: amd64
+pkg: github.com/miku/silt/internal/minilm
+cpu: Intel(R) Core(TM) Ultra 7 258V
+BenchmarkKernel/kernel=go-8         	       1	3668000331 ns/op
+BenchmarkKernel/kernel=asm-8        	       2	 637494292 ns/op
+BenchmarkKernel/kernel=archsimd16-8 	       2	 967353938 ns/op
+BenchmarkKernel/kernel=archsimd24-8 	       1	1112446727 ns/op
+goos: linux
+goarch: amd64
+pkg: github.com/miku/silt/internal/minilm
+cpu: Intel(R) Core(TM) Ultra 7 258V
+BenchmarkKernel/kernel=go-8         	       1	3534267454 ns/op
+BenchmarkKernel/kernel=asm-8        	       2	 605733096 ns/op
+BenchmarkKernel/kernel=archsimd16-8 	       2	 958560086 ns/op
+BenchmarkKernel/kernel=archsimd24-8 	       1	1113888657 ns/op
+goos: linux
+goarch: amd64
+pkg: github.com/miku/silt/internal/minilm
+cpu: Intel(R) Core(TM) Ultra 7 258V
+BenchmarkKernel/kernel=go-8         	       1	3610783332 ns/op
+BenchmarkKernel/kernel=asm-8        	       2	 608461596 ns/op
+BenchmarkKernel/kernel=archsimd16-8 	       1	1073442947 ns/op
+BenchmarkKernel/kernel=archsimd24-8 	       1	1371116447 ns/op
+goos: linux
+goarch: amd64
+pkg: github.com/miku/silt/internal/minilm
+cpu: Intel(R) Core(TM) Ultra 7 258V
+BenchmarkKernel/kernel=go-8         	       1	3775599230 ns/op
+BenchmarkKernel/kernel=asm-8        	       2	 645780570 ns/op
+BenchmarkKernel/kernel=archsimd16-8 	       1	1152526249 ns/op
+BenchmarkKernel/kernel=archsimd24-8 	       1	1258008173 ns/op
+goos: linux
+goarch: amd64
+pkg: github.com/miku/silt/internal/minilm
+cpu: Intel(R) Core(TM) Ultra 7 258V
+BenchmarkKernel/kernel=go-8         	       1	3723784063 ns/op
+BenchmarkKernel/kernel=asm-8        	       2	 630099044 ns/op
+BenchmarkKernel/kernel=archsimd16-8 	       1	1053101265 ns/op
+BenchmarkKernel/kernel=archsimd24-8 	       1	1149589256 ns/op
+goos: linux
+goarch: amd64
+pkg: github.com/miku/silt/internal/minilm
+cpu: Intel(R) Core(TM) Ultra 7 258V
+BenchmarkKernel/kernel=go-8         	       1	3747307934 ns/op
+BenchmarkKernel/kernel=asm-8        	       2	 724181036 ns/op
+BenchmarkKernel/kernel=archsimd16-8 	       1	1073343576 ns/op
+BenchmarkKernel/kernel=archsimd24-8 	       1	1162503383 ns/op

@@ -1,0 +1,10 @@
+# 2026-10-26T22:22:46Z, 8 identical searches for "container kubernetes logging"
+ 1  count=176430  order=c0fcd91f  set=ae317a5a
+ 2  count=176430  order=c0fcd91f  set=ae317a5a
+ 3  count=176430  order=c0fcd91f  set=ae317a5a
+ 4  count=176430  order=0c97f686  set=ae317a5a
+ 5  count=176430  order=c0fcd91f  set=ae317a5a
+ 6  count=176430  order=199eea7f  set=ae317a5a
+ 7  count=176430  order=0c97f686  set=ae317a5a
+ 8  count=176430  order=0c97f686  set=ae317a5a
+# hit counts: "kubernetes logging" 51864, "container kubernetes logging" 176430

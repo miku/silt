@@ -1,0 +1,5 @@
+# kernel	seconds	color
+plain Go	3.573	2781880
+archsimd, 4×24	1.143	2781880
+archsimd, 4×16	0.983	2781880
+assembly, 4×24	0.611	12737058

@@ -1,0 +1,7 @@
+goos: linux
+goarch: amd64
+pkg: github.com/miku/silt/internal/minilm
+cpu: Intel(R) Core(TM) Ultra 7 258V
+         │      go       │                 asm                 │             archsimd16              │              archsimd24               │
+         │    sec/op     │   sec/op     vs base                │   sec/op     vs base                │    sec/op      vs base                │
+Kernel-8   3572.5m ± 18%   611.3m ± 8%  -82.89% (p=0.000 n=10)   983.1m ± 9%  -72.48% (p=0.000 n=10)   1142.7m ± 12%  -68.01% (p=0.000 n=10)

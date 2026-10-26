@@ -1,0 +1,186 @@
+diff -ruN a/internal/minilm/matmul.go b/internal/minilm/matmul.go
+--- a/internal/minilm/matmul.go
++++ b/internal/minilm/matmul.go
+@@ -1,5 +1,9 @@
+ package minilm
+ 
++// simdMatmulCols, when not 0, makes matmul use the simd/archsimd tile with
++// that many columns, 16 or 24, instead of the assembly; see matmul_simd.go.
++var simdMatmulCols int
++
+ // matmul computes dst[n×out] = x[n×in]·w[in×out], all row-major. Where there
+ // is an assembly kernel (AVX2 and FMA on amd64, NEON on arm64), it needs n to
+ // be a multiple of 4 and out one of kernelCols (24 or 16, of which 384 and
+@@ -8,6 +12,10 @@
+ 	if len(dst) < n*out || len(x) < n*in || len(w) < in*out {
+ 		panic("minilm: matmul: slices too short")
+ 	}
++	if simdMatmulCols != 0 && n%4 == 0 && out%simdMatmulCols == 0 && in > 0 {
++		matmulSIMD(dst, x, w, n, in, out, simdMatmulCols)
++		return
++	}
+ 	if hasKernel && n%4 == 0 && out%kernelCols == 0 && in > 0 {
+ 		// Column panels outermost: a panel of w (in × kernelCols floats)
+ 		// stays in L1 while every block of 4 rows passes over it.
+diff -ruN a/internal/minilm/matmul_nosimd.go b/internal/minilm/matmul_nosimd.go
+--- a/internal/minilm/matmul_nosimd.go
++++ b/internal/minilm/matmul_nosimd.go
+@@ -0,0 +1,10 @@
++//go:build !goexperiment.simd || !amd64
++
++package minilm
++
++// Without GOEXPERIMENT=simd there are no simd/archsimd kernels.
++const simdAvailable = false
++
++func matmulSIMD(dst, x, w []float32, n, in, out, cols int) {
++	panic("unreachable")
++}
+diff -ruN a/internal/minilm/matmul_simd_amd64_test.go b/internal/minilm/matmul_simd_amd64_test.go
+--- a/internal/minilm/matmul_simd_amd64_test.go
++++ b/internal/minilm/matmul_simd_amd64_test.go
+@@ -0,0 +1,57 @@
++package minilm
++
++import (
++	"fmt"
++	"testing"
++)
++
++// kernels are the matrix kernels to compare: plain Go, the assembly, and
++// the simd/archsimd tiles of 16 and 24 columns.
++var kernels = []struct {
++	name     string
++	asm      bool
++	simdCols int
++}{
++	{"go", false, 0},
++	{"asm", true, 0},
++	{"archsimd16", false, 16},
++	{"archsimd24", false, 24},
++}
++
++// useKernel switches matmul to the assembly kernel, a simd/archsimd tile or
++// plain Go until the test ends.
++func useKernel(t testing.TB, asm bool, simdCols int) {
++	if simdCols != 0 && !simdAvailable {
++		t.Skip("needs GOEXPERIMENT=simd")
++	}
++	if asm && !hasKernel {
++		t.Skip("needs AVX2 and FMA")
++	}
++	origKernel, origCols := hasKernel, simdMatmulCols
++	hasKernel, simdMatmulCols = asm, simdCols
++	t.Cleanup(func() { hasKernel, simdMatmulCols = origKernel, origCols })
++}
++
++func TestEmbeddingsMatchPatentWithKernel(t *testing.T) {
++	for _, k := range kernels {
++		t.Run(fmt.Sprintf("kernel=%s", k.name), func(t *testing.T) {
++			useKernel(t, k.asm, k.simdCols)
++			checkGoldenEmbeddings(t)
++		})
++	}
++}
++
++// BenchmarkKernel embeds 300 texts with each kernel. Compare the kernels
++// with benchstat -col /kernel.
++func BenchmarkKernel(b *testing.B) {
++	m := loadModel(b)
++	texts := benchTexts(b, 300)
++	for _, k := range kernels {
++		b.Run(fmt.Sprintf("kernel=%s", k.name), func(b *testing.B) {
++			useKernel(b, k.asm, k.simdCols)
++			for b.Loop() {
++				m.Embed(texts)
++			}
++		})
++	}
++}
+diff -ruN a/internal/minilm/matmul_simd.go b/internal/minilm/matmul_simd.go
+--- a/internal/minilm/matmul_simd.go
++++ b/internal/minilm/matmul_simd.go
+@@ -0,0 +1,83 @@
++//go:build goexperiment.simd && amd64
++
++package minilm
++
++import "simd/archsimd"
++
++// simdAvailable reports whether this build has the simd/archsimd kernels.
++const simdAvailable = true
++
++// matmulSIMD is matmul with the tile written with simd/archsimd instead of
++// assembly: the same column panels, loop order and accumulators as the
++// assembly kernel, with tiles of 4×cols, cols 16 or 24.
++func matmulSIMD(dst, x, w []float32, n, in, out, cols int) {
++	for j := 0; j < out; j += cols {
++		for i := 0; i < n; i += 4 {
++			if cols == 24 {
++				tile24(in, x[i*in:], in, w[j:], out, dst[i*out+j:], out)
++			} else {
++				tile16(in, x[i*in:], in, w[j:], out, dst[i*out+j:], out)
++			}
++		}
++	}
++}
++
++// tile24 computes a 4×24 tile with 12 accumulators, like matmul_amd64.s.
++func tile24(k int, x []float32, xs int, w []float32, ws int, d []float32, ds int) {
++	var c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11 archsimd.Float32x8
++	x0, x1, x2, x3 := x[:k], x[xs:xs+k], x[2*xs:2*xs+k], x[3*xs:3*xs+k]
++	for p := range k {
++		wp := w[p*ws : p*ws+24]
++		w0 := archsimd.LoadFloat32x8(wp[0:8])
++		w1 := archsimd.LoadFloat32x8(wp[8:16])
++		w2 := archsimd.LoadFloat32x8(wp[16:24])
++		a := archsimd.BroadcastFloat32x8(x0[p])
++		c0, c1, c2 = w0.MulAdd(a, c0), w1.MulAdd(a, c1), w2.MulAdd(a, c2)
++		a = archsimd.BroadcastFloat32x8(x1[p])
++		c3, c4, c5 = w0.MulAdd(a, c3), w1.MulAdd(a, c4), w2.MulAdd(a, c5)
++		a = archsimd.BroadcastFloat32x8(x2[p])
++		c6, c7, c8 = w0.MulAdd(a, c6), w1.MulAdd(a, c7), w2.MulAdd(a, c8)
++		a = archsimd.BroadcastFloat32x8(x3[p])
++		c9, c10, c11 = w0.MulAdd(a, c9), w1.MulAdd(a, c10), w2.MulAdd(a, c11)
++	}
++	c0.Store(d[0:8])
++	c1.Store(d[8:16])
++	c2.Store(d[16:24])
++	c3.Store(d[ds : ds+8])
++	c4.Store(d[ds+8 : ds+16])
++	c5.Store(d[ds+16 : ds+24])
++	c6.Store(d[2*ds : 2*ds+8])
++	c7.Store(d[2*ds+8 : 2*ds+16])
++	c8.Store(d[2*ds+16 : 2*ds+24])
++	c9.Store(d[3*ds : 3*ds+8])
++	c10.Store(d[3*ds+8 : 3*ds+16])
++	c11.Store(d[3*ds+16 : 3*ds+24])
++}
++
++// tile16 computes a 4×16 tile with 8 accumulators: with the two vectors of w
++// and the broadcast, nothing has to be spilled.
++func tile16(k int, x []float32, xs int, w []float32, ws int, d []float32, ds int) {
++	var c0, c1, c2, c3, c4, c5, c6, c7 archsimd.Float32x8
++	x0, x1, x2, x3 := x[:k], x[xs:xs+k], x[2*xs:2*xs+k], x[3*xs:3*xs+k]
++	for p := range k {
++		wp := w[p*ws : p*ws+16]
++		w0 := archsimd.LoadFloat32x8(wp[0:8])
++		w1 := archsimd.LoadFloat32x8(wp[8:16])
++		a := archsimd.BroadcastFloat32x8(x0[p])
++		c0, c1 = w0.MulAdd(a, c0), w1.MulAdd(a, c1)
++		a = archsimd.BroadcastFloat32x8(x1[p])
++		c2, c3 = w0.MulAdd(a, c2), w1.MulAdd(a, c3)
++		a = archsimd.BroadcastFloat32x8(x2[p])
++		c4, c5 = w0.MulAdd(a, c4), w1.MulAdd(a, c5)
++		a = archsimd.BroadcastFloat32x8(x3[p])
++		c6, c7 = w0.MulAdd(a, c6), w1.MulAdd(a, c7)
++	}
++	c0.Store(d[0:8])
++	c1.Store(d[8:16])
++	c2.Store(d[ds : ds+8])
++	c3.Store(d[ds+8 : ds+16])
++	c4.Store(d[2*ds : 2*ds+8])
++	c5.Store(d[2*ds+8 : 2*ds+16])
++	c6.Store(d[3*ds : 3*ds+8])
++	c7.Store(d[3*ds+8 : 3*ds+16])
++}
