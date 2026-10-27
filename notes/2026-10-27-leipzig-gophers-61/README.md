@@ -16,14 +16,11 @@
 
 ## Motivation
 
-I am working through my own [AI-assisted coding challenge
-list](https://github.com/miku/nightjet), and would like to know which of
-these projects already exist.
+I am working through my own [AI-assisted coding challenge list](https://github.com/miku/nightjet) and I like to look for prior art.
 
-* **Inspiration:** learn from projects that solved it before.
-* **Reuse or rebuild:** rebuild on purpose, not by accident.
-* **Relevance:** lots of projects that made sense in the past may not be
-  relevant today. Strange times.
+* **inspiration**: learn (stealing good ideas) from projects that solved problems before
+* maybe, actually **reuse** code
+* **relevance**: it is easier to look at an existing project and critique it or see the downsides (and some software, that made sense in the past, may not make sense today)
 
 ---
 
@@ -31,16 +28,15 @@ these projects already exist.
 
 > Software reuse is finally here but comes with risks.
 >
-> — Russ Cox, "[Surviving Software Dependencies](https://dl.acm.org/doi/10.1145/3347446)", ACM Queue 17(2), 2019
+> -- Russ Cox, "[Surviving Software Dependencies](https://dl.acm.org/doi/10.1145/3347446)", ACM Queue 17(2), 2019
 
 Build or buy, 2026 edition:
 
 | | |
 |---|---|
-| **Build is cheap** | small tailor-made tools take an evening: [gh-repos](https://github.com/miku/gh-repos), [doclingclient](https://github.com/miku/doclingclient), [tldhunter](https://github.com/miku/tldhunter), … |
-| **Gains hide** | productivity gains are less visible: we mostly rebuild things that already existed |
-| **What lasts** | interface-y code goes obsolete fast; a data access layer (databases, and the code that feeds them) stays useful |
-| **What it costs** | an LLM call is still expensive; anything that runs on software 1.0 is lightning fast and cheap |
+| **Build is cheap** | small tailor-made tools take a few hours: [gh-repos](https://github.com/miku/gh-repos), [doclingclient](https://github.com/miku/doclingclient), [tldhunter](https://github.com/miku/tldhunter), … |
+| **More to throwaway?** | interface-y code goes obsolete fast; a data access layer (databases, and the code that feeds them) may stay useful a bit longer |
+| **No free tokens** | an LLM is expensive; anything that runs on software 1.0 looks lightning fast and cheap now |
 
 ---
 
@@ -91,10 +87,12 @@ Has this dev tool already been shipped?
 > only searched some sources.
 
 A Go port of [patent](https://github.com/r14dd/patent) 0.14.1 (Rust, MIT).
+Thanks [Riad](https://github.com/r14dd) and greetings to
+[Baku](https://en.wikipedia.org/wiki/Baku).
 
 ---
 
-## Rust to Go, by the numbers
+## Rust to Go, some numbers
 
 | | |
 |---|---|
@@ -115,8 +113,8 @@ A Go port of [patent](https://github.com/r14dd/patent) 0.14.1 (Rust, MIT).
 | **Checking** | review, and hope | golden files, side-by-side runs |
 | **Unknowns** | everywhere | few, named, spiked first |
 
-The price: you inherit the quirks. Port them unchanged, and keep a table of
-every deviation, with its reason ([todo.md](../todo.md)).
+The price: you inherit the quirks, maybe bugs, maybe a design that is still
+slightly off.
 
 ---
 
@@ -137,9 +135,11 @@ every deviation, with its reason ([todo.md](../todo.md)).
 Result: 33 of 33 verdict levels agree; similarities differ by at most 8.9e-7
 (the tolerance was 1e-3).
 
+Verification becomes the key.
+
 ---
 
-## A port is a thorough code review
+## A port is a also code review
 
 Found in patent 0.14.1:
 
