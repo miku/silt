@@ -23,6 +23,8 @@ Where silt differs from patent:
 
 - It is called `silt`: `SILT_MODEL`, `SILT_API_BASE` and `SILT_API_KEY`,
   `<config>/silt/config.toml`, `<cache>/silt/`, and its own User-Agent.
+- It reads `OLLAMA_HOST` as the `ollama` CLI does, so the verdict can come
+  from an Ollama on another machine; patent always uses `localhost:11434`.
 - The TUI is silt's own, with patent's layout, keys and integrity rules.
 - Duplicate matches are resolved in source order; in patent, which duplicate
   wins changes from run to run.

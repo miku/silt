@@ -24,11 +24,14 @@ const MinRelevance float32 = 0.35
 
 // Config configures a run. Nil pointers are settings left unset.
 type Config struct {
-	APIBase     *string
-	APIKey      *string
-	Model       *string
-	Fast        bool
-	KeywordOnly bool
+	APIBase *string
+	APIKey  *string
+	Model   *string
+	// OllamaEndpoint is the base URL of the Ollama daemon, used when APIBase
+	// is not set; nil is a local one.
+	OllamaEndpoint *string
+	Fast           bool
+	KeywordOnly    bool
 	// Limit is how many matches to keep after ranking.
 	Limit int
 	// Include, if not nil, replaces the auto-detected sources.
@@ -52,8 +55,9 @@ type ranker interface {
 }
 
 // searchFiltered runs the fan-out, newRanker loads the embedding model, and
-// ollamaEndpoint is where the default LLM backend listens; tests replace them
-// to stay off the network and away from a local Ollama.
+// ollamaEndpoint is where the default LLM backend listens unless
+// Config.OllamaEndpoint is set; tests replace them to stay off the network
+// and away from a local Ollama.
 var (
 	searchFiltered = sources.SearchFiltered
 	newRanker      = func(ctx context.Context, progress rank.Progress) (ranker, error) {
@@ -164,7 +168,11 @@ func Run(ctx context.Context, idea string, cfg Config, log func(string)) (Result
 		if cfg.Model != nil {
 			modelName = *cfg.Model
 		}
-		var backend llm.LLM = ollama.New(ollamaEndpoint, modelName)
+		endpoint := ollamaEndpoint
+		if cfg.OllamaEndpoint != nil {
+			endpoint = *cfg.OllamaEndpoint
+		}
+		var backend llm.LLM = ollama.New(endpoint, modelName)
 		if cfg.APIBase != nil {
 			backend = openai.New(*cfg.APIBase, modelName, cfg.APIKey)
 		}

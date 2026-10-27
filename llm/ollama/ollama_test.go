@@ -169,3 +169,40 @@ func TestGenerateMapsAMissingResponseToParse(t *testing.T) {
 		}
 	}
 }
+
+func TestEndpointReadsOLLAMA_HOSTAsTheOllamaCLIDoes(t *testing.T) {
+	for host, want := range map[string]string{
+		"":                             DefaultEndpoint,
+		"  ":                           DefaultEndpoint,
+		"strix.tiny.vpn:11434":         "http://strix.tiny.vpn:11434",
+		"http://strix.tiny.vpn:11434":  "http://strix.tiny.vpn:11434",
+		"http://strix.tiny.vpn:11434/": "http://strix.tiny.vpn:11434",
+		`"strix.tiny.vpn:11434"`:       "http://strix.tiny.vpn:11434",
+		"strix.tiny.vpn":               "http://strix.tiny.vpn:11434",
+		"0.0.0.0":                      "http://0.0.0.0:11434",
+		"[::1]":                        "http://[::1]:11434",
+		"[::1]:8080":                   "http://[::1]:8080",
+		":8080":                        "http://:8080",
+		// With a scheme, the port defaults to the scheme's, as in a URL.
+		"http://strix.tiny.vpn":        "http://strix.tiny.vpn:80",
+		"https://ollama.example.com":   "https://ollama.example.com:443",
+		"https://example.com/ollama/":  "https://example.com:443/ollama",
+		"https://example.com:8443/a/b": "https://example.com:8443/a/b",
+	} {
+		if got := Endpoint(host); got != want {
+			t.Errorf("Endpoint(%q) = %q, want %q", host, got, want)
+		}
+	}
+}
+
+func TestGenerateUsesThePathOfTheEndpoint(t *testing.T) {
+	var path string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		path = r.URL.Path
+		respond(200, generateResponse("ok"))(w, r)
+	}))
+	t.Cleanup(srv.Close)
+	if _, err := New(Endpoint(srv.URL+"/ollama/"), "m").Generate(t.Context(), "hi"); err != nil || path != "/ollama/api/generate" {
+		t.Errorf("path = %q, err = %v", path, err)
+	}
+}

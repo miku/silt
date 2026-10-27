@@ -46,8 +46,15 @@ func TestResolveBackendPrecedence(t *testing.T) {
 		t.Errorf("config: %v %v %v", deref(b.apiBase), deref(b.apiKey), deref(b.model))
 	}
 	b, _, _ = resolveBackend(nil, nil, nil, false, config.Config{}, env(map[string]string{"OPENAI_API_KEY": "openai"}))
-	if deref(b.apiKey) != "openai" || b.apiBase != nil || b.model != nil {
-		t.Errorf("defaults: %v %v %v", deref(b.apiBase), deref(b.apiKey), deref(b.model))
+	if deref(b.apiKey) != "openai" || b.apiBase != nil || b.model != nil || b.ollamaEndpoint != nil {
+		t.Errorf("defaults: %v %v %v %v", deref(b.apiBase), deref(b.apiKey), deref(b.model), deref(b.ollamaEndpoint))
+	}
+}
+
+func TestResolveBackendReadsOLLAMA_HOST(t *testing.T) {
+	b, notes, err := resolveBackend(nil, nil, nil, false, config.Config{}, env(map[string]string{"OLLAMA_HOST": "strix.tiny.vpn"}))
+	if err != nil || len(notes) != 0 || deref(b.ollamaEndpoint) != "http://strix.tiny.vpn:11434" {
+		t.Errorf("endpoint %v, notes %q, err %v", deref(b.ollamaEndpoint), notes, err)
 	}
 }
 
@@ -160,6 +167,11 @@ func TestBackendNote(t *testing.T) {
 	}{
 		{backend{}, false, "Verdicts by qwen3.5 on the local Ollama."},
 		{backend{model: str("llama3")}, false, "Verdicts by llama3 on the local Ollama."},
+		{backend{ollamaEndpoint: str("http://strix.tiny.vpn:11434")}, false,
+			"Verdicts by qwen3.5 on the Ollama at http://strix.tiny.vpn:11434."},
+		// --api-base wins over OLLAMA_HOST.
+		{backend{apiBase: str("https://api.openai.com/v1"), model: str("gpt-4o-mini"), ollamaEndpoint: str("http://strix.tiny.vpn:11434")}, false,
+			"Verdicts by gpt-4o-mini, through the API at https://api.openai.com/v1."},
 		{backend{apiBase: str("https://api.openai.com/v1"), model: str("gpt-4o-mini")}, false,
 			"Verdicts by gpt-4o-mini, through the API at https://api.openai.com/v1."},
 		{backend{apiBase: str("https://api.openai.com/v1"), model: str("gpt-4o-mini")}, true,

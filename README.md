@@ -1,6 +1,6 @@
 # silt
 
-A prior-art search for code ideas: has this (dev) tool already been
+A prior-art search for code ideas: has this developer tool already been
 shipped? silt is an Go port of [patent](https://github.com/r14dd/patent).
 
 > silt can prove that something **exists**, but never that it **doesn't** — it
@@ -72,8 +72,10 @@ api_key = "sk-..."
 ```
 
 A flag beats the environment, which beats the file. The key falls back to
-`OPENAI_API_KEY` last. `GITHUB_TOKEN`, if set, lifts GitHub's rate limit,
-and `NO_COLOR` turns off colour in the TUI.
+`OPENAI_API_KEY` last. Without `--api-base`, the verdict comes from the
+Ollama daemon that `OLLAMA_HOST` names, as for the `ollama` CLI, or from
+`localhost:11434` if it is unset. `GITHUB_TOKEN`, if set, lifts GitHub's
+rate limit, and `NO_COLOR` turns off colour in the TUI.
 
 ## TUI
 

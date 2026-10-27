@@ -255,6 +255,23 @@ func TestRunGeneratesTheVerdictViaOllamaByDefault(t *testing.T) {
 	}
 }
 
+func TestRunUsesTheConfiguredOllamaEndpoint(t *testing.T) {
+	killPortSearch(t)
+	// The default endpoint stays the dead one TestMain sets, so only a
+	// request to the configured one can produce the verdict.
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		writeJSON(w, 200, map[string]any{"response": modelVerdict, "done": true})
+	}))
+	t.Cleanup(srv.Close)
+	res, err := Run(context.Background(), "kill process port", Config{KeywordOnly: true, Limit: 1, OllamaEndpoint: ptr(srv.URL)}, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if res.Verdict.Headline != "kill-port and fkill already do this." {
+		t.Errorf("verdict = %+v", res.Verdict)
+	}
+}
+
 func TestRunUsesTheOpenAICompatibleAPIWhenAPIBaseIsSet(t *testing.T) {
 	killPortSearch(t)
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

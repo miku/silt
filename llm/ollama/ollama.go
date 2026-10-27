@@ -1,6 +1,6 @@
 // Package ollama is a minimal client for Ollama's generate API
-// (localhost:11434/api/generate). It returns a clear, actionable error when
-// the daemon is unreachable.
+// (localhost:11434/api/generate, or the daemon OLLAMA_HOST names). It returns
+// a clear, actionable error when the daemon is unreachable.
 package ollama
 
 import (
@@ -9,7 +9,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/miku/silt"
 	"github.com/miku/silt/llm"
@@ -17,6 +20,40 @@ import (
 
 // DefaultEndpoint is where a local Ollama daemon listens.
 const DefaultEndpoint = "http://localhost:11434"
+
+// Endpoint returns the base URL of the daemon that host, a value of
+// OLLAMA_HOST, names. It reads host as the ollama CLI does: the scheme
+// defaults to http and the port to 11434, or to 80 or 443 when the scheme is
+// given, and a path is kept, for a daemon behind a proxy. An empty host is
+// DefaultEndpoint.
+func Endpoint(host string) string {
+	s := strings.Trim(strings.TrimSpace(host), `"'`)
+	if s == "" {
+		return DefaultEndpoint
+	}
+	defaultPort := "11434"
+	scheme, hostport, ok := strings.Cut(s, "://")
+	switch {
+	case !ok:
+		scheme, hostport = "http", s
+	case scheme == "http":
+		defaultPort = "80"
+	case scheme == "https":
+		defaultPort = "443"
+	}
+	hostport, path, _ := strings.Cut(hostport, "/")
+	name, port, err := net.SplitHostPort(hostport)
+	if err != nil {
+		name, port = "127.0.0.1", defaultPort
+		if ip := net.ParseIP(strings.Trim(hostport, "[]")); ip != nil {
+			name = ip.String()
+		} else if hostport != "" {
+			name = hostport
+		}
+	}
+	u := url.URL{Scheme: scheme, Host: net.JoinHostPort(name, port), Path: strings.TrimRight(path, "/")}
+	return u.String()
+}
 
 // DefaultModel is the generation model: qwen3.5 (9B) for quality, or
 // qwen2.5:3b if RAM is tight. Override it with --model.

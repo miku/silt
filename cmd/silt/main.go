@@ -170,12 +170,15 @@ func or(vs ...*string) *string {
 // backend is the resolved LLM backend configuration.
 type backend struct {
 	apiBase, apiKey, model *string
+	// ollamaEndpoint is the daemon OLLAMA_HOST names, if it is set.
+	ollamaEndpoint *string
 }
 
 // resolveBackend applies the precedence CLI flag / env var > config file >
 // built-in default, with OPENAI_API_KEY as a last fallback for the key only.
-// It returns the warnings and notes to print, or an error if the settings
-// can't work.
+// The Ollama daemon is the one OLLAMA_HOST names, as for the ollama CLI. It
+// returns the warnings and notes to print, or an error if the settings can't
+// work.
 func resolveBackend(flagBase, flagKey, flagModel *string, fast bool, cfg config.Config, lookupEnv func(string) (string, bool)) (backend, []string, error) {
 	var openAIKey *string
 	if v, ok := lookupEnv("OPENAI_API_KEY"); ok {
@@ -185,6 +188,10 @@ func resolveBackend(flagBase, flagKey, flagModel *string, fast bool, cfg config.
 		apiBase: or(flagBase, cfg.APIBase),
 		apiKey:  or(flagKey, cfg.APIKey, openAIKey),
 		model:   or(flagModel, cfg.Model),
+	}
+	if v, ok := lookupEnv("OLLAMA_HOST"); ok {
+		endpoint := ollama.Endpoint(v)
+		b.ollamaEndpoint = &endpoint
 	}
 	keyExplicit := flagKey != nil || cfg.APIKey != nil
 
@@ -271,14 +278,15 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 
 	ctx := context.Background()
 	pcfg := pipeline.Config{
-		APIBase:     b.apiBase,
-		APIKey:      b.apiKey,
-		Model:       b.model,
-		Fast:        f.fast || f.printPrompt,
-		KeywordOnly: f.keywordOnly,
-		Limit:       int(f.limit),
-		Include:     include,
-		Exclude:     exclude,
+		APIBase:        b.apiBase,
+		APIKey:         b.apiKey,
+		Model:          b.model,
+		OllamaEndpoint: b.ollamaEndpoint,
+		Fast:           f.fast || f.printPrompt,
+		KeywordOnly:    f.keywordOnly,
+		Limit:          int(f.limit),
+		Include:        include,
+		Exclude:        exclude,
 	}
 	tuiOpts := tui.Options{Search: searcher(pcfg), Backend: backendNote(b, pcfg.Fast)}
 
@@ -365,6 +373,8 @@ func backendNote(b backend, fast bool) string {
 		return "--fast: verdicts come from the similarity data, without an LLM."
 	case b.apiBase != nil:
 		return fmt.Sprintf("Verdicts by %s, through the API at %s.", model, *b.apiBase)
+	case b.ollamaEndpoint != nil:
+		return fmt.Sprintf("Verdicts by %s on the Ollama at %s.", model, *b.ollamaEndpoint)
 	}
 	return fmt.Sprintf("Verdicts by %s on the local Ollama.", model)
 }

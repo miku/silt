@@ -45,6 +45,7 @@ plan builds on is in [2026-10-25-patent.md](2026-10-25-patent.md).
 | `freshness::from_rfc3339` panics when an offset moves a date out of years 0000–9999 (`"9999-12-31T23:00:00-02:00"`, `time`'s `to_offset`) | no date | a panic in one adapter takes down the whole process; reported in M9 |
 | reqwest's and serde_json's texts inside LLM errors: `Ollama not reachable at … (error sending request for url (…))`, `failed to parse response: expected value at line 1 column 1`; `{:?}` escaping in `invalid level: Some("…")` | net/http's and encoding/json's: `(Post "…": dial tcp …: connect: connection refused)`, `invalid character 'I' looking for beginning of value`; Go's `%q`, which escapes control characters differently | different HTTP and JSON libraries; the wording around them is patent's |
 | the TUI (ratatui): its screens, its state machine, its 105 tests | silt's own TUI (bubbletea), with patent's layout, keys and integrity rules | decided with the user in M7 (D7) |
+| the Ollama endpoint is fixed at `localhost:11434` | the daemon `OLLAMA_HOST` names, read as the `ollama` CLI reads it; `localhost:11434` if unset | with the `ollama` CLI pointed at another machine, silt asked a local daemon that didn't have the model, and every verdict fell back (2026-10-27) |
 
 ### patent quirks we port unchanged (fixes are listed in M9)
 
@@ -61,8 +62,6 @@ plan builds on is in [2026-10-25-patent.md](2026-10-25-patent.md).
 - The gap filter's `is_whole_word` looks up the character before a later
   occurrence in what is left after the previous one, so with a top-10 match
   named `at`, the gap "atat …" is dropped as if it named it.
-- The Ollama endpoint is fixed at `localhost:11434`; `OLLAMA_HOST` is not
-  read.
 
 ## Milestones
 
@@ -696,8 +695,6 @@ Collected here so these ideas stay out of the port.
   Ollama's native API avoids it with `think: false`; for `/v1`, try a
   reasoning-effort parameter where the server accepts one, or a larger
   budget and timeout.
-- Read `OLLAMA_HOST`, as the `ollama` CLI does, so that a daemon on another
-  machine works without going through the OpenAI-compatible API.
 - Fix the gap filter's `is_whole_word` so that "atat" doesn't contain the
   whole word "at".
 
