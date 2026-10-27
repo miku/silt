@@ -105,6 +105,8 @@ Thanks [Riad](https://github.com/r14dd) and greetings to
 
 ## In a port, the spec already exists
 
+
+
 | | Greenfield | Port |
 |---|---|---|
 | **Spec** | in your head, and moving | 397 tests and a binary to run |
@@ -113,8 +115,7 @@ Thanks [Riad](https://github.com/r14dd) and greetings to
 | **Checking** | review, and hope | golden files, side-by-side runs |
 | **Unknowns** | everywhere | few, named, spiked first |
 
-The price: you inherit the quirks, maybe bugs, maybe a design that is still
-slightly off.
+The price: you inherit the quirks, maybe bugs, maybe a design that is slightly off.
 
 ---
 
@@ -223,7 +224,12 @@ for range min(runtime.GOMAXPROCS(0), len(texts)) {
 
 * [all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2)
   is a small sentence-embedding model: 22M parameters, 90 MB. Similar
-  meaning, nearby vectors.
+  meaning, nearby vectors. Quite popular: 190M downloads, last month (09/2026)
+
+> This is a sentence-transformers model: It maps sentences & paragraphs to a
+> 384 dimensional dense vector space and can be used for tasks like clustering
+> or semantic search.
+
 * silt embeds the idea and every match (`name: description`) and sorts by
   cosine similarity.
 * The numbers gate the verdict:
