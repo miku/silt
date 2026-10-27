@@ -1,8 +1,7 @@
 # silt
 
-A prior-art search for your code ideas: has this dev tool already been
-shipped? silt is an idiomatic Go port of [patent](https://github.com/r14dd/patent),
-and the first step towards a tool for exploring code projects.
+A prior-art search for code ideas: has this (dev) tool already been
+shipped? silt is an Go port of [patent](https://github.com/r14dd/patent).
 
 > silt can prove that something **exists**, but never that it **doesn't** — it
 > only searched some sources. Every verdict is scoped to "found in the sources
