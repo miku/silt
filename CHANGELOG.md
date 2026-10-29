@@ -28,6 +28,14 @@ Where silt differs from patent:
 - The TUI is silt's own, with patent's layout, keys and integrity rules.
 - Duplicate matches are resolved in source order; in patent, which duplicate
   wins changes from run to run.
+- Each source's results are cached for an hour, so the same idea run again
+  doesn't send the same requests again (`--cache-ttl`, `SILT_CACHE_TTL`; `0`
+  turns it off). Failed searches are never cached. patent sends every
+  request on every run.
+- With CloakBrowser installed, PyPI is reached: when its search page walls
+  off silt's request, silt loads the page in the browser, which passes the
+  challenge. `SILT_BROWSER` names the browser, or turns it off with `off`.
+  patent reports PyPI as not reached.
 - `--completions` supports bash, fish, powershell and zsh, but not elvish.
 - Help and argument errors are worded by cobra rather than clap, with the
   same flags and exit codes.

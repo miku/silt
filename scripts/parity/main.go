@@ -183,6 +183,10 @@ func execute(ctx context.Context, bin string, args []string, idea string) run {
 	defer cancel()
 	var stdout, stderr bytes.Buffer
 	cmd := exec.CommandContext(ctx, bin, append(slices.Clone(args), "--", idea)...)
+	// Both tools must ask the registries at the same moment, and the same
+	// way: silt's result cache would answer a rerun from an earlier one, and
+	// its browser would reach PyPI, which patent can't. patent ignores both.
+	cmd.Env = append(os.Environ(), "SILT_CACHE_TTL=0", "SILT_BROWSER=off")
 	cmd.Stdout, cmd.Stderr = &stdout, &stderr
 	r := run{}
 	// The exit code is the verdict level, so a non-zero one is no failure.

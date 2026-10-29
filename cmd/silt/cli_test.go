@@ -39,9 +39,11 @@ func TestMain(m *testing.M) {
 func runSilt(t *testing.T, args ...string) (stdout, stderr string, exitCode int) {
 	t.Helper()
 	cmd := exec.CommandContext(t.Context(), siltBin, args...)
-	// No config file: the user config directory on Linux and on Windows.
+	// No config file: the user config directory on Linux and on Windows. No
+	// result cache either, so a live test always searches the registries, and
+	// no browser, so it searches them the same way on every machine.
 	config := t.TempDir()
-	cmd.Env = append(os.Environ(), "NO_COLOR=1", "XDG_CONFIG_HOME="+config, "AppData="+config)
+	cmd.Env = append(os.Environ(), "NO_COLOR=1", "XDG_CONFIG_HOME="+config, "AppData="+config, "SILT_CACHE_TTL=0", "SILT_BROWSER=off")
 	var out, errOut bytes.Buffer
 	cmd.Stdout, cmd.Stderr = &out, &errOut
 	err := cmd.Run()
@@ -126,6 +128,8 @@ func TestArgumentErrorsExitTwo(t *testing.T) {
 		{"--no-such-flag"},
 		{"two", "ideas"},
 		{"--completions", "elvish"},
+		{"--cache-ttl=-1h", "x"},
+		{"--cache-ttl", "an hour", "x"},
 	} {
 		_, stderr, code := runSilt(t, args...)
 		if code != 2 || !strings.HasPrefix(stderr, "error: ") {

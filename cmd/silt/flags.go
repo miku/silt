@@ -6,9 +6,11 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 
+	"github.com/miku/silt/internal/pipeline"
 	"github.com/miku/silt/model"
 )
 
@@ -29,6 +31,34 @@ func (l *limitValue) Set(s string) error {
 	}
 	*l = limitValue(n)
 	return nil
+}
+
+// ttlValue is --cache-ttl: a duration such as 30m or 24h; 0 turns the cache
+// off.
+type ttlValue time.Duration
+
+func (d *ttlValue) String() string { return pipeline.ShortDuration(time.Duration(*d)) }
+func (d *ttlValue) Type() string   { return "DURATION" }
+
+func (d *ttlValue) Set(s string) error {
+	v, err := parseTTL(s)
+	if err != nil {
+		return err
+	}
+	*d = ttlValue(v)
+	return nil
+}
+
+// parseTTL parses a cache TTL: a Go duration that isn't negative.
+func parseTTL(s string) (time.Duration, error) {
+	d, err := time.ParseDuration(s)
+	if err != nil {
+		return 0, err
+	}
+	if d < 0 {
+		return 0, fmt.Errorf("%s is negative; 0 turns the cache off", s)
+	}
+	return d, nil
 }
 
 // listValue is a comma-separated list flag that may be repeated. Unlike

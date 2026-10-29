@@ -51,6 +51,7 @@ Binaries for Linux, macOS and Windows are on the
 | `--api-key KEY` | the key for `--api-base`; omit it for servers without auth |
 | `--sources LIST` | search only these sources, comma-separated, instead of picking them from the idea |
 | `--exclude LIST` | leave these sources out |
+| `--cache-ttl DURATION` | how long a source's results are reused for the same idea (default `1h`; `0` turns the cache off) |
 | `--json` | print JSON instead of opening the TUI |
 | `--print-prompt` | print the verdict prompt, for your own agent, and exit |
 | `--list-sources` | list the source names and exit |
@@ -76,6 +77,39 @@ A flag beats the environment, which beats the file. The key falls back to
 Ollama daemon that `OLLAMA_HOST` names, as for the `ollama` CLI, or from
 `localhost:11434` if it is unset. `GITHUB_TOKEN`, if set, lifts GitHub's
 rate limit, and `NO_COLOR` turns off colour in the TUI.
+
+Each source's results are kept for an hour in silt's cache directory
+(`~/.cache/silt/results` on Linux, `~/Library/Caches/silt/results` on macOS,
+`%LocalAppData%\silt\results` on Windows), so running the same idea again
+doesn't send the same requests to the registries again. A source that failed
+is never cached, and the progress lines say which sources the cache
+answered. `--cache-ttl` or `SILT_CACHE_TTL` sets another duration, such as
+`10m` or `24h`; `0` turns the cache off.
+
+### PyPI and CloakBrowser
+
+PyPI has no search API, and its search page answers every client that isn't
+a browser with a JavaScript challenge, so silt can't search PyPI on its own:
+it reports it as not reached. With [CloakBrowser](https://github.com/CloakHQ/CloakBrowser)
+installed, silt loads the search page in it, which passes the challenge, and
+reaches PyPI. silt doesn't ship the browser (about 700 MB, and its license
+forbids redistribution). To install it:
+
+```shell
+uv tool install cloakbrowser
+cloakbrowser install
+```
+
+silt uses the newest version under `~/.cloakbrowser` (or
+`CLOAKBROWSER_CACHE_DIR`), or the executable that `CLOAKBROWSER_BINARY_PATH`
+or `SILT_BROWSER` names. It keeps a browser profile in its cache directory
+(`~/.cache/silt/browser` on Linux). Without CloakBrowser nothing changes.
+
+The browser is only used when PyPI walls off silt's own request, once per
+search, and the result is cached like any other. The progress line then says
+"PyPI (through CloakBrowser)". Through the browser PyPI no longer sees silt's
+User-Agent, but a browser's; PyPI's wall is deliberate. `SILT_BROWSER=off`
+turns the browser off.
 
 ## TUI
 

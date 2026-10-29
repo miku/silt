@@ -46,6 +46,8 @@ plan builds on is in [2026-10-25-patent.md](2026-10-25-patent.md).
 | reqwest's and serde_json's texts inside LLM errors: `Ollama not reachable at … (error sending request for url (…))`, `failed to parse response: expected value at line 1 column 1`; `{:?}` escaping in `invalid level: Some("…")` | net/http's and encoding/json's: `(Post "…": dial tcp …: connect: connection refused)`, `invalid character 'I' looking for beginning of value`; Go's `%q`, which escapes control characters differently | different HTTP and JSON libraries; the wording around them is patent's |
 | the TUI (ratatui): its screens, its state machine, its 105 tests | silt's own TUI (bubbletea), with patent's layout, keys and integrity rules | decided with the user in M7 (D7) |
 | the Ollama endpoint is fixed at `localhost:11434` | the daemon `OLLAMA_HOST` names, read as the `ollama` CLI reads it; `localhost:11434` if unset | with the `ollama` CLI pointed at another machine, silt asked a local daemon that didn't have the model, and every verdict fell back (2026-10-27) |
+| every run sends every request | each source's successful results are cached on disk for 1 h, per idea (`--cache-ttl`, `SILT_CACHE_TTL`, `0` = off); failures are never cached; the parity harness and the CLI tests run with the cache off | spare the registries repeated identical searches (2026-10-29, [2026-10-29-reachability.md](2026-10-29-reachability.md)) |
+| PyPI is always not reached: its search page is bot-walled | when the plain request is walled and CloakBrowser is installed, the page is loaded in it (`internal/browser`, `--dump-dom`); the progress line says "PyPI (through CloakBrowser)"; `SILT_BROWSER` (path or `off`); a large page saying "There were no results" is an empty result, not the wall; the parity harness and the CLI tests run with the browser off | PyPI failed in all 7 recorded runs that selected it; registries then see a browser, not silt's User-Agent, which the README says (2026-10-29, [2026-10-29-reachability.md](2026-10-29-reachability.md)) |
 
 ### patent quirks we port unchanged (fixes are listed in M9)
 
@@ -713,4 +715,7 @@ instead of a live fan-out)
   Package Index, Conan/vcpkg, …
 - Link identities across sources by normalising repository URLs, which dedups
   better than exact URL matching.
-- Add response caching and per-source rate limits.
+- Add response caching and per-source rate limits. Caching of results per
+  source and idea is done (2026-10-29); rate limits and the rest of the
+  reachability plan are in
+  [2026-10-29-reachability.md](2026-10-29-reachability.md).

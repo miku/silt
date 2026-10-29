@@ -2,6 +2,8 @@ package sources
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"net/http"
 	"os"
 	"strings"
@@ -30,6 +32,17 @@ func NewGitHub(client *http.Client) *GitHub {
 
 // ID implements Adapter.
 func (*GitHub) ID() model.Source { return model.GitHub }
+
+// cacheKey tells results found with different tokens apart, since a token
+// widens the search to the private repositories it can see. The token itself
+// is not stored.
+func (a *GitHub) cacheKey() string {
+	if a.Token == "" {
+		return ""
+	}
+	sum := sha256.Sum256([]byte(a.Token))
+	return hex.EncodeToString(sum[:8])
+}
 
 // Search implements Adapter.
 func (a *GitHub) Search(ctx context.Context, q model.Query) ([]model.Match, error) {

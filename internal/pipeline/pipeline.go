@@ -5,6 +5,7 @@ package pipeline
 import (
 	"context"
 	"fmt"
+	"slices"
 	"strings"
 	"time"
 
@@ -37,6 +38,12 @@ type Config struct {
 	// Include, if not nil, replaces the auto-detected sources.
 	Include []model.Source
 	Exclude []model.Source
+	// Cache, if not nil, answers a source's search when the same query was
+	// searched there within the cache's TTL.
+	Cache *sources.Cache
+	// Browser, if not nil, fetches the search page of a source whose plain
+	// request was walled.
+	Browser sources.Browser
 	// Progress, if not nil, follows the download of the embedding model on
 	// the first run.
 	Progress rank.Progress
@@ -59,8 +66,10 @@ type ranker interface {
 // Config.OllamaEndpoint is set; tests replace them to stay off the network
 // and away from a local Ollama.
 var (
-	searchFiltered = sources.SearchFiltered
-	newRanker      = func(ctx context.Context, progress rank.Progress) (ranker, error) {
+	searchFiltered = func(ctx context.Context, s sources.Searcher, q model.Query, include, exclude []model.Source) sources.Outcome {
+		return s.SearchFiltered(ctx, q, include, exclude)
+	}
+	newRanker = func(ctx context.Context, progress rank.Progress) (ranker, error) {
 		r, err := rank.NewRanker(ctx, progress)
 		if err != nil {
 			return nil, err
@@ -70,10 +79,36 @@ var (
 	ollamaEndpoint = ollama.DefaultEndpoint
 )
 
+// ShortDuration is d without the zero units time.Duration.String appends:
+// "1h", not "1h0m0s".
+func ShortDuration(d time.Duration) string {
+	s := d.String()
+	if strings.HasSuffix(s, "m0s") {
+		s = s[:len(s)-2]
+	}
+	if strings.HasSuffix(s, "h0m") {
+		s = s[:len(s)-2]
+	}
+	return s
+}
+
 func sourceNames(ss []model.Source) string {
 	names := make([]string, len(ss))
 	for i, s := range ss {
 		names[i] = s.String()
+	}
+	return strings.Join(names, ", ")
+}
+
+// reachedNames names the sources out reached, saying which of them were
+// reached through the browser.
+func reachedNames(out sources.Outcome) string {
+	names := make([]string, len(out.Reached))
+	for i, s := range out.Reached {
+		names[i] = s.String()
+		if slices.Contains(out.Browsed, s) {
+			names[i] += " (through CloakBrowser)"
+		}
 	}
 	return strings.Join(names, ", ")
 }
@@ -95,7 +130,11 @@ func Run(ctx context.Context, idea string, cfg Config, log func(string)) (Result
 	evalLimit := max(cfg.Limit, rank.DefaultLimit)
 	logSearch := func(out sources.Outcome) {
 		log(fmt.Sprintf("   %d matches from %d sources in %.1fs: %s",
-			len(out.Matches), len(out.Reached), time.Since(start).Seconds(), sourceNames(out.Reached)))
+			len(out.Matches), len(out.Reached), time.Since(start).Seconds(), reachedNames(out)))
+		if len(out.Cached) > 0 && cfg.Cache != nil {
+			log(fmt.Sprintf("   from the local cache (less than %s old): %s",
+				ShortDuration(cfg.Cache.TTL), sourceNames(out.Cached)))
+		}
 	}
 
 	var (
@@ -103,7 +142,7 @@ func Run(ctx context.Context, idea string, cfg Config, log func(string)) (Result
 		ranked []model.Match
 	)
 	if cfg.KeywordOnly {
-		out = searchFiltered(ctx, q, cfg.Include, cfg.Exclude)
+		out = searchFiltered(ctx, sources.Searcher{Cache: cfg.Cache, Browser: cfg.Browser}, q, cfg.Include, cfg.Exclude)
 		logSearch(out)
 		rankStart := time.Now()
 		ranked = rank.ByKeywords(q, out.Matches, evalLimit)
@@ -125,7 +164,7 @@ func Run(ctx context.Context, idea string, cfg Config, log func(string)) (Result
 			}
 			ch <- loaded{r: r, queryEmb: r.EmbedQuery(q.Idea)}
 		}()
-		out = searchFiltered(ctx, q, cfg.Include, cfg.Exclude)
+		out = searchFiltered(ctx, sources.Searcher{Cache: cfg.Cache, Browser: cfg.Browser}, q, cfg.Include, cfg.Exclude)
 		l := <-ch
 		if l.err != nil {
 			return Result{}, l.err

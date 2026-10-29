@@ -4,9 +4,11 @@ import (
 	"context"
 	"errors"
 	"io"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/miku/silt/internal/config"
 	"github.com/miku/silt/internal/tui"
@@ -108,6 +110,69 @@ func TestLimitValue(t *testing.T) {
 		if err := l.Set(bad); err == nil {
 			t.Errorf("Set(%q) succeeded", bad)
 		}
+	}
+}
+
+func TestTTLValue(t *testing.T) {
+	var d ttlValue
+	for s, want := range map[string]time.Duration{"0": 0, "30m": 30 * time.Minute, "24h": 24 * time.Hour, "1h30m": 90 * time.Minute} {
+		if err := d.Set(s); err != nil || time.Duration(d) != want {
+			t.Errorf("Set(%q) = %v, %v; want %v", s, err, time.Duration(d), want)
+		}
+	}
+	for _, bad := range []string{"-1h", "1", "an hour", ""} {
+		if err := d.Set(bad); err == nil {
+			t.Errorf("Set(%q) succeeded", bad)
+		}
+	}
+	if d = ttlValue(time.Hour); d.String() != "1h" {
+		t.Errorf("String() = %q, want 1h", d.String())
+	}
+}
+
+func TestResolveCacheTTL(t *testing.T) {
+	for _, tc := range []struct {
+		name    string
+		flagSet bool
+		flag    time.Duration
+		env     map[string]string
+		want    time.Duration
+		wantErr bool
+	}{
+		{name: "default", want: time.Hour},
+		{name: "env", env: map[string]string{"SILT_CACHE_TTL": "10m"}, want: 10 * time.Minute},
+		{name: "env turns it off", env: map[string]string{"SILT_CACHE_TTL": "0"}, want: 0},
+		{name: "flag beats env", flagSet: true, flag: 0, env: map[string]string{"SILT_CACHE_TTL": "10m"}, want: 0},
+		{name: "invalid env", env: map[string]string{"SILT_CACHE_TTL": "soon"}, wantErr: true},
+		{name: "negative env", env: map[string]string{"SILT_CACHE_TTL": "-5m"}, wantErr: true},
+		{name: "set but empty env", env: map[string]string{"SILT_CACHE_TTL": ""}, wantErr: true},
+	} {
+		got, err := resolveCacheTTL(tc.flagSet, tc.flag, env(tc.env))
+		if (err != nil) != tc.wantErr || got != tc.want {
+			t.Errorf("%s: %v, %v; want %v (error: %v)", tc.name, got, err, tc.want, tc.wantErr)
+		}
+		if err != nil && !strings.HasPrefix(err.Error(), "SILT_CACHE_TTL: ") {
+			t.Errorf("%s: the error should name the variable: %v", tc.name, err)
+		}
+	}
+}
+
+func TestABrowserPathThatIsNoFileIsAnError(t *testing.T) {
+	missing := filepath.Join(t.TempDir(), "chrome")
+	for name, value := range map[string]string{"SILT_BROWSER": missing, "CLOAKBROWSER_BINARY_PATH": missing} {
+		var stderr strings.Builder
+		var opened []tui.Options
+		e := tuiEnv(&stderr, &opened, nil)
+		e.lookupEnv = env(map[string]string{name: value})
+		if code := run(nil, e); code != 1 || !strings.HasPrefix(stderr.String(), "Error: "+name+": ") || len(opened) != 0 {
+			t.Errorf("%s: exit %d, stderr %q", name, code, stderr.String())
+		}
+	}
+	var opened []tui.Options
+	e := tuiEnv(io.Discard, &opened, nil)
+	e.lookupEnv = env(map[string]string{"SILT_BROWSER": "off", "CLOAKBROWSER_BINARY_PATH": missing})
+	if code := run(nil, e); code != 0 || len(opened) != 1 {
+		t.Errorf("SILT_BROWSER=off: exit %d; it should win over a broken CLOAKBROWSER_BINARY_PATH", code)
 	}
 }
 

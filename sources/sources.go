@@ -270,8 +270,21 @@ func detectSources(idea string) map[model.Source]bool {
 	return selected
 }
 
-// newAdapter builds the adapter for id, against the live service.
-func newAdapter(id model.Source, client *http.Client) Adapter {
+// A Browser renders a page in a real browser and returns its DOM, for the
+// sources whose plain request is walled off; internal/browser is one.
+type Browser interface {
+	DumpDOM(ctx context.Context, url string) (string, error)
+}
+
+// browsingAdapter is an adapter that can fall back to a [Browser]; its
+// search also says whether it did.
+type browsingAdapter interface {
+	searchReportingBrowser(ctx context.Context, q model.Query) (matches []model.Match, browsed bool, err error)
+}
+
+// newAdapter builds the adapter for id, against the live service. browser,
+// if not nil, is given to the adapters that can use one.
+func newAdapter(id model.Source, client *http.Client, browser Browser) Adapter {
 	switch id {
 	case model.CratesIO:
 		return NewCratesIO(client)
@@ -280,7 +293,9 @@ func newAdapter(id model.Source, client *http.Client) Adapter {
 	case model.Npm:
 		return NewNpm(client)
 	case model.PyPI:
-		return NewPyPI(client)
+		a := NewPyPI(client)
+		a.Browser = browser
+		return a
 	case model.HackerNews:
 		return NewHackerNews(client)
 	case model.Go:
@@ -322,6 +337,12 @@ type Outcome struct {
 	Matches []model.Match
 	Reached []model.Source
 	Failed  []model.Source
+	// Cached are the reached sources whose results came from the [Cache]
+	// rather than from a request, in the same order.
+	Cached []model.Source
+	// Browsed are the reached sources whose results came through the
+	// [Browser], after their plain request was walled, in the same order.
+	Browsed []model.Source
 }
 
 // SearchAll fans out to the sources detected for q. Individual source
@@ -339,7 +360,7 @@ func SearchAll(ctx context.Context, q model.Query) Outcome {
 // hash set, so its order — and which duplicate wins in [Dedup] — changes from
 // run to run.)
 func SearchFiltered(ctx context.Context, q model.Query, include, exclude []model.Source) Outcome {
-	return SearchFilteredWithClient(ctx, NewHTTPClient(), q, include, exclude)
+	return Searcher{}.SearchFiltered(ctx, q, include, exclude)
 }
 
 // SearchFilteredWithClient is [SearchFiltered] with client for every
@@ -347,11 +368,39 @@ func SearchFiltered(ctx context.Context, q model.Query, include, exclude []model
 // (internal/httprec). Homebrew still caches its catalog for the whole
 // process, whichever client fetched it.
 func SearchFilteredWithClient(ctx context.Context, client *http.Client, q model.Query, include, exclude []model.Source) Outcome {
+	return Searcher{Client: client}.SearchFiltered(ctx, q, include, exclude)
+}
+
+// A Searcher runs the fan-out with a given HTTP client, cache and browser.
+// The zero value searches with [NewHTTPClient], caches nothing and uses no
+// browser.
+type Searcher struct {
+	// Client is the client of every adapter; nil is [NewHTTPClient].
+	Client *http.Client
+	// Cache, if not nil, answers a source's search from disk when it holds a
+	// fresh result for the same query, and keeps every successful one. Its
+	// expired entries are removed at the start of each search.
+	Cache *Cache
+	// Browser, if not nil, fetches the search page of a source whose plain
+	// request was walled. Only PyPI uses it.
+	Browser Browser
+}
+
+// SearchFiltered is the package's [SearchFiltered] with s's client, cache
+// and browser.
+func (s Searcher) SearchFiltered(ctx context.Context, q model.Query, include, exclude []model.Source) Outcome {
+	client := s.Client
+	if client == nil {
+		client = NewHTTPClient()
+	}
 	var adapters []Adapter
 	for _, id := range selectSources(q.Idea, include, exclude) {
-		adapters = append(adapters, newAdapter(id, client))
+		adapters = append(adapters, newAdapter(id, client, s.Browser))
 	}
-	return SearchSources(ctx, adapters, q)
+	s.Cache.prune()
+	f := defaultFanout
+	f.cache = s.Cache
+	return f.search(ctx, adapters, q)
 }
 
 // selectSources returns the sources SearchFiltered searches, in model.All
@@ -387,6 +436,8 @@ type fanout struct {
 	timeout time.Duration
 	// retryDelay is the pause before the one retry of a transient failure.
 	retryDelay time.Duration
+	// cache, if not nil, is asked before a source is searched.
+	cache *Cache
 }
 
 var defaultFanout = fanout{timeout: 15 * time.Second, retryDelay: 800 * time.Millisecond}
@@ -402,6 +453,10 @@ func SearchSources(ctx context.Context, adapters []Adapter, q model.Query) Outco
 type result struct {
 	matches []model.Match
 	err     error
+	// cached is set when the matches came from the cache.
+	cached bool
+	// browsed is set when the matches came through the browser.
+	browsed bool
 }
 
 func (f fanout) search(ctx context.Context, adapters []Adapter, q model.Query) Outcome {
@@ -419,28 +474,54 @@ func (f fanout) search(ctx context.Context, adapters []Adapter, q model.Query) O
 			continue
 		}
 		out.Reached = append(out.Reached, adapters[i].ID())
+		if r.cached {
+			out.Cached = append(out.Cached, adapters[i].ID())
+		}
+		if r.browsed {
+			out.Browsed = append(out.Browsed, adapters[i].ID())
+		}
 		all = append(all, r.matches...)
 	}
 	out.Matches = Dedup(all)
 	return out
 }
 
-// searchOne searches a single source within the fan-out's timeout, retrying a
-// retryable failure once.
+// searchOne answers a single source's search from the cache, or else
+// searches it and caches a success.
 func (f fanout) searchOne(ctx context.Context, a Adapter, q model.Query) result {
+	if matches, ok := f.cache.get(a, q); ok {
+		return result{matches: matches, cached: true}
+	}
+	r := f.searchLive(ctx, a, q)
+	if r.err == nil {
+		f.cache.put(a, q, r.matches)
+	}
+	return r
+}
+
+// searchLive searches a single source within the fan-out's timeout, retrying
+// a retryable failure once.
+func (f fanout) searchLive(ctx context.Context, a Adapter, q model.Query) result {
 	ctx, cancel := context.WithTimeout(ctx, f.timeout)
 	defer cancel()
+	search := func() ([]model.Match, bool, error) {
+		matches, err := a.Search(ctx, q)
+		return matches, false, err
+	}
+	if b, ok := a.(browsingAdapter); ok {
+		search = func() ([]model.Match, bool, error) { return b.searchReportingBrowser(ctx, q) }
+	}
 	ch := make(chan result, 1) // buffered: an adapter that ignores ctx must not leak
 	go func() {
-		matches, err := a.Search(ctx, q)
+		matches, browsed, err := search()
 		if err != nil && silt.IsRetryable(err) {
 			select {
 			case <-time.After(f.retryDelay):
-				matches, err = a.Search(ctx, q)
+				matches, browsed, err = search()
 			case <-ctx.Done():
 			}
 		}
-		ch <- result{matches, err}
+		ch <- result{matches: matches, err: err, browsed: browsed}
 	}()
 	select {
 	case r := <-ch:

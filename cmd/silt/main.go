@@ -22,12 +22,14 @@ import (
 	"golang.org/x/term"
 
 	"github.com/miku/silt"
+	"github.com/miku/silt/internal/browser"
 	"github.com/miku/silt/internal/config"
 	"github.com/miku/silt/internal/pipeline"
 	"github.com/miku/silt/internal/tui"
 	"github.com/miku/silt/llm/ollama"
 	"github.com/miku/silt/model"
 	"github.com/miku/silt/rank"
+	"github.com/miku/silt/sources"
 	"github.com/miku/silt/verdict"
 )
 
@@ -77,12 +79,13 @@ type flags struct {
 	keywordOnly, fast, printPrompt bool
 	listSources, json              bool
 	sources, exclude               listValue
+	cacheTTL                       ttlValue
 	completions                    string
 }
 
 // run runs silt with args and returns its exit code.
 func run(args []string, env environment) int {
-	f := flags{limit: rank.DefaultLimit}
+	f := flags{limit: rank.DefaultLimit, cacheTTL: ttlValue(sources.DefaultCacheTTL)}
 	exitCode := 0
 	cmd := &cobra.Command{
 		Use:   "silt [IDEA]",
@@ -137,6 +140,7 @@ func (f *flags) register(cmd *cobra.Command) {
 	fs.BoolVar(&f.fast, "fast", false, "Skip the LLM verdict for an instant, search-only result")
 	fs.Var(&f.sources, "sources", "Only search these sources (comma-separated, e.g. \"npm,crates-io,github\").\nOverrides the automatic source detection. See --list-sources for valid names")
 	fs.Var(&f.exclude, "exclude", "Exclude these sources from the search (comma-separated)")
+	fs.Var(&f.cacheTTL, "cache-ttl", "How long a source's results are reused for the same idea, e.g. 30m or 24h;\n0 turns the cache off. Failed searches are never cached. Can also be set\nvia SILT_CACHE_TTL")
 	fs.BoolVar(&f.printPrompt, "print-prompt", false, "Print the verdict prompt to stdout and exit (for BYO-agent workflows)")
 	fs.BoolVar(&f.listSources, "list-sources", false, "List all available source names and exit")
 	fs.BoolVar(&f.json, "json", false, "Print structured JSON instead of launching the TUI")
@@ -212,6 +216,22 @@ func resolveBackend(flagBase, flagKey, flagModel *string, fast bool, cfg config.
 	return b, notes, nil
 }
 
+// resolveCacheTTL applies the precedence --cache-ttl > SILT_CACHE_TTL > the
+// default TTL.
+func resolveCacheTTL(flagSet bool, flag time.Duration, lookupEnv func(string) (string, bool)) (time.Duration, error) {
+	if flagSet {
+		return flag, nil
+	}
+	if v, ok := lookupEnv("SILT_CACHE_TTL"); ok {
+		d, err := parseTTL(v)
+		if err != nil {
+			return 0, fmt.Errorf("SILT_CACHE_TTL: %w", err)
+		}
+		return d, nil
+	}
+	return sources.DefaultCacheTTL, nil
+}
+
 func parseSources(names []string) ([]model.Source, error) {
 	var ss []model.Source
 	for _, name := range names {
@@ -275,6 +295,14 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 	for _, n := range notes {
 		fmt.Fprintln(stderr, n)
 	}
+	ttl, err := resolveCacheTTL(cmd.Flags().Changed("cache-ttl"), time.Duration(f.cacheTTL), env.lookupEnv)
+	if err != nil {
+		return 0, err
+	}
+	browserPath, err := browser.Find(env.lookupEnv)
+	if err != nil {
+		return 0, err
+	}
 
 	ctx := context.Background()
 	pcfg := pipeline.Config{
@@ -287,6 +315,18 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 		Limit:          int(f.limit),
 		Include:        include,
 		Exclude:        exclude,
+	}
+	if ttl > 0 {
+		// Without a cache directory (no home directory), search uncached.
+		if dir, err := sources.DefaultCacheDir(); err == nil {
+			pcfg.Cache = &sources.Cache{Dir: dir, TTL: ttl}
+		}
+	}
+	if browserPath != "" {
+		// The browser needs a profile; without a cache directory, go without.
+		if dir, err := browser.DefaultProfileDir(); err == nil {
+			pcfg.Browser = &browser.Browser{Path: browserPath, ProfileDir: dir}
+		}
 	}
 	tuiOpts := tui.Options{Search: searcher(pcfg), Backend: backendNote(b, pcfg.Fast)}
 

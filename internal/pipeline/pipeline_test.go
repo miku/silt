@@ -103,7 +103,7 @@ func fakeSearch(t *testing.T, out sources.Outcome) *model.Query {
 	t.Helper()
 	var got model.Query
 	orig := searchFiltered
-	searchFiltered = func(_ context.Context, q model.Query, _, _ []model.Source) sources.Outcome {
+	searchFiltered = func(_ context.Context, _ sources.Searcher, q model.Query, _, _ []model.Source) sources.Outcome {
 		got = q
 		return out
 	}
@@ -173,6 +173,56 @@ func TestRunSkipsTheVerdictBelowMinRelevance(t *testing.T) {
 	}
 	if got := logs[len(logs)-1]; got != "warning: best similarity 0.00 < 0.35 — skipping verdict" {
 		t.Errorf("log = %q", got)
+	}
+}
+
+// nopBrowser is a sources.Browser that is never asked for a page.
+type nopBrowser struct{}
+
+func (nopBrowser) DumpDOM(context.Context, string) (string, error) { return "", nil }
+
+func TestRunPassesTheCacheAndBrowserAndSaysHowSourcesWereReached(t *testing.T) {
+	cache := &sources.Cache{Dir: t.TempDir(), TTL: 90 * time.Minute}
+	var got sources.Searcher
+	orig := searchFiltered
+	searchFiltered = func(_ context.Context, s sources.Searcher, _ model.Query, _, _ []model.Source) sources.Outcome {
+		got = s
+		return sources.Outcome{
+			Matches: []model.Match{match("kill-port", "kill the process on a port")},
+			Reached: []model.Source{model.CratesIO, model.Npm, model.PyPI},
+			Cached:  []model.Source{model.Npm},
+			Browsed: []model.Source{model.PyPI},
+		}
+	}
+	t.Cleanup(func() { searchFiltered = orig })
+	var logs []string
+	cfg := Config{Fast: true, KeywordOnly: true, Limit: 50, Cache: cache, Browser: nopBrowser{}}
+	if _, err := Run(context.Background(), "kill process port", cfg, func(s string) { logs = append(logs, s) }); err != nil {
+		t.Fatal(err)
+	}
+	if got.Cache != cache || got.Browser != cfg.Browser {
+		t.Errorf("the fan-out got %+v, want the cache and the browser", got)
+	}
+	if len(logs) < 2 || !strings.HasSuffix(logs[0], "s: crates.io, npm, PyPI (through CloakBrowser)") ||
+		logs[1] != "   from the local cache (less than 1h30m old): npm" {
+		t.Errorf("logs = %q", logs)
+	}
+}
+
+func TestShortDuration(t *testing.T) {
+	for d, want := range map[time.Duration]string{
+		time.Hour:                   "1h",
+		90 * time.Minute:            "1h30m",
+		30 * time.Minute:            "30m",
+		10 * time.Second:            "10s",
+		2*time.Minute + time.Second: "2m1s",
+		24 * time.Hour:              "24h",
+		time.Hour + 30*time.Second:  "1h0m30s",
+		500 * time.Millisecond:      "500ms",
+	} {
+		if got := ShortDuration(d); got != want {
+			t.Errorf("ShortDuration(%v) = %q, want %q", d, got, want)
+		}
 	}
 }
 
@@ -395,7 +445,7 @@ func TestRunLoadsTheModelWhileTheSourcesSearch(t *testing.T) {
 	// the search to begin: run one after the other, they would deadlock.
 	loading, searching := make(chan struct{}), make(chan struct{})
 	orig := searchFiltered
-	searchFiltered = func(context.Context, model.Query, []model.Source, []model.Source) sources.Outcome {
+	searchFiltered = func(context.Context, sources.Searcher, model.Query, []model.Source, []model.Source) sources.Outcome {
 		close(searching)
 		<-loading
 		return sources.Outcome{}

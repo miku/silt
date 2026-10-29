@@ -15,11 +15,14 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/miku/silt"
 	"github.com/miku/silt/freshness"
+	"github.com/miku/silt/internal/browser"
 	"github.com/miku/silt/model"
 )
 
@@ -106,6 +109,30 @@ func TestLivePyPI(t *testing.T) {
 	}
 	if err != nil {
 		t.Fatalf("PyPI failed, but not with the expected wall: %v", err)
+	}
+	assertLive(t, m, model.PyPI)
+}
+
+// With CloakBrowser installed, PyPI is reached through it. The profile is a
+// fresh one, so the challenge has to be passed, not skipped with a cookie.
+func TestLivePyPIThroughTheBrowser(t *testing.T) {
+	path, err := browser.Find(os.LookupEnv)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if path == "" {
+		t.Skip("CloakBrowser is not installed")
+	}
+	a := NewPyPI(client())
+	a.Browser = &browser.Browser{Path: path, ProfileDir: t.TempDir()}
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	m, browsed, err := a.searchReportingBrowser(ctx, model.Query{Idea: "http requests library for python", Keywords: []string{"requests"}})
+	if err != nil {
+		t.Fatalf("PyPI through %s: %v", path, err)
+	}
+	if !browsed {
+		t.Log("PyPI answered the plain request; the browser wasn't needed")
 	}
 	assertLive(t, m, model.PyPI)
 }
