@@ -181,8 +181,9 @@ type nopBrowser struct{}
 
 func (nopBrowser) DumpDOM(context.Context, string) (string, error) { return "", nil }
 
-func TestRunPassesTheCacheAndBrowserAndSaysHowSourcesWereReached(t *testing.T) {
+func TestRunPassesTheCachesAndBrowserAndSaysHowSourcesWereReached(t *testing.T) {
 	cache := &sources.Cache{Dir: t.TempDir(), TTL: 90 * time.Minute}
+	catalogs := &sources.CatalogCache{Dir: t.TempDir(), TTL: 24 * time.Hour}
 	var got sources.Searcher
 	orig := searchFiltered
 	searchFiltered = func(_ context.Context, s sources.Searcher, _ model.Query, _, _ []model.Source) sources.Outcome {
@@ -196,12 +197,12 @@ func TestRunPassesTheCacheAndBrowserAndSaysHowSourcesWereReached(t *testing.T) {
 	}
 	t.Cleanup(func() { searchFiltered = orig })
 	var logs []string
-	cfg := Config{Fast: true, KeywordOnly: true, Limit: 50, Cache: cache, Browser: nopBrowser{}}
+	cfg := Config{Fast: true, KeywordOnly: true, Limit: 50, Cache: cache, Browser: nopBrowser{}, Catalogs: catalogs}
 	if _, err := Run(context.Background(), "kill process port", cfg, func(s string) { logs = append(logs, s) }); err != nil {
 		t.Fatal(err)
 	}
-	if got.Cache != cache || got.Browser != cfg.Browser {
-		t.Errorf("the fan-out got %+v, want the cache and the browser", got)
+	if got.Cache != cache || got.Browser != cfg.Browser || got.Catalogs != catalogs {
+		t.Errorf("the fan-out got %+v, want the caches and the browser", got)
 	}
 	if len(logs) < 2 || !strings.HasSuffix(logs[0], "s: crates.io, npm, PyPI (through CloakBrowser)") ||
 		logs[1] != "   from the local cache (less than 1h30m old): npm" {

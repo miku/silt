@@ -282,9 +282,10 @@ type browsingAdapter interface {
 	searchReportingBrowser(ctx context.Context, q model.Query) (matches []model.Match, browsed bool, err error)
 }
 
-// newAdapter builds the adapter for id, against the live service. browser,
-// if not nil, is given to the adapters that can use one.
-func newAdapter(id model.Source, client *http.Client, browser Browser) Adapter {
+// newAdapter builds the adapter for id, against the live service, with
+// client and, for the adapters that can use them, s's browser and catalog
+// cache.
+func (s Searcher) newAdapter(id model.Source, client *http.Client) Adapter {
 	switch id {
 	case model.CratesIO:
 		return NewCratesIO(client)
@@ -294,7 +295,7 @@ func newAdapter(id model.Source, client *http.Client, browser Browser) Adapter {
 		return NewNpm(client)
 	case model.PyPI:
 		a := NewPyPI(client)
-		a.Browser = browser
+		a.Browser = s.Browser
 		return a
 	case model.HackerNews:
 		return NewHackerNews(client)
@@ -313,7 +314,9 @@ func newAdapter(id model.Source, client *http.Client, browser Browser) Adapter {
 	case model.NuGet:
 		return NewNuGet(client)
 	case model.Homebrew:
-		return NewHomebrew(client)
+		a := NewHomebrew(client)
+		a.Catalogs = s.Catalogs
+		return a
 	case model.Packagist:
 		return NewPackagist(client)
 	case model.Hex:
@@ -371,9 +374,9 @@ func SearchFilteredWithClient(ctx context.Context, client *http.Client, q model.
 	return Searcher{Client: client}.SearchFiltered(ctx, q, include, exclude)
 }
 
-// A Searcher runs the fan-out with a given HTTP client, cache and browser.
-// The zero value searches with [NewHTTPClient], caches nothing and uses no
-// browser.
+// A Searcher runs the fan-out with a given HTTP client, caches and browser.
+// The zero value searches with [NewHTTPClient], caches nothing on disk and
+// uses no browser.
 type Searcher struct {
 	// Client is the client of every adapter; nil is [NewHTTPClient].
 	Client *http.Client
@@ -384,9 +387,12 @@ type Searcher struct {
 	// Browser, if not nil, fetches the search page of a source whose plain
 	// request was walled. Only PyPI uses it.
 	Browser Browser
+	// Catalogs, if not nil, keeps the catalogs that a source downloads whole
+	// on disk. Only Homebrew downloads one.
+	Catalogs *CatalogCache
 }
 
-// SearchFiltered is the package's [SearchFiltered] with s's client, cache
+// SearchFiltered is the package's [SearchFiltered] with s's client, caches
 // and browser.
 func (s Searcher) SearchFiltered(ctx context.Context, q model.Query, include, exclude []model.Source) Outcome {
 	client := s.Client
@@ -395,7 +401,7 @@ func (s Searcher) SearchFiltered(ctx context.Context, q model.Query, include, ex
 	}
 	var adapters []Adapter
 	for _, id := range selectSources(q.Idea, include, exclude) {
-		adapters = append(adapters, newAdapter(id, client, s.Browser))
+		adapters = append(adapters, s.newAdapter(id, client))
 	}
 	s.Cache.prune()
 	f := defaultFanout

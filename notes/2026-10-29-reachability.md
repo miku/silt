@@ -1,8 +1,8 @@
 # Reachability: plan
 
 2026-10-29. How silt could reach more of the sources it selects, and ask
-them less often. Steps 1–3 (the result cache, and PyPI through CloakBrowser)
-are done; the rest is a plan.
+them less often. Steps 1–4 (the result cache, PyPI through CloakBrowser,
+Homebrew's catalogs kept for a day) are done; the rest is a plan.
 
 ## Where coverage is lost today
 
@@ -136,7 +136,7 @@ only looks for it.
 | 1 | result cache per source and idea, 1 h, failures never cached (`sources/cache.go`, `--cache-ttl`, `SILT_CACHE_TTL`) | done |
 | 2 | `internal/browser`: find the binary, `--dump-dom`, semaphore, profile, fake-binary tests | done |
 | 3 | PyPI through the browser after a wall; progress line names it | done |
-| 4 | Homebrew catalogs cached for a day | |
+| 4 | Homebrew catalogs cached for a day (`--catalog-ttl`, `SILT_CATALOG_TTL`) | done |
 | 5 | Retry-After / rate-limit handling, Hackage concurrency cap | |
 | 6 | PyPI simple-index fallback when no browser is found | |
 | 7 | stale-if-error, `--check-sources` | |
@@ -198,3 +198,31 @@ only looks for it.
 - Live check of the CLI, `--keyword-only --fast --sources pypi,crates-io`:
   5.5 s with PyPI through CloakBrowser (20 PyPI matches); the rerun 0.0 s
   from the cache; with `SILT_BROWSER=off`, PyPI not reached as before.
+
+### Step 4, as built
+
+- `sources.CatalogCache` (Dir, TTL), separate from the result `Cache`: a
+  catalog answers any query, and lives in `<UserCacheDir>/silt/catalogs`,
+  not `<cache>/silt/http` as planned above and not next to `results`, whose
+  prune would delete it after an hour.
+- What is kept is not the HTTP responses but the fields the search reads:
+  name, desc and homepage of every formula, then every cask, in the order
+  downloaded, with a format version and the base URL. A file of another
+  version or host, an unreadable one, or one older than the TTL (by
+  modification time) is a miss and is replaced by the next download. Live:
+  16,500 packages, 1.9 MB, against 32.2 + 19.3 MB downloaded.
+- Below it, the process-wide in-memory catalog stays as it was, so a TUI
+  session reads the disk at most once.
+- Only a successful download of both catalogs is kept; written to a
+  temporary file and renamed (`writeAtomic`, now shared with the result
+  cache), directory 0700.
+- Default 24 h; `--catalog-ttl` > `SILT_CATALOG_TTL` > default, parsed as
+  `--cache-ttl` is (`resolveTTL`, generalised from `resolveCacheTTL`); `0`
+  downloads on every run. The parity harness and the CLI tests set
+  `SILT_CATALOG_TTL=0`, so silt searches the same catalog as patent.
+- Not labelled in the progress output: a day-old catalog is still
+  Homebrew's data, and the results cache line already covers a repeated
+  idea.
+- Live check, `--keyword-only --fast --cache-ttl 0 --sources homebrew`:
+  1.7 s downloading; another idea 0.02 s from disk; the first idea again
+  0.02 s with the same matches as the download; `--catalog-ttl 0` 1.7 s.

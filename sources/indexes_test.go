@@ -1,14 +1,21 @@
 package sources
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/fs"
 	"net/http"
+	"os"
+	"path/filepath"
+	"reflect"
+	"runtime"
 	"slices"
 	"strings"
 	"sync/atomic"
 	"testing"
+	"time"
 	"unicode/utf8"
 
 	"github.com/miku/silt"
@@ -258,6 +265,134 @@ func TestHomebrewRetriesAFailedCatalogFetch(t *testing.T) {
 	ok.Store(true)
 	if m := mustSearch(t, a, q); len(m) != 2 {
 		t.Errorf("matches = %+v; the failed fetch must not have been cached", m)
+	}
+}
+
+// brewCatalogServer serves catalogs with fields the search doesn't read, as
+// the real ones have, and a formula without a homepage.
+func brewCatalogServer(t *testing.T) *mockServer {
+	return brewServer(t,
+		`[{"name": "jq", "desc": "Lightweight and flexible command-line JSON processor", "homepage": "https://jqlang.org/",
+		   "versions": {"stable": "1.8.1"}, "dependencies": ["oniguruma"]},
+		  {"name": "jless", "desc": "Command-line pager for JSON data"}]`,
+		`[{"token": "jsonviewer", "desc": "JSON viewer", "homepage": "https://example.com/jv", "url": "https://example.com/jv.dmg"}]`)
+}
+
+// runBrew searches like a new silt process: with its own in-memory catalog, and
+// the catalogs on disk.
+func runBrew(t *testing.T, srv *mockServer, c *CatalogCache) []model.Match {
+	t.Helper()
+	a := brewFor(srv)
+	a.Catalogs = c
+	return mustSearch(t, a, model.Query{Idea: "x", Keywords: []string{"json"}})
+}
+
+func testCatalogs(t *testing.T) *CatalogCache {
+	return &CatalogCache{Dir: filepath.Join(t.TempDir(), "catalogs"), TTL: 24 * time.Hour}
+}
+
+func TestHomebrewKeepsItsCatalogOnDisk(t *testing.T) {
+	srv := brewCatalogServer(t)
+	c := testCatalogs(t)
+	first := runBrew(t, srv, c)
+	if len(first) != 3 || len(srv.Requests()) != 2 {
+		t.Fatalf("first run: %d matches, %d requests", len(first), len(srv.Requests()))
+	}
+	second := runBrew(t, srv, c)
+	if n := len(srv.Requests()); n != 2 {
+		t.Errorf("the second run sent %d more requests, want none", n-2)
+	}
+	// The same matches, in the same order, with the same fallback URL.
+	if !reflect.DeepEqual(second, first) || second[1].URL != srv.URL+"/formula/jless" {
+		t.Errorf("from disk:\n got %+v\nwant %+v", second, first)
+	}
+
+	b, err := os.ReadFile(filepath.Join(c.Dir, "homebrew.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, field := range []string{"versions", "dependencies", "oniguruma", "jv.dmg"} {
+		if strings.Contains(string(b), field) {
+			t.Errorf("the catalog on disk keeps %q, which the search doesn't read", field)
+		}
+	}
+	if fi, err := os.Stat(c.Dir); err != nil {
+		t.Error(err)
+	} else if fi.Mode().Perm() != 0o700 && runtime.GOOS != "windows" {
+		t.Errorf("catalog directory mode %v, want 0700", fi.Mode())
+	}
+}
+
+func TestHomebrewDownloadsAgainWhenTheCatalogOnDiskIsNoGood(t *testing.T) {
+	path := func(c *CatalogCache) string { return filepath.Join(c.Dir, "homebrew.json") }
+	for name, spoil := range map[string]func(t *testing.T, c *CatalogCache){
+		"expired": func(t *testing.T, c *CatalogCache) {
+			old := time.Now().Add(-c.TTL - time.Minute)
+			if err := os.Chtimes(path(c), old, old); err != nil {
+				t.Fatal(err)
+			}
+		},
+		"corrupt": func(t *testing.T, c *CatalogCache) {
+			if err := os.WriteFile(path(c), []byte(`{"version": 1, "packages": [`), 0o600); err != nil {
+				t.Fatal(err)
+			}
+		},
+		"another version": func(t *testing.T, c *CatalogCache) {
+			b, _ := os.ReadFile(path(c))
+			if err := os.WriteFile(path(c), bytes.Replace(b, []byte(`"version":1`), []byte(`"version":2`), 1), 0o600); err != nil {
+				t.Fatal(err)
+			}
+		},
+		"another host": func(t *testing.T, c *CatalogCache) {
+			runBrew(t, brewCatalogServer(t), c)
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			c := testCatalogs(t)
+			srv := brewCatalogServer(t)
+			runBrew(t, srv, c)
+			spoil(t, c)
+			if m := runBrew(t, srv, c); len(m) != 3 || len(srv.Requests()) != 4 {
+				t.Errorf("%d matches after %d requests; want the catalogs downloaded again", len(m), len(srv.Requests()))
+			}
+			// The download replaced it.
+			runBrew(t, srv, c)
+			if n := len(srv.Requests()); n != 4 {
+				t.Errorf("%d requests; the new download should have been kept", n)
+			}
+		})
+	}
+}
+
+func TestHomebrewNeverKeepsAFailedDownload(t *testing.T) {
+	c := testCatalogs(t)
+	wantSearchError(t, func() *Homebrew { a := brewFor(newMockServer(t, respond(500, ""))); a.Catalogs = c; return a }(),
+		model.Query{Idea: "x", Keywords: []string{"json"}})
+	if _, err := os.Stat(c.Dir); !errors.Is(err, fs.ErrNotExist) {
+		t.Errorf("after a failed download: %v; want no catalog directory", err)
+	}
+}
+
+func TestHomebrewWithoutACatalogCacheDownloadsEveryRun(t *testing.T) {
+	for _, c := range []*CatalogCache{nil, {Dir: t.TempDir(), TTL: 0}} {
+		srv := brewCatalogServer(t)
+		runBrew(t, srv, c)
+		runBrew(t, srv, c)
+		if n := len(srv.Requests()); n != 4 {
+			t.Errorf("%+v: %d requests for two runs, want 4", c, n)
+		}
+		if c != nil {
+			if entries, _ := os.ReadDir(c.Dir); len(entries) != 0 {
+				t.Errorf("TTL 0 wrote %d files", len(entries))
+			}
+		}
+	}
+}
+
+func TestSearcherGivesHomebrewTheCatalogCache(t *testing.T) {
+	c := testCatalogs(t)
+	if a := (Searcher{Catalogs: c}).newAdapter(model.Homebrew, nil).(*Homebrew); a.Catalogs != c || a.catalog != sharedBrewCatalog {
+		t.Errorf("adapter %+v; want the catalog cache and the shared in-memory catalog", a)
 	}
 }
 

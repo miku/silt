@@ -18,6 +18,9 @@ const homebrewBaseURL = "https://formulae.brew.sh"
 type Homebrew struct {
 	Client  *http.Client
 	BaseURL string
+	// Catalogs, if not nil, keeps the downloaded catalogs on disk, so that
+	// the runs within its TTL search them without downloading them.
+	Catalogs *CatalogCache
 
 	// catalog is the shared, process-wide cache for adapters from
 	// NewHomebrew; an adapter built otherwise caches on its own.
@@ -65,6 +68,57 @@ func (c *brewCatalog) get(ctx context.Context, fetch func(context.Context) ([]br
 	return c.packages, nil
 }
 
+// brewCatalogVersion is the format of the catalog on disk. A catalog of
+// another version is a miss.
+const brewCatalogVersion = 1
+
+// brewCatalogFile is the catalog on disk: only the fields the search reads,
+// in the order downloaded. That is under 2 MB of the 51 MB downloaded.
+type brewCatalogFile struct {
+	Version int    `json:"version"`
+	BaseURL string `json:"base_url"`
+	// Packages are the formulae, then the casks.
+	Packages []brewCatalogEntry `json:"packages"`
+}
+
+type brewCatalogEntry struct {
+	Name     string `json:"name"`
+	Desc     string `json:"desc,omitempty"`
+	Homepage string `json:"homepage,omitempty"`
+}
+
+// loadCatalog returns the catalog kept on disk, if it is fresh and from the
+// same host, or else downloads it and keeps it.
+func (a *Homebrew) loadCatalog(ctx context.Context) ([]brewPackage, error) {
+	var file brewCatalogFile
+	if a.Catalogs.load("homebrew", &file) && file.Version == brewCatalogVersion && file.BaseURL == a.BaseURL {
+		pkgs := make([]brewPackage, len(file.Packages))
+		for i, e := range file.Packages {
+			pkgs[i] = newBrewPackage(e.Name, e.Desc, e.Homepage)
+		}
+		return pkgs, nil
+	}
+	pkgs, err := a.fetchCatalog(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if a.Catalogs.enabled() {
+		file = brewCatalogFile{Version: brewCatalogVersion, BaseURL: a.BaseURL, Packages: make([]brewCatalogEntry, len(pkgs))}
+		for i, p := range pkgs {
+			file.Packages[i] = brewCatalogEntry{p.name, p.desc, p.homepage}
+		}
+		a.Catalogs.store("homebrew", file)
+	}
+	return pkgs, nil
+}
+
+func newBrewPackage(name, desc, homepage string) brewPackage {
+	return brewPackage{
+		name: name, desc: desc, homepage: homepage,
+		lowerName: textutil.ToLower(name), lowerDesc: textutil.ToLower(desc),
+	}
+}
+
 func (a *Homebrew) fetchCatalog(ctx context.Context) ([]brewPackage, error) {
 	var formulae []struct {
 		Name     *string `json:"name"`
@@ -90,10 +144,7 @@ func (a *Homebrew) fetchCatalog(ctx context.Context) ([]brewPackage, error) {
 	}
 	pkgs := make([]brewPackage, 0, len(formulae)+len(casks))
 	add := func(name, desc, homepage string) {
-		pkgs = append(pkgs, brewPackage{
-			name: name, desc: desc, homepage: homepage,
-			lowerName: textutil.ToLower(name), lowerDesc: textutil.ToLower(desc),
-		})
+		pkgs = append(pkgs, newBrewPackage(name, desc, homepage))
 	}
 	for _, f := range formulae {
 		if f.Name == nil {
@@ -130,7 +181,7 @@ func (a *Homebrew) Search(ctx context.Context, q model.Query) ([]model.Match, er
 			a.catalog = &brewCatalog{}
 		}
 	})
-	pkgs, err := a.catalog.get(ctx, a.fetchCatalog)
+	pkgs, err := a.catalog.get(ctx, a.loadCatalog)
 	if err != nil {
 		return nil, err
 	}

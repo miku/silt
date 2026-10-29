@@ -79,13 +79,13 @@ type flags struct {
 	keywordOnly, fast, printPrompt bool
 	listSources, json              bool
 	sources, exclude               listValue
-	cacheTTL                       ttlValue
+	cacheTTL, catalogTTL           ttlValue
 	completions                    string
 }
 
 // run runs silt with args and returns its exit code.
 func run(args []string, env environment) int {
-	f := flags{limit: rank.DefaultLimit, cacheTTL: ttlValue(sources.DefaultCacheTTL)}
+	f := flags{limit: rank.DefaultLimit, cacheTTL: ttlValue(sources.DefaultCacheTTL), catalogTTL: ttlValue(sources.DefaultCatalogTTL)}
 	exitCode := 0
 	cmd := &cobra.Command{
 		Use:   "silt [IDEA]",
@@ -141,6 +141,7 @@ func (f *flags) register(cmd *cobra.Command) {
 	fs.Var(&f.sources, "sources", "Only search these sources (comma-separated, e.g. \"npm,crates-io,github\").\nOverrides the automatic source detection. See --list-sources for valid names")
 	fs.Var(&f.exclude, "exclude", "Exclude these sources from the search (comma-separated)")
 	fs.Var(&f.cacheTTL, "cache-ttl", "How long a source's results are reused for the same idea, e.g. 30m or 24h;\n0 turns the cache off. Failed searches are never cached. Can also be set\nvia SILT_CACHE_TTL")
+	fs.Var(&f.catalogTTL, "catalog-ttl", "How long Homebrew's catalogs are kept after downloading them, e.g. 6h or\n168h; 0 downloads them on every run. Can also be set via\nSILT_CATALOG_TTL")
 	fs.BoolVar(&f.printPrompt, "print-prompt", false, "Print the verdict prompt to stdout and exit (for BYO-agent workflows)")
 	fs.BoolVar(&f.listSources, "list-sources", false, "List all available source names and exit")
 	fs.BoolVar(&f.json, "json", false, "Print structured JSON instead of launching the TUI")
@@ -216,20 +217,20 @@ func resolveBackend(flagBase, flagKey, flagModel *string, fast bool, cfg config.
 	return b, notes, nil
 }
 
-// resolveCacheTTL applies the precedence --cache-ttl > SILT_CACHE_TTL > the
-// default TTL.
-func resolveCacheTTL(flagSet bool, flag time.Duration, lookupEnv func(string) (string, bool)) (time.Duration, error) {
+// resolveTTL applies the precedence of a TTL flag, such as --cache-ttl, over
+// its environment variable env, such as SILT_CACHE_TTL, over the default.
+func resolveTTL(flagSet bool, flag time.Duration, env string, def time.Duration, lookupEnv func(string) (string, bool)) (time.Duration, error) {
 	if flagSet {
 		return flag, nil
 	}
-	if v, ok := lookupEnv("SILT_CACHE_TTL"); ok {
+	if v, ok := lookupEnv(env); ok {
 		d, err := parseTTL(v)
 		if err != nil {
-			return 0, fmt.Errorf("SILT_CACHE_TTL: %w", err)
+			return 0, fmt.Errorf("%s: %w", env, err)
 		}
 		return d, nil
 	}
-	return sources.DefaultCacheTTL, nil
+	return def, nil
 }
 
 func parseSources(names []string) ([]model.Source, error) {
@@ -295,7 +296,11 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 	for _, n := range notes {
 		fmt.Fprintln(stderr, n)
 	}
-	ttl, err := resolveCacheTTL(cmd.Flags().Changed("cache-ttl"), time.Duration(f.cacheTTL), env.lookupEnv)
+	ttl, err := resolveTTL(cmd.Flags().Changed("cache-ttl"), time.Duration(f.cacheTTL), "SILT_CACHE_TTL", sources.DefaultCacheTTL, env.lookupEnv)
+	if err != nil {
+		return 0, err
+	}
+	catalogTTL, err := resolveTTL(cmd.Flags().Changed("catalog-ttl"), time.Duration(f.catalogTTL), "SILT_CATALOG_TTL", sources.DefaultCatalogTTL, env.lookupEnv)
 	if err != nil {
 		return 0, err
 	}
@@ -320,6 +325,11 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 		// Without a cache directory (no home directory), search uncached.
 		if dir, err := sources.DefaultCacheDir(); err == nil {
 			pcfg.Cache = &sources.Cache{Dir: dir, TTL: ttl}
+		}
+	}
+	if catalogTTL > 0 {
+		if dir, err := sources.DefaultCatalogDir(); err == nil {
+			pcfg.Catalogs = &sources.CatalogCache{Dir: dir, TTL: catalogTTL}
 		}
 	}
 	if browserPath != "" {

@@ -44,6 +44,9 @@ type Config struct {
 	// Browser, if not nil, fetches the search page of a source whose plain
 	// request was walled.
 	Browser sources.Browser
+	// Catalogs, if not nil, keeps Homebrew's downloaded catalogs on disk for
+	// its TTL.
+	Catalogs *sources.CatalogCache
 	// Progress, if not nil, follows the download of the embedding model on
 	// the first run.
 	Progress rank.Progress
@@ -100,6 +103,11 @@ func sourceNames(ss []model.Source) string {
 	return strings.Join(names, ", ")
 }
 
+// searcher is the fan-out's configuration in cfg.
+func (cfg Config) searcher() sources.Searcher {
+	return sources.Searcher{Cache: cfg.Cache, Browser: cfg.Browser, Catalogs: cfg.Catalogs}
+}
+
 // reachedNames names the sources out reached, saying which of them were
 // reached through the browser.
 func reachedNames(out sources.Outcome) string {
@@ -142,7 +150,7 @@ func Run(ctx context.Context, idea string, cfg Config, log func(string)) (Result
 		ranked []model.Match
 	)
 	if cfg.KeywordOnly {
-		out = searchFiltered(ctx, sources.Searcher{Cache: cfg.Cache, Browser: cfg.Browser}, q, cfg.Include, cfg.Exclude)
+		out = searchFiltered(ctx, cfg.searcher(), q, cfg.Include, cfg.Exclude)
 		logSearch(out)
 		rankStart := time.Now()
 		ranked = rank.ByKeywords(q, out.Matches, evalLimit)
@@ -164,7 +172,7 @@ func Run(ctx context.Context, idea string, cfg Config, log func(string)) (Result
 			}
 			ch <- loaded{r: r, queryEmb: r.EmbedQuery(q.Idea)}
 		}()
-		out = searchFiltered(ctx, sources.Searcher{Cache: cfg.Cache, Browser: cfg.Browser}, q, cfg.Include, cfg.Exclude)
+		out = searchFiltered(ctx, cfg.searcher(), q, cfg.Include, cfg.Exclude)
 		l := <-ch
 		if l.err != nil {
 			return Result{}, l.err

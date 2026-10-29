@@ -40,10 +40,12 @@ func runSilt(t *testing.T, args ...string) (stdout, stderr string, exitCode int)
 	t.Helper()
 	cmd := exec.CommandContext(t.Context(), siltBin, args...)
 	// No config file: the user config directory on Linux and on Windows. No
-	// result cache either, so a live test always searches the registries, and
-	// no browser, so it searches them the same way on every machine.
+	// result or catalog cache either, so a live test always searches the
+	// registries, and no browser, so it searches them the same way on every
+	// machine.
 	config := t.TempDir()
-	cmd.Env = append(os.Environ(), "NO_COLOR=1", "XDG_CONFIG_HOME="+config, "AppData="+config, "SILT_CACHE_TTL=0", "SILT_BROWSER=off")
+	cmd.Env = append(os.Environ(), "NO_COLOR=1", "XDG_CONFIG_HOME="+config, "AppData="+config,
+		"SILT_CACHE_TTL=0", "SILT_CATALOG_TTL=0", "SILT_BROWSER=off")
 	var out, errOut bytes.Buffer
 	cmd.Stdout, cmd.Stderr = &out, &errOut
 	err := cmd.Run()
@@ -130,6 +132,8 @@ func TestArgumentErrorsExitTwo(t *testing.T) {
 		{"--completions", "elvish"},
 		{"--cache-ttl=-1h", "x"},
 		{"--cache-ttl", "an hour", "x"},
+		{"--catalog-ttl=-24h", "x"},
+		{"--catalog-ttl", "1d", "x"},
 	} {
 		_, stderr, code := runSilt(t, args...)
 		if code != 2 || !strings.HasPrefix(stderr, "error: ") {

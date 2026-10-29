@@ -130,7 +130,7 @@ func TestTTLValue(t *testing.T) {
 	}
 }
 
-func TestResolveCacheTTL(t *testing.T) {
+func TestResolveTTL(t *testing.T) {
 	for _, tc := range []struct {
 		name    string
 		flagSet bool
@@ -147,13 +147,21 @@ func TestResolveCacheTTL(t *testing.T) {
 		{name: "negative env", env: map[string]string{"SILT_CACHE_TTL": "-5m"}, wantErr: true},
 		{name: "set but empty env", env: map[string]string{"SILT_CACHE_TTL": ""}, wantErr: true},
 	} {
-		got, err := resolveCacheTTL(tc.flagSet, tc.flag, env(tc.env))
+		got, err := resolveTTL(tc.flagSet, tc.flag, "SILT_CACHE_TTL", time.Hour, env(tc.env))
 		if (err != nil) != tc.wantErr || got != tc.want {
 			t.Errorf("%s: %v, %v; want %v (error: %v)", tc.name, got, err, tc.want, tc.wantErr)
 		}
 		if err != nil && !strings.HasPrefix(err.Error(), "SILT_CACHE_TTL: ") {
 			t.Errorf("%s: the error should name the variable: %v", tc.name, err)
 		}
+	}
+	// Each TTL reads its own variable.
+	both := env(map[string]string{"SILT_CACHE_TTL": "0", "SILT_CATALOG_TTL": "6h"})
+	if got, err := resolveTTL(false, 0, "SILT_CATALOG_TTL", 24*time.Hour, both); err != nil || got != 6*time.Hour {
+		t.Errorf("SILT_CATALOG_TTL: %v, %v; want 6h", got, err)
+	}
+	if got, err := resolveTTL(false, 0, "SILT_CATALOG_TTL", 24*time.Hour, env(map[string]string{"SILT_CACHE_TTL": "0"})); err != nil || got != 24*time.Hour {
+		t.Errorf("SILT_CACHE_TTL changed the catalog TTL: %v, %v", got, err)
 	}
 }
 

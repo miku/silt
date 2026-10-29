@@ -32,6 +32,9 @@ Where silt differs from patent:
   doesn't send the same requests again (`--cache-ttl`, `SILT_CACHE_TTL`; `0`
   turns it off). Failed searches are never cached. patent sends every
   request on every run.
+- Homebrew's catalogs (51 MB) are downloaded once a day rather than on
+  every run that searches Homebrew; silt keeps the 2 MB it searches
+  (`--catalog-ttl`, `SILT_CATALOG_TTL`; `0` downloads them every run).
 - With CloakBrowser installed, PyPI is reached: when its search page walls
   off silt's request, silt loads the page in the browser, which passes the
   challenge. `SILT_BROWSER` names the browser, or turns it off with `off`.

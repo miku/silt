@@ -261,7 +261,7 @@ func TestSourcesForBuildsSelectedAdapters(t *testing.T) {
 	}
 	client := NewHTTPClient()
 	for _, id := range ids {
-		if a := newAdapter(id, client, nil); a.ID() != id {
+		if a := (Searcher{}).newAdapter(id, client); a.ID() != id {
 			t.Errorf("adapter for %v reports %v", id, a.ID())
 		}
 	}
@@ -292,7 +292,7 @@ func TestSelectSourcesUsesStableOrderAndFilters(t *testing.T) {
 func TestEverySourceHasAnAdapterForTheLiveService(t *testing.T) {
 	client := NewHTTPClient()
 	for _, id := range model.All() {
-		a := newAdapter(id, client, nil)
+		a := Searcher{}.newAdapter(id, client)
 		if a.ID() != id {
 			t.Errorf("adapter for %v reports %v", id, a.ID())
 		}

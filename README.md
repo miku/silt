@@ -52,6 +52,7 @@ Binaries for Linux, macOS and Windows are on the
 | `--sources LIST` | search only these sources, comma-separated, instead of picking them from the idea |
 | `--exclude LIST` | leave these sources out |
 | `--cache-ttl DURATION` | how long a source's results are reused for the same idea (default `1h`; `0` turns the cache off) |
+| `--catalog-ttl DURATION` | how long Homebrew's catalogs are kept after downloading them (default `24h`; `0` downloads them on every run) |
 | `--json` | print JSON instead of opening the TUI |
 | `--print-prompt` | print the verdict prompt, for your own agent, and exit |
 | `--list-sources` | list the source names and exit |
@@ -85,6 +86,13 @@ doesn't send the same requests to the registries again. A source that failed
 is never cached, and the progress lines say which sources the cache
 answered. `--cache-ttl` or `SILT_CACHE_TTL` sets another duration, such as
 `10m` or `24h`; `0` turns the cache off.
+
+Homebrew has no search API, so silt downloads its whole catalog of formulae
+and casks (51 MB) and searches it locally. It keeps the parts it searches
+(under 2 MB) for a day in `catalogs` next to `results`, so the next ideas
+are searched without downloading it again. A failed download is never kept.
+`--catalog-ttl` or `SILT_CATALOG_TTL` sets another duration, such as `6h`
+or `168h`; `0` downloads the catalog on every run.
 
 ### PyPI and CloakBrowser
 
