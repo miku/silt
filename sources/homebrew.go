@@ -24,13 +24,13 @@ type Homebrew struct {
 
 	// catalog is the shared, process-wide cache for adapters from
 	// NewHomebrew; an adapter built otherwise caches on its own.
-	catalog *brewCatalog
+	catalog *memCatalog[[]brewPackage]
 	init    sync.Once
 }
 
 // sharedBrewCatalog is the catalog every live adapter uses, so that a
 // session that searches several times downloads it once.
-var sharedBrewCatalog = &brewCatalog{}
+var sharedBrewCatalog = &memCatalog[[]brewPackage]{}
 
 // NewHomebrew returns an adapter for the live Homebrew API, which shares its
 // catalog with every other adapter NewHomebrew returns.
@@ -45,27 +45,6 @@ type brewPackage struct {
 	name, desc, homepage string
 	// lowered for matching
 	lowerName, lowerDesc string
-}
-
-// brewCatalog is fetched at most once successfully; a failed fetch is tried
-// again by the next search.
-type brewCatalog struct {
-	mu       sync.Mutex
-	packages []brewPackage
-	fetched  bool
-}
-
-func (c *brewCatalog) get(ctx context.Context, fetch func(context.Context) ([]brewPackage, error)) ([]brewPackage, error) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-	if !c.fetched {
-		pkgs, err := fetch(ctx)
-		if err != nil {
-			return nil, err
-		}
-		c.packages, c.fetched = pkgs, true
-	}
-	return c.packages, nil
 }
 
 // brewCatalogVersion is the format of the catalog on disk. A catalog of
@@ -178,7 +157,7 @@ func (a *Homebrew) getCatalog(ctx context.Context, path string, v any) error {
 func (a *Homebrew) Search(ctx context.Context, q model.Query) ([]model.Match, error) {
 	a.init.Do(func() {
 		if a.catalog == nil {
-			a.catalog = &brewCatalog{}
+			a.catalog = &memCatalog[[]brewPackage]{}
 		}
 	})
 	pkgs, err := a.catalog.get(ctx, a.loadCatalog)

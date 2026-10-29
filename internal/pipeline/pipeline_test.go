@@ -190,21 +190,22 @@ func TestRunPassesTheCachesAndBrowserAndSaysHowSourcesWereReached(t *testing.T) 
 		got = s
 		return sources.Outcome{
 			Matches: []model.Match{match("kill-port", "kill the process on a port")},
-			Reached: []model.Source{model.CratesIO, model.Npm, model.PyPI},
+			Reached: []model.Source{model.CratesIO, model.Npm, model.PyPI, model.Homebrew},
 			Cached:  []model.Source{model.Npm},
 			Browsed: []model.Source{model.PyPI},
+			ByName:  []model.Source{model.Homebrew},
 		}
 	}
 	t.Cleanup(func() { searchFiltered = orig })
 	var logs []string
-	cfg := Config{Fast: true, KeywordOnly: true, Limit: 50, Cache: cache, Browser: nopBrowser{}, Catalogs: catalogs}
+	cfg := Config{Fast: true, KeywordOnly: true, Limit: 50, Cache: cache, Browser: nopBrowser{}, Catalogs: catalogs, PyPIIndex: true}
 	if _, err := Run(context.Background(), "kill process port", cfg, func(s string) { logs = append(logs, s) }); err != nil {
 		t.Fatal(err)
 	}
-	if got.Cache != cache || got.Browser != cfg.Browser || got.Catalogs != catalogs {
+	if got.Cache != cache || got.Browser != cfg.Browser || got.Catalogs != catalogs || !got.PyPIIndex {
 		t.Errorf("the fan-out got %+v, want the caches and the browser", got)
 	}
-	if len(logs) < 2 || !strings.HasSuffix(logs[0], "s: crates.io, npm, PyPI (through CloakBrowser)") ||
+	if len(logs) < 2 || !strings.HasSuffix(logs[0], "s: crates.io, npm, PyPI (through CloakBrowser), Homebrew (names only)") ||
 		logs[1] != "   from the local cache (less than 1h30m old): npm" {
 		t.Errorf("logs = %q", logs)
 	}
@@ -469,5 +470,40 @@ func TestRunLoadsTheModelWhileTheSourcesSearch(t *testing.T) {
 		}
 	case <-time.After(5 * time.Second):
 		t.Fatal("the model load and the search did not overlap")
+	}
+}
+
+func TestRunSaysWhichSourcesWereRateLimited(t *testing.T) {
+	reset := time.Date(2026, 10, 29, 21, 21, 47, 0, time.Local)
+	fakeSearch(t, sources.Outcome{
+		Matches: []model.Match{match("kill-port", "kill the process on a port")},
+		Reached: []model.Source{model.Npm},
+		Failed:  []model.Source{model.CratesIO, model.GitHub},
+		RateLimited: []sources.RateLimit{
+			{Source: model.CratesIO},
+			{Source: model.GitHub, Reset: reset, Hint: "set GITHUB_TOKEN for a higher limit"},
+		},
+	})
+	var logs []string
+	if _, err := Run(context.Background(), "kill process port", Config{Fast: true, KeywordOnly: true, Limit: 50},
+		func(s string) { logs = append(logs, s) }); err != nil {
+		t.Fatal(err)
+	}
+	want := []string{"   crates.io: rate-limited", "   GitHub: rate-limited until 21:22; set GITHUB_TOKEN for a higher limit"}
+	if len(logs) < 3 || !reflect.DeepEqual(logs[1:3], want) {
+		t.Errorf("logs = %q, want %q after the matches line", logs, want)
+	}
+}
+
+func TestRateLimitNoteRoundsTheResetUp(t *testing.T) {
+	for reset, want := range map[time.Time]string{
+		time.Date(2026, 10, 29, 21, 21, 0, 0, time.Local):     "npm: rate-limited until 21:21",
+		time.Date(2026, 10, 29, 21, 21, 0, 1, time.Local):     "npm: rate-limited until 21:22",
+		time.Date(2026, 10, 29, 23, 59, 30, 0, time.Local):    "npm: rate-limited until 00:00",
+		time.Date(2026, 10, 29, 9, 5, 0, 0, time.Local).UTC(): "npm: rate-limited until 09:05",
+	} {
+		if got := rateLimitNote(sources.RateLimit{Source: model.Npm, Reset: reset}); got != want {
+			t.Errorf("%v: %q, want %q", reset, got, want)
+		}
 	}
 }

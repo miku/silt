@@ -141,7 +141,7 @@ func (f *flags) register(cmd *cobra.Command) {
 	fs.Var(&f.sources, "sources", "Only search these sources (comma-separated, e.g. \"npm,crates-io,github\").\nOverrides the automatic source detection. See --list-sources for valid names")
 	fs.Var(&f.exclude, "exclude", "Exclude these sources from the search (comma-separated)")
 	fs.Var(&f.cacheTTL, "cache-ttl", "How long a source's results are reused for the same idea, e.g. 30m or 24h;\n0 turns the cache off. Failed searches are never cached. Can also be set\nvia SILT_CACHE_TTL")
-	fs.Var(&f.catalogTTL, "catalog-ttl", "How long Homebrew's catalogs are kept after downloading them, e.g. 6h or\n168h; 0 downloads them on every run. Can also be set via\nSILT_CATALOG_TTL")
+	fs.Var(&f.catalogTTL, "catalog-ttl", "How long downloaded catalogs (Homebrew's, PyPI's project names) are kept,\ne.g. 6h or 168h; 0 downloads them on every run. Can also be set via\nSILT_CATALOG_TTL")
 	fs.BoolVar(&f.printPrompt, "print-prompt", false, "Print the verdict prompt to stdout and exit (for BYO-agent workflows)")
 	fs.BoolVar(&f.listSources, "list-sources", false, "List all available source names and exit")
 	fs.BoolVar(&f.json, "json", false, "Print structured JSON instead of launching the TUI")
@@ -331,6 +331,11 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 		if dir, err := sources.DefaultCatalogDir(); err == nil {
 			pcfg.Catalogs = &sources.CatalogCache{Dir: dir, TTL: catalogTTL}
 		}
+	}
+	// The names fallback is plain HTTP to PyPI's own index and JSON API, so
+	// it is on unless turned off.
+	if v, _ := env.lookupEnv("SILT_PYPI_INDEX"); v != "off" {
+		pcfg.PyPIIndex = true
 	}
 	if browserPath != "" {
 		// The browser needs a profile; without a cache directory, go without.

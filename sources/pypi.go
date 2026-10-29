@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"strings"
+	"sync"
 
 	"github.com/PuerkitoBio/goquery"
 
@@ -33,44 +34,81 @@ const pypiUnavailable = "PyPI search is unavailable to non-browser clients (no k
 //
 // With a Browser, a walled search is sent once more, through the browser,
 // which passes the challenge. Only a page that is recognisably PyPI's results
-// counts then; anything else leaves PyPI unavailable.
+// counts then. With Index, a walled search that no browser got through
+// matches the keywords against the names of all projects instead (see
+// searchIndex). Without either, or if both fail, PyPI is unavailable.
 type PyPI struct {
 	Client  *http.Client
 	BaseURL string
 	// Browser, if not nil, fetches the search page when the plain request
 	// is walled.
 	Browser Browser
+	// Index, if set, matches the keywords against PyPI's index of project
+	// names when the plain request is walled and no Browser got through.
+	Index bool
+	// Catalogs, if not nil, keeps the index on disk, so that the runs within
+	// its TTL don't download it again.
+	Catalogs *CatalogCache
+
+	// index is the shared, process-wide index for adapters from NewPyPI;
+	// an adapter built otherwise keeps its own.
+	index *memCatalog[[]string]
+	init  sync.Once
 }
 
-// NewPyPI returns an adapter for the live PyPI site.
-func NewPyPI(client *http.Client) *PyPI { return &PyPI{Client: client, BaseURL: pypiBaseURL} }
+// NewPyPI returns an adapter for the live PyPI site, which shares its index
+// with every other adapter NewPyPI returns.
+func NewPyPI(client *http.Client) *PyPI {
+	return &PyPI{Client: client, BaseURL: pypiBaseURL, index: sharedPyPIIndex}
+}
 
 // ID implements Adapter.
 func (*PyPI) ID() model.Source { return model.PyPI }
 
 // Search implements Adapter.
 func (a *PyPI) Search(ctx context.Context, q model.Query) ([]model.Match, error) {
-	matches, _, err := a.searchReportingBrowser(ctx, q)
+	matches, _, err := a.searchDetour(ctx, q)
 	return matches, err
 }
 
-// searchReportingBrowser implements browsingAdapter.
-func (a *PyPI) searchReportingBrowser(ctx context.Context, q model.Query) ([]model.Match, bool, error) {
+// searchDetour implements detouringAdapter.
+func (a *PyPI) searchDetour(ctx context.Context, q model.Query) ([]model.Match, detour, error) {
 	params := queryParams{{"q", strings.Join(q.Keywords, " ")}}
 	matches, err := a.searchPlain(ctx, params)
 	var walled *silt.UnavailableError
-	if a.Browser == nil || !errors.As(err, &walled) {
-		return matches, false, err
+	if !errors.As(err, &walled) {
+		return matches, noDetour, err
 	}
+	why := []string{pypiUnavailable}
+	if a.Browser != nil {
+		matches, err := a.searchBrowser(ctx, params)
+		if err == nil {
+			return matches, throughBrowser, nil
+		}
+		why = append(why, err.Error())
+	}
+	if a.Index {
+		matches, err := a.searchIndex(ctx, q)
+		if err == nil {
+			return matches, byName, nil
+		}
+		why = append(why, "its index of names: "+err.Error())
+	}
+	return nil, noDetour, &silt.UnavailableError{Msg: strings.Join(why, "; ")}
+}
+
+// searchBrowser searches with the browser. Only a page that is recognisably
+// PyPI's results counts.
+func (a *PyPI) searchBrowser(ctx context.Context, params queryParams) ([]model.Match, error) {
 	html, err := a.Browser.DumpDOM(ctx, a.BaseURL+"/search/?"+params.encode())
 	if err != nil {
-		return nil, false, &silt.UnavailableError{Msg: pypiUnavailable + "; " + err.Error()}
+		return nil, err
 	}
 	matches, noResults, err := scrapePyPI(html, a.BaseURL)
 	if err != nil || len(matches) == 0 && !noResults {
-		return nil, false, &silt.UnavailableError{Msg: pypiUnavailable + "; the browser did not get a results page either"}
+		return nil, errors.New("the browser did not get a results page either")
 	}
-	return matches, true, nil
+	return matches, nil
 }
 
 // searchPlain searches with an HTTP request.
@@ -81,7 +119,8 @@ func (a *PyPI) searchPlain(ctx context.Context, params queryParams) ([]model.Mat
 	}
 	// A hard 403 is the bot wall's blunt form; a 200 with a challenge stub is
 	// caught in parsePyPI. Either way it's a persistent wall, not a transient
-	// error. A 429 or 5xx is still a retryable HTTPError.
+	// error. A 429 or 5xx is still a retryable HTTPError (a 429 also a
+	// rateLimitError).
 	if resp.StatusCode == http.StatusForbidden {
 		resp.Body.Close()
 		return nil, &silt.UnavailableError{Msg: pypiUnavailable}

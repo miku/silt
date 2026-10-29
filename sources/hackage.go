@@ -15,11 +15,16 @@ import (
 const (
 	hackageBaseURL    = "https://hackage.haskell.org"
 	maxHackageResults = 20
+	// maxCabalFetches is how many .cabal files are fetched at once. patent
+	// fetches all 20 at once; 4 spares a server run by volunteers, for about
+	// a second more per search (1.7–2.1 s instead of 0.9–1.1 s, measured).
+	maxCabalFetches = 4
 )
 
 // Hackage searches the Hackage package archive (Haskell). Its search,
 // /packages/search, returns names only, so the synopsis and homepage of each
-// result come from its .cabal file, fetched in parallel.
+// result come from its .cabal file, fetched in parallel, maxCabalFetches at a
+// time.
 //
 // Hackage sends a last-modified header for the .cabal file, but trustee
 // bound fixes bump it without a release, so it is not a last-updated date and
@@ -69,8 +74,11 @@ func (a *Hackage) Search(ctx context.Context, q model.Query) ([]model.Match, err
 
 	matches := make([]model.Match, len(names))
 	var wg sync.WaitGroup
+	fetching := make(chan struct{}, maxCabalFetches)
 	for i, name := range names {
 		wg.Go(func() {
+			fetching <- struct{}{}
+			defer func() { <-fetching }()
 			// A .cabal file that can't be fetched only costs the match its
 			// description and homepage.
 			cabal := a.fetchCabal(ctx, name)

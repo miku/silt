@@ -35,10 +35,18 @@ Where silt differs from patent:
 - Homebrew's catalogs (51 MB) are downloaded once a day rather than on
   every run that searches Homebrew; silt keeps the 2 MB it searches
   (`--catalog-ttl`, `SILT_CATALOG_TTL`; `0` downloads them every run).
+- A rate-limited search is tried again only when the source's reset
+  (`Retry-After`, GitHub's `X-RateLimit-Reset`) comes within its 15 s;
+  otherwise silt says "rate-limited until HH:MM". Other retries wait
+  800 ms give or take half. Hackage's `.cabal` files are fetched 4 at a
+  time, not 20. patent retries every failure once after 800 ms.
 - With CloakBrowser installed, PyPI is reached: when its search page walls
   off silt's request, silt loads the page in the browser, which passes the
   challenge. `SILT_BROWSER` names the browser, or turns it off with `off`.
-  patent reports PyPI as not reached.
+  Without it, silt matches the keywords against the names of all PyPI
+  projects and describes the 20 best from PyPI's JSON API ("PyPI (names
+  only)"; `SILT_PYPI_INDEX=off` turns it off). patent reports PyPI as not
+  reached.
 - `--completions` supports bash, fish, powershell and zsh, but not elvish.
 - Help and argument errors are worded by cobra rather than clap, with the
   same flags and exit codes.

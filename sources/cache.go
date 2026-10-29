@@ -1,6 +1,7 @@
 package sources
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -8,6 +9,7 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/miku/silt/model"
@@ -224,4 +226,26 @@ func (c *CatalogCache) store(name string, v any) {
 	if b, err := json.Marshal(v); err == nil {
 		_ = writeAtomic(filepath.Join(c.Dir, name+".json"), b)
 	}
+}
+
+// memCatalog keeps a catalog in memory for the rest of the process. It is
+// fetched at most once successfully; a failed fetch is tried again by the
+// next search.
+type memCatalog[T any] struct {
+	mu      sync.Mutex
+	v       T
+	fetched bool
+}
+
+func (c *memCatalog[T]) get(ctx context.Context, fetch func(context.Context) (T, error)) (T, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if !c.fetched {
+		v, err := fetch(ctx)
+		if err != nil {
+			return v, err
+		}
+		c.v, c.fetched = v, true
+	}
+	return c.v, nil
 }

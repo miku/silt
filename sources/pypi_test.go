@@ -151,9 +151,9 @@ func TestPyPIGoesThroughTheBrowserWhenWalled(t *testing.T) {
 		b := &fakeBrowser{dom: pypiHTML}
 		a := pypiFor(srv)
 		a.Browser = b
-		m, browsed, err := a.searchReportingBrowser(t.Context(), query())
-		if err != nil || !browsed || len(m) != 2 || m[0].Name != "requests" || !strings.HasPrefix(m[0].URL, srv.URL) {
-			t.Errorf("wall %d: Search = %+v, browsed %v, %v", wall.status, m, browsed, err)
+		m, how, err := a.searchDetour(t.Context(), query())
+		if err != nil || how != throughBrowser || len(m) != 2 || m[0].Name != "requests" || !strings.HasPrefix(m[0].URL, srv.URL) {
+			t.Errorf("wall %d: Search = %+v, detour %v, %v", wall.status, m, how, err)
 		}
 		if want := []string{srv.URL + "/search/?q=async+runtime"}; !slices.Equal(b.urls, want) {
 			t.Errorf("wall %d: the browser loaded %q, want %q", wall.status, b.urls, want)
@@ -169,8 +169,8 @@ func TestPyPIOnlyUsesTheBrowserForTheWall(t *testing.T) {
 		b := &fakeBrowser{dom: pypiHTML}
 		a := pypiFor(pypiServer(t, tt.status, tt.body))
 		a.Browser = b
-		_, browsed, err := a.searchReportingBrowser(t.Context(), query())
-		if browsed || len(b.urls) != 0 {
+		_, how, err := a.searchDetour(t.Context(), query())
+		if how != noDetour || len(b.urls) != 0 {
 			t.Errorf("%d: the browser was used for a page that isn't the wall", tt.status)
 		}
 		if tt.status >= 400 && !silt.IsRetryable(err) {
@@ -189,10 +189,10 @@ func TestPyPIStaysUnavailableWhenTheBrowserFails(t *testing.T) {
 	} {
 		a := pypiFor(pypiServer(t, 200, pypiChallenge))
 		a.Browser = b
-		m, browsed, err := a.searchReportingBrowser(t.Context(), query())
+		m, how, err := a.searchDetour(t.Context(), query())
 		var unavailable *silt.UnavailableError
-		if !errors.As(err, &unavailable) || browsed || m != nil {
-			t.Errorf("%s: Search = %+v, browsed %v, %v; want PyPI unavailable", name, m, browsed, err)
+		if !errors.As(err, &unavailable) || how != noDetour || m != nil {
+			t.Errorf("%s: Search = %+v, detour %v, %v; want PyPI unavailable", name, m, how, err)
 		}
 	}
 }
@@ -204,9 +204,9 @@ func TestPyPINoResultsIsAnEmptyResultWhateverTheSize(t *testing.T) {
 	}
 	a := pypiFor(pypiServer(t, 200, pypiChallenge))
 	a.Browser = &fakeBrowser{dom: pypiNoResults}
-	m, browsed, err := a.searchReportingBrowser(t.Context(), query())
-	if err != nil || !browsed || len(m) != 0 {
-		t.Errorf("browser: Search = %+v, browsed %v, %v", m, browsed, err)
+	m, how, err := a.searchDetour(t.Context(), query())
+	if err != nil || how != throughBrowser || len(m) != 0 {
+		t.Errorf("browser: Search = %+v, detour %v, %v", m, how, err)
 	}
 }
 

@@ -127,11 +127,11 @@ func TestLivePyPIThroughTheBrowser(t *testing.T) {
 	a.Browser = &browser.Browser{Path: path, ProfileDir: t.TempDir()}
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	m, browsed, err := a.searchReportingBrowser(ctx, model.Query{Idea: "http requests library for python", Keywords: []string{"requests"}})
+	m, how, err := a.searchDetour(ctx, model.Query{Idea: "http requests library for python", Keywords: []string{"requests"}})
 	if err != nil {
 		t.Fatalf("PyPI through %s: %v", path, err)
 	}
-	if !browsed {
+	if how != throughBrowser {
 		t.Log("PyPI answered the plain request; the browser wasn't needed")
 	}
 	assertLive(t, m, model.PyPI)

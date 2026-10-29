@@ -44,9 +44,12 @@ type Config struct {
 	// Browser, if not nil, fetches the search page of a source whose plain
 	// request was walled.
 	Browser sources.Browser
-	// Catalogs, if not nil, keeps Homebrew's downloaded catalogs on disk for
-	// its TTL.
+	// Catalogs, if not nil, keeps downloaded catalogs (Homebrew's, PyPI's
+	// project names) on disk for its TTL.
 	Catalogs *sources.CatalogCache
+	// PyPIIndex lets PyPI match the keywords against the names of all its
+	// projects when its search is walled and no Browser got through.
+	PyPIIndex bool
 	// Progress, if not nil, follows the download of the embedding model on
 	// the first run.
 	Progress rank.Progress
@@ -103,19 +106,41 @@ func sourceNames(ss []model.Source) string {
 	return strings.Join(names, ", ")
 }
 
+// rateLimitNote says that a source was not reached because of its rate
+// limit, until when, and how to get a higher one: "GitHub: rate-limited until
+// 21:22; set GITHUB_TOKEN for a higher limit". The time is rounded up to the
+// minute, so that it is never before the reset.
+func rateLimitNote(l sources.RateLimit) string {
+	note := l.Source.String() + ": rate-limited"
+	if !l.Reset.IsZero() {
+		reset := l.Reset.Local()
+		if reset.Second() > 0 || reset.Nanosecond() > 0 {
+			reset = reset.Add(time.Minute)
+		}
+		note += " until " + reset.Format("15:04")
+	}
+	if l.Hint != "" {
+		note += "; " + l.Hint
+	}
+	return note
+}
+
 // searcher is the fan-out's configuration in cfg.
 func (cfg Config) searcher() sources.Searcher {
-	return sources.Searcher{Cache: cfg.Cache, Browser: cfg.Browser, Catalogs: cfg.Catalogs}
+	return sources.Searcher{Cache: cfg.Cache, Browser: cfg.Browser, Catalogs: cfg.Catalogs, PyPIIndex: cfg.PyPIIndex}
 }
 
 // reachedNames names the sources out reached, saying which of them were
-// reached through the browser.
+// reached through the browser, or by matching names only.
 func reachedNames(out sources.Outcome) string {
 	names := make([]string, len(out.Reached))
 	for i, s := range out.Reached {
 		names[i] = s.String()
-		if slices.Contains(out.Browsed, s) {
+		switch {
+		case slices.Contains(out.Browsed, s):
 			names[i] += " (through CloakBrowser)"
+		case slices.Contains(out.ByName, s):
+			names[i] += " (names only)"
 		}
 	}
 	return strings.Join(names, ", ")
@@ -142,6 +167,9 @@ func Run(ctx context.Context, idea string, cfg Config, log func(string)) (Result
 		if len(out.Cached) > 0 && cfg.Cache != nil {
 			log(fmt.Sprintf("   from the local cache (less than %s old): %s",
 				ShortDuration(cfg.Cache.TTL), sourceNames(out.Cached)))
+		}
+		for _, l := range out.RateLimited {
+			log("   " + rateLimitNote(l))
 		}
 	}
 

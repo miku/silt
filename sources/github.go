@@ -6,7 +6,9 @@ import (
 	"encoding/hex"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/miku/silt"
 	"github.com/miku/silt/freshness"
@@ -72,12 +74,17 @@ func (a *GitHub) Search(ctx context.Context, q model.Query) ([]model.Match, erro
 	case http.StatusUnauthorized:
 		resp.Body.Close()
 		return nil, &silt.ParseError{Msg: "GitHub API returned 401 — check that GITHUB_TOKEN is valid"}
-	case http.StatusForbidden:
+	case http.StatusForbidden, http.StatusTooManyRequests:
+		// GitHub answers either for its primary and its secondary rate limits.
 		resp.Body.Close()
+		limited := &rateLimitError{reset: gitHubReset(resp.Header, time.Now())}
 		if a.Token != "" {
-			return nil, &silt.ParseError{Msg: "GitHub API rate limit exceeded even with token — try again later"}
+			limited.err = &silt.ParseError{Msg: "GitHub API rate limit exceeded even with token — try again later"}
+		} else {
+			limited.err = &silt.ParseError{Msg: "GitHub API rate limit exceeded — set GITHUB_TOKEN env var for higher limits"}
+			limited.hint = "set GITHUB_TOKEN for a higher limit"
 		}
-		return nil, &silt.ParseError{Msg: "GitHub API rate limit exceeded — set GITHUB_TOKEN env var for higher limits"}
+		return nil, limited
 	}
 	var body struct {
 		Items *[]struct {
@@ -116,4 +123,22 @@ func (a *GitHub) Search(ctx context.Context, q model.Query) ([]model.Match, erro
 		})
 	}
 	return matches, nil
+}
+
+// gitHubReset returns when GitHub's rate limit lifts: what Retry-After says,
+// which GitHub sends for its secondary limits, or else X-RateLimit-Reset (in
+// seconds since the epoch) once X-RateLimit-Remaining is 0. It is zero if
+// GitHub says neither.
+func gitHubReset(h http.Header, now time.Time) time.Time {
+	if t := retryAfter(h, now); !t.IsZero() {
+		return t
+	}
+	if h.Get("X-RateLimit-Remaining") != "0" {
+		return time.Time{}
+	}
+	secs, err := strconv.ParseInt(h.Get("X-RateLimit-Reset"), 10, 64)
+	if err != nil || secs <= 0 {
+		return time.Time{}
+	}
+	return time.Unix(secs, 0)
 }

@@ -52,7 +52,7 @@ Binaries for Linux, macOS and Windows are on the
 | `--sources LIST` | search only these sources, comma-separated, instead of picking them from the idea |
 | `--exclude LIST` | leave these sources out |
 | `--cache-ttl DURATION` | how long a source's results are reused for the same idea (default `1h`; `0` turns the cache off) |
-| `--catalog-ttl DURATION` | how long Homebrew's catalogs are kept after downloading them (default `24h`; `0` downloads them on every run) |
+| `--catalog-ttl DURATION` | how long downloaded catalogs (Homebrew's, PyPI's project names) are kept (default `24h`; `0` downloads them on every run) |
 | `--json` | print JSON instead of opening the TUI |
 | `--print-prompt` | print the verdict prompt, for your own agent, and exit |
 | `--list-sources` | list the source names and exit |
@@ -79,6 +79,12 @@ Ollama daemon that `OLLAMA_HOST` names, as for the `ollama` CLI, or from
 `localhost:11434` if it is unset. `GITHUB_TOKEN`, if set, lifts GitHub's
 rate limit, and `NO_COLOR` turns off colour in the TUI.
 
+When a source refuses a search because of its rate limit, silt tries again
+once the limit lifts, if that is within the 15 s each source gets. Otherwise
+the progress output says so, e.g. "GitHub: rate-limited until 21:39; set
+GITHUB_TOKEN for a higher limit". Without a token, GitHub allows 10
+searches a minute.
+
 Each source's results are kept for an hour in silt's cache directory
 (`~/.cache/silt/results` on Linux, `~/Library/Caches/silt/results` on macOS,
 `%LocalAppData%\silt\results` on Windows), so running the same idea again
@@ -90,9 +96,10 @@ answered. `--cache-ttl` or `SILT_CACHE_TTL` sets another duration, such as
 Homebrew has no search API, so silt downloads its whole catalog of formulae
 and casks (51 MB) and searches it locally. It keeps the parts it searches
 (under 2 MB) for a day in `catalogs` next to `results`, so the next ideas
-are searched without downloading it again. A failed download is never kept.
-`--catalog-ttl` or `SILT_CATALOG_TTL` sets another duration, such as `6h`
-or `168h`; `0` downloads the catalog on every run.
+are searched without downloading it again; the same goes for PyPI's list of
+project names (15 MB), when silt needs it (see below). A failed download is
+never kept. `--catalog-ttl` or `SILT_CATALOG_TTL` sets another duration,
+such as `6h` or `168h`; `0` downloads the catalogs on every run.
 
 ### PyPI and CloakBrowser
 
@@ -118,6 +125,14 @@ search, and the result is cached like any other. The progress line then says
 "PyPI (through CloakBrowser)". Through the browser PyPI no longer sees silt's
 User-Agent, but a browser's; PyPI's wall is deliberate. `SILT_BROWSER=off`
 turns the browser off.
+
+Without the browser, silt matches the idea's keywords against the names of
+all PyPI projects, from the index pip reads (downloaded at most once a day,
+like Homebrew's catalog), and fetches the descriptions of the 20 best from
+PyPI's JSON API. That finds less than PyPI's search, which also reads
+descriptions and knows what is popular, so the progress line says "PyPI
+(names only)". `SILT_PYPI_INDEX=off` turns it off, and PyPI is then not
+reached.
 
 ## TUI
 

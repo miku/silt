@@ -1,8 +1,9 @@
 # Reachability: plan
 
 2026-10-29. How silt could reach more of the sources it selects, and ask
-them less often. Steps 1–4 (the result cache, PyPI through CloakBrowser,
-Homebrew's catalogs kept for a day) are done; the rest is a plan.
+them less often. Steps 1–6 (the result cache, PyPI through CloakBrowser,
+Homebrew's catalogs kept for a day, rate limits, PyPI by name without a
+browser) are done; step 7 is a plan.
 
 ## Where coverage is lost today
 
@@ -137,8 +138,8 @@ only looks for it.
 | 2 | `internal/browser`: find the binary, `--dump-dom`, semaphore, profile, fake-binary tests | done |
 | 3 | PyPI through the browser after a wall; progress line names it | done |
 | 4 | Homebrew catalogs cached for a day (`--catalog-ttl`, `SILT_CATALOG_TTL`) | done |
-| 5 | Retry-After / rate-limit handling, Hackage concurrency cap | |
-| 6 | PyPI simple-index fallback when no browser is found | |
+| 5 | Retry-After / rate-limit handling, Hackage concurrency cap, retry jitter | done |
+| 6 | PyPI simple-index fallback when no browser is found | done |
 | 7 | stale-if-error, `--check-sources` | |
 
 ### Step 1, as built
@@ -226,3 +227,86 @@ only looks for it.
 - Live check, `--keyword-only --fast --cache-ttl 0 --sources homebrew`:
   1.7 s downloading; another idea 0.02 s from disk; the first idea again
   0.02 s with the same matches as the download; `--catalog-ttl 0` 1.7 s.
+
+### Step 5, as built
+
+- `rateLimitError` (in `sources`, unexported) wraps the error an adapter
+  reported before, so its kind and wording, and `IsRetryable`, are as they
+  were; it adds the reset and a hint. `checkStatus` makes every 429 one,
+  with the reset from `Retry-After` (seconds or an HTTP date). GitHub makes
+  its 403 and 429 one, with `Retry-After` (secondary limits) or else
+  `X-RateLimit-Reset` when `X-RateLimit-Remaining` is 0, and the hint "set
+  GITHUB_TOKEN for a higher limit" when it has no token.
+  `X-RateLimit-Reset` is read for GitHub only: elsewhere it is sometimes
+  seconds from now rather than an epoch.
+- `fanout.retryWait` decides the one retry. A known reset: wait for it if
+  that leaves `minRetryTime` (2 s) before the deadline (the earlier of the
+  15 s and the caller's), else no retry. A rate limit without a reset, and
+  any other retryable failure: retry after 800 ms give or take half
+  (400–1200 ms). Pure function of (err, now, deadline), tested without
+  sleeping.
+- `Outcome.RateLimited` ([]RateLimit: source, reset, hint, in Failed
+  order); the pipeline logs one line per source, the reset in local time
+  rounded up to the minute so it is never before the reset: "GitHub:
+  rate-limited until 21:39; set GITHUB_TOKEN for a higher limit". JSON
+  unchanged; the TUI's "Not reached" list unchanged.
+- Hackage: `maxCabalFetches` = 4 (a semaphore around the 20 fetches).
+  Live, three ideas: 0.9–1.1 s at 20 at once, 1.7–2.1 s at 4, the same
+  descriptions.
+- Tests can fail: dropping the reset branch fails `TestRetryWait`; raising
+  the cap to 20 fails the Hackage test (which checks 4, not the constant —
+  its first version compared against the constant and passed the mutation).
+- Live, GitHub without a token, limit used up: 0.3 s, "GitHub:
+  rate-limited until 21:39; set GITHUB_TOKEN …" (reset 21:38:53); before,
+  the 403 was retried after 800 ms. With the token, 49 matches.
+- Testing note: GitHub counted curl's and Go's requests from this machine
+  separately (curl at 0 remaining, Go's client at 9 in the same minute), so
+  the limit had to be used up with Go's client to test silt.
+
+### Step 6, as built
+
+- Checked first, with silt's User-Agent, no browser: `/simple/` as PEP 691
+  JSON is 200 (10 MB gzip, 45 MB, 926,592 projects, 1.7 s);
+  `/pypi/<name>/json` is 200 (requests 43 KB gzip; boto3 713 KB gzip, 3.3 MB,
+  for its list of releases), 404 for a name that isn't a project, and takes
+  display names as listed (`Simple-TOML-Configurator`, `zope.interface`)
+  without a redirect. There is no `/pypi/<name>/latest/json` (404), and the
+  per-version endpoint (3.4 KB for boto3) needs the version first.
+- Used only after the plain request is walled and no browser got through:
+  none, or one that failed. `PyPI.Index`, `Searcher.PyPIIndex`; the zero
+  Searcher leaves it off (patent has none); the CLI turns it on unless
+  `SILT_PYPI_INDEX=off`. The parity harness and the CLI tests set it off.
+- The index is a catalog: `<cache>/silt/catalogs/pypi-names.json` (15 MB,
+  names only), `--catalog-ttl`, and in memory for the process (the generic
+  `memCatalog`, now shared with Homebrew). No `If-None-Match`: the ETag had
+  changed after 40 minutes (800 serials later), so after a day it never
+  matches.
+- Matching (`matchPyPINames`), chosen by prototyping on the real index with
+  8 ideas: names split at `-_.`; a keyword matches a part equal to it (a
+  final "s" ignored on both) or, from 4 letters, a part it starts
+  ("port_killer"); each matched keyword counts its IDF over all names (not
+  below 0), each unmatched part counts -1; ties to the shorter name, then
+  in order. Generic words (python, library, package, tool, util, …) are
+  dropped first. Rejected on the prototype: exact parts only (missed
+  port_killer, file-renamer, markdown-pdf-converter); at least two keywords
+  (dropped one-word names); no generic-word list (python-library topped
+  the fuzzy idea; "whatever", in 9 names, ranked as the rarest keyword).
+- Description: the 20 best names, 4 at a time, from `/pypi/<name>/json`:
+  `info.summary`, and the latest `upload_time_iso_8601` of `urls` as
+  LastUpdated (a date the search path doesn't have). A 404 (no such
+  project, or one without releases) drops the name, so some ideas get
+  17–18 matches; another failure keeps it without a description. URL
+  `/project/<name>/`, as the search path.
+- `detour` (noDetour, throughBrowser, byName) replaces the browsed bool;
+  `Outcome.ByName`; the progress line says "PyPI (names only)".
+- Live, no browser, fresh cache, `--keyword-only --fast --sources pypi`:
+  first idea 3.1 s (index downloaded), then 1.1–1.6 s. kill-port →
+  port_killer ("It kills process by specify port number."),
+  kill-this-port, kill-process-tree; toml → toml-config, toml-file,
+  Simple-TOML-Configurator; markdown → markdown-pdf-converter,
+  markdown-pdf, markdown_convert. Weak for "fuzzy string matching"
+  (matchingsplit, matchingtools): "matching" is rarer among names than
+  "fuzzy". The ranker orders the 20 by description afterwards.
+- Peak RSS (`--keyword-only`, PyPI only): 22 MB without the index, 103 MB
+  reading it from disk, 171 MB downloading it (decoding 45 MB of JSON). A
+  text format on disk would roughly halve the disk case; not done.

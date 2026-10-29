@@ -25,10 +25,12 @@
 //	Go                     scraped from the rendered "published on" date
 //	JetBrains Marketplace  cdate (epoch millis, last-updated not creation)
 //	VS Code Marketplace    lastUpdated (needs flags: 914; a narrower flag set silently drops it)
+//	PyPI, by name only     upload_time_iso_8601 of the latest release's files (JSON API)
 //
 // Always nil because the date exists only behind a per-package request, which
 // the timeout does not buy: RubyGems, Docker Hub, NuGet, Packagist, Homebrew
-// and Nixpkgs. PyPI is bot-walled and returns nothing to parse.
+// and Nixpkgs. PyPI's search page shows no date; only the matches found by
+// name, whose description comes from the JSON API anyway, carry one.
 //
 // Two more sources publish a date that is not a last-updated date, and stay
 // nil on purpose. The field means "when the artifact itself last changed":
@@ -56,6 +58,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math/rand/v2"
 	"net/http"
 	"slices"
 	"strings"
@@ -276,10 +279,21 @@ type Browser interface {
 	DumpDOM(ctx context.Context, url string) (string, error)
 }
 
-// browsingAdapter is an adapter that can fall back to a [Browser]; its
-// search also says whether it did.
-type browsingAdapter interface {
-	searchReportingBrowser(ctx context.Context, q model.Query) (matches []model.Match, browsed bool, err error)
+// A detour is how a source was reached when its own search was walled off.
+type detour int
+
+const (
+	noDetour detour = iota
+	// throughBrowser: the search page, loaded in the [Browser].
+	throughBrowser
+	// byName: the keywords, matched against the names in the source's index.
+	byName
+)
+
+// detouringAdapter is an adapter that can reach its source another way when
+// its search is walled off; its search also says whether it did, and how.
+type detouringAdapter interface {
+	searchDetour(ctx context.Context, q model.Query) ([]model.Match, detour, error)
 }
 
 // newAdapter builds the adapter for id, against the live service, with
@@ -295,7 +309,7 @@ func (s Searcher) newAdapter(id model.Source, client *http.Client) Adapter {
 		return NewNpm(client)
 	case model.PyPI:
 		a := NewPyPI(client)
-		a.Browser = s.Browser
+		a.Browser, a.Index, a.Catalogs = s.Browser, s.PyPIIndex, s.Catalogs
 		return a
 	case model.HackerNews:
 		return NewHackerNews(client)
@@ -346,6 +360,23 @@ type Outcome struct {
 	// Browsed are the reached sources whose results came through the
 	// [Browser], after their plain request was walled, in the same order.
 	Browsed []model.Source
+	// ByName are the reached sources whose results came from matching the
+	// keywords against the names in their index, after their search was
+	// walled, in the same order.
+	ByName []model.Source
+	// RateLimited are the failed sources that refused the search because
+	// silt was over their rate limit, in the same order.
+	RateLimited []RateLimit
+}
+
+// A RateLimit is a source's refusal to search because silt was over its rate
+// limit.
+type RateLimit struct {
+	Source model.Source
+	// Reset is when the source said the limit lifts; zero if it didn't.
+	Reset time.Time
+	// Hint says how to get a higher limit, if there is a way.
+	Hint string
 }
 
 // SearchAll fans out to the sources detected for q. Individual source
@@ -388,8 +419,12 @@ type Searcher struct {
 	// request was walled. Only PyPI uses it.
 	Browser Browser
 	// Catalogs, if not nil, keeps the catalogs that a source downloads whole
-	// on disk. Only Homebrew downloads one.
+	// on disk: Homebrew's, and PyPI's index of project names.
 	Catalogs *CatalogCache
+	// PyPIIndex, if set, lets PyPI match the keywords against the names of
+	// all its projects when its search is walled and no Browser got
+	// through.
+	PyPIIndex bool
 }
 
 // SearchFiltered is the package's [SearchFiltered] with s's client, caches
@@ -440,13 +475,17 @@ type fanout struct {
 	// attempt, but prevents a single slow source from holding up the entire
 	// fan-out indefinitely.
 	timeout time.Duration
-	// retryDelay is the pause before the one retry of a transient failure.
+	// retryDelay is the pause before the one retry of a transient failure,
+	// give or take half of it.
 	retryDelay time.Duration
+	// minRetryTime is how much time a retry must have left before the
+	// deadline for a rate-limited search to wait for its reset.
+	minRetryTime time.Duration
 	// cache, if not nil, is asked before a source is searched.
 	cache *Cache
 }
 
-var defaultFanout = fanout{timeout: 15 * time.Second, retryDelay: 800 * time.Millisecond}
+var defaultFanout = fanout{timeout: 15 * time.Second, retryDelay: 800 * time.Millisecond, minRetryTime: 2 * time.Second}
 
 // SearchSources runs q against adapters concurrently and dedups the combined
 // results. A failing source is skipped, never fatal: it is reported in
@@ -461,8 +500,8 @@ type result struct {
 	err     error
 	// cached is set when the matches came from the cache.
 	cached bool
-	// browsed is set when the matches came through the browser.
-	browsed bool
+	// detour is how the matches were found, if not by the source's search.
+	detour detour
 }
 
 func (f fanout) search(ctx context.Context, adapters []Adapter, q model.Query) Outcome {
@@ -477,14 +516,21 @@ func (f fanout) search(ctx context.Context, adapters []Adapter, q model.Query) O
 	for i, r := range results {
 		if r.err != nil {
 			out.Failed = append(out.Failed, adapters[i].ID())
+			var limited *rateLimitError
+			if errors.As(r.err, &limited) {
+				out.RateLimited = append(out.RateLimited, RateLimit{Source: adapters[i].ID(), Reset: limited.reset, Hint: limited.hint})
+			}
 			continue
 		}
 		out.Reached = append(out.Reached, adapters[i].ID())
 		if r.cached {
 			out.Cached = append(out.Cached, adapters[i].ID())
 		}
-		if r.browsed {
+		switch r.detour {
+		case throughBrowser:
 			out.Browsed = append(out.Browsed, adapters[i].ID())
+		case byName:
+			out.ByName = append(out.ByName, adapters[i].ID())
 		}
 		all = append(all, r.matches...)
 	}
@@ -506,28 +552,29 @@ func (f fanout) searchOne(ctx context.Context, a Adapter, q model.Query) result 
 }
 
 // searchLive searches a single source within the fan-out's timeout, retrying
-// a retryable failure once.
+// a retryable failure once, as retryWait says.
 func (f fanout) searchLive(ctx context.Context, a Adapter, q model.Query) result {
 	ctx, cancel := context.WithTimeout(ctx, f.timeout)
 	defer cancel()
-	search := func() ([]model.Match, bool, error) {
+	deadline, _ := ctx.Deadline()
+	search := func() ([]model.Match, detour, error) {
 		matches, err := a.Search(ctx, q)
-		return matches, false, err
+		return matches, noDetour, err
 	}
-	if b, ok := a.(browsingAdapter); ok {
-		search = func() ([]model.Match, bool, error) { return b.searchReportingBrowser(ctx, q) }
+	if d, ok := a.(detouringAdapter); ok {
+		search = func() ([]model.Match, detour, error) { return d.searchDetour(ctx, q) }
 	}
 	ch := make(chan result, 1) // buffered: an adapter that ignores ctx must not leak
 	go func() {
-		matches, browsed, err := search()
-		if err != nil && silt.IsRetryable(err) {
+		matches, how, err := search()
+		if wait, ok := f.retryWait(err, time.Now(), deadline); ok {
 			select {
-			case <-time.After(f.retryDelay):
-				matches, browsed, err = search()
+			case <-time.After(wait):
+				matches, how, err = search()
 			case <-ctx.Done():
 			}
 		}
-		ch <- result{matches: matches, err: err, browsed: browsed}
+		ch <- result{matches: matches, err: err, detour: how}
 	}()
 	select {
 	case r := <-ch:
@@ -543,6 +590,27 @@ func (f fanout) searchLive(ctx context.Context, a Adapter, q model.Query) result
 		}
 		return result{err: ctx.Err()}
 	}
+}
+
+// retryWait says whether a search that failed with err is tried again, and
+// after how long. A rate-limited search whose source said when the limit
+// lifts is tried again then, if that leaves the retry minRetryTime before the
+// deadline; otherwise not, since it would be refused again. Any other
+// retryable failure is tried again after retryDelay, give or take half of it,
+// so that retries from several runs don't arrive together.
+func (f fanout) retryWait(err error, now, deadline time.Time) (time.Duration, bool) {
+	if err == nil || !silt.IsRetryable(err) {
+		return 0, false
+	}
+	var limited *rateLimitError
+	if errors.As(err, &limited) && !limited.reset.IsZero() {
+		wait := max(limited.reset.Sub(now), 0)
+		return wait, !now.Add(wait + f.minRetryTime).After(deadline)
+	}
+	if f.retryDelay <= 0 {
+		return 0, true
+	}
+	return f.retryDelay/2 + rand.N(f.retryDelay), true
 }
 
 // Dedup removes duplicate matches by URL, keeping the first occurrence and

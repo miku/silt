@@ -186,8 +186,9 @@ func execute(ctx context.Context, bin string, args []string, idea string) run {
 	// Both tools must ask the registries at the same moment, and the same
 	// way: silt's result cache would answer a rerun from an earlier one, its
 	// catalog cache would search a Homebrew catalog up to a day old, and its
-	// browser would reach PyPI, which patent can't. patent ignores all three.
-	cmd.Env = append(os.Environ(), "SILT_CACHE_TTL=0", "SILT_CATALOG_TTL=0", "SILT_BROWSER=off")
+	// browser and its PyPI index would reach PyPI, which patent can't.
+	// patent ignores all four.
+	cmd.Env = append(os.Environ(), "SILT_CACHE_TTL=0", "SILT_CATALOG_TTL=0", "SILT_BROWSER=off", "SILT_PYPI_INDEX=off")
 	cmd.Stdout, cmd.Stderr = &stdout, &stderr
 	r := run{}
 	// The exit code is the verdict level, so a non-zero one is no failure.

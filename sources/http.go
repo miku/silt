@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -110,15 +111,50 @@ func decodeJSON(resp *http.Response, v any) error {
 }
 
 // checkStatus turns a non-2xx response into an HTTPError, which is
-// retryable.
+// retryable. A 429 is also a rateLimitError, with the reset its Retry-After
+// header names.
 func checkStatus(resp *http.Response) error {
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 		return nil
 	}
-	return &silt.HTTPError{
+	err := &silt.HTTPError{
 		StatusCode: resp.StatusCode,
 		Err:        fmt.Errorf("HTTP status %s for url (%s)", resp.Status, resp.Request.URL),
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		return &rateLimitError{err: err, reset: retryAfter(resp.Header, time.Now())}
+	}
+	return err
+}
+
+// rateLimitError is a search the source refused because silt was over its
+// rate limit. It wraps the error the adapter reports, whose kind and wording
+// stay as they were.
+type rateLimitError struct {
+	err error
+	// reset is when the source said the limit lifts; zero if it didn't.
+	reset time.Time
+	// hint says how to get a higher limit, if there is a way.
+	hint string
+}
+
+func (e *rateLimitError) Error() string { return e.err.Error() }
+func (e *rateLimitError) Unwrap() error { return e.err }
+
+// retryAfter returns the time h's Retry-After header names, as a number of
+// seconds from now or as an HTTP date, or zero if it has none that parses.
+func retryAfter(h http.Header, now time.Time) time.Time {
+	v := strings.TrimSpace(h.Get("Retry-After"))
+	if v == "" {
+		return time.Time{}
+	}
+	if secs, err := strconv.ParseUint(v, 10, 32); err == nil {
+		return now.Add(time.Duration(secs) * time.Second)
+	}
+	if t, err := http.ParseTime(v); err == nil {
+		return t
+	}
+	return time.Time{}
 }
 
 // get sends a GET request for rawURL with params.
