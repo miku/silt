@@ -2,6 +2,7 @@ package sources
 
 import (
 	"context"
+	"errors"
 	"io"
 	"net/http"
 	"os"
@@ -223,5 +224,92 @@ func TestSearcherAnswersARepeatedSearchFromItsCache(t *testing.T) {
 	}
 	if !reflect.DeepEqual(second.Cached, include) || !reflect.DeepEqual(second.Matches, first.Matches) {
 		t.Errorf("second search: cached %v, matches %+v", second.Cached, second.Matches)
+	}
+}
+
+// staleCache is a cache with a 1 h TTL and a day of stale-if-error, holding
+// matches for src and q, written age ago.
+func staleCache(t *testing.T, src Adapter, age time.Duration) *Cache {
+	t.Helper()
+	c := &Cache{Dir: filepath.Join(t.TempDir(), "results"), TTL: time.Hour, StaleIfError: 24 * time.Hour}
+	c.put(src, cacheQuery, []model.Match{{Name: "old-match", Source: src.ID(), URL: "https://x/old"}})
+	when := time.Now().Add(-age)
+	if err := os.Chtimes(c.path(src, cacheQuery), when, when); err != nil {
+		t.Fatal(err)
+	}
+	return c
+}
+
+func TestAnOlderResultStandsInForAFailedSearch(t *testing.T) {
+	src := &countingSource{err: &silt.HTTPError{StatusCode: 503, Err: errors.New("down")}}
+	out := cachedFanout(staleCache(t, src, 5*time.Hour)).search(t.Context(), []Adapter{src}, cacheQuery)
+	if n := src.calls.Load(); n != 2 {
+		t.Errorf("searched %d times; the entry is past its TTL, so the source must be searched (and retried)", n)
+	}
+	if len(out.Failed) != 0 || !reflect.DeepEqual(out.Reached, []model.Source{model.PyPI}) || len(out.Cached) != 0 ||
+		len(out.Matches) != 1 || out.Matches[0].Name != "old-match" {
+		t.Fatalf("failed %v, reached %v, cached %v, matches %+v", out.Failed, out.Reached, out.Cached, out.Matches)
+	}
+	if len(out.Stale) != 1 || out.Stale[0].Source != model.PyPI || out.Stale[0].Age < 5*time.Hour || out.Stale[0].Age > 5*time.Hour+time.Minute {
+		t.Errorf("stale %+v; want PyPI, 5h old", out.Stale)
+	}
+}
+
+func TestAnOlderResultIsNotUsedPastStaleIfError(t *testing.T) {
+	src := &countingSource{err: &silt.UnavailableError{Msg: "walled"}}
+	for _, c := range []*Cache{
+		staleCache(t, src, 25*time.Hour),
+		func() *Cache { c := staleCache(t, src, 5*time.Hour); c.StaleIfError = 0; return c }(),
+	} {
+		out := cachedFanout(c).search(t.Context(), []Adapter{src}, cacheQuery)
+		if !reflect.DeepEqual(out.Failed, []model.Source{model.PyPI}) || len(out.Stale) != 0 || len(out.Matches) != 0 {
+			t.Errorf("StaleIfError %v: failed %v, stale %v", c.StaleIfError, out.Failed, out.Stale)
+		}
+	}
+}
+
+func TestAnOlderResultNeverReplacesASuccess(t *testing.T) {
+	src := &staticSource{id: model.PyPI, matches: []model.Match{{Name: "new-match", Source: model.PyPI, URL: "https://x/new"}}}
+	c := staleCache(t, src, 5*time.Hour)
+	out := cachedFanout(c).search(t.Context(), []Adapter{src}, cacheQuery)
+	if len(out.Stale) != 0 || len(out.Matches) != 1 || out.Matches[0].Name != "new-match" {
+		t.Errorf("stale %v, matches %+v", out.Stale, out.Matches)
+	}
+	if fi, err := os.Stat(c.path(src, cacheQuery)); err != nil || time.Since(fi.ModTime()) > time.Minute {
+		t.Errorf("the success should have replaced the old entry: %v", err)
+	}
+}
+
+func TestACancelledSearchUsesNoOlderResult(t *testing.T) {
+	src := &countingSource{err: context.Canceled}
+	out := cachedFanout(staleCache(t, src, 5*time.Hour)).search(t.Context(), []Adapter{src}, cacheQuery)
+	if len(out.Stale) != 0 || len(out.Failed) != 1 {
+		t.Errorf("stale %v, failed %v", out.Stale, out.Failed)
+	}
+}
+
+func TestARateLimitedSourceCanStandInAndStillSaysSo(t *testing.T) {
+	src := &countingSource{err: &rateLimitError{err: &silt.ParseError{Msg: "limited"}, reset: time.Now().Add(time.Hour), hint: "set a token"}}
+	out := cachedFanout(staleCache(t, src, 3*time.Hour)).search(t.Context(), []Adapter{src}, cacheQuery)
+	if len(out.Stale) != 1 || len(out.RateLimited) != 1 || out.RateLimited[0].Hint != "set a token" || len(out.Failed) != 0 {
+		t.Errorf("stale %v, rate-limited %v, failed %v", out.Stale, out.RateLimited, out.Failed)
+	}
+}
+
+func TestPruneKeepsEntriesForStaleIfError(t *testing.T) {
+	src := &staticSource{id: model.Npm}
+	other := &staticSource{id: model.Go}
+	c := staleCache(t, src, 5*time.Hour)
+	c.put(other, cacheQuery, nil)
+	old := time.Now().Add(-25 * time.Hour)
+	if err := os.Chtimes(c.path(other, cacheQuery), old, old); err != nil {
+		t.Fatal(err)
+	}
+	c.prune()
+	if _, err := os.Stat(c.path(src, cacheQuery)); err != nil {
+		t.Errorf("a 5h-old entry was pruned, but can still stand in: %v", err)
+	}
+	if _, err := os.Stat(c.path(other, cacheQuery)); err == nil {
+		t.Error("a 25h-old entry was kept")
 	}
 }

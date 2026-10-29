@@ -1,9 +1,9 @@
 # Reachability: plan
 
 2026-10-29. How silt could reach more of the sources it selects, and ask
-them less often. Steps 1–6 (the result cache, PyPI through CloakBrowser,
-Homebrew's catalogs kept for a day, rate limits, PyPI by name without a
-browser) are done; step 7 is a plan.
+them less often. All seven steps are done: the result cache, PyPI through
+CloakBrowser, Homebrew's catalogs kept for a day, rate limits, PyPI by name
+without a browser, stale-if-error and `--check-sources`.
 
 ## Where coverage is lost today
 
@@ -140,7 +140,7 @@ only looks for it.
 | 4 | Homebrew catalogs cached for a day (`--catalog-ttl`, `SILT_CATALOG_TTL`) | done |
 | 5 | Retry-After / rate-limit handling, Hackage concurrency cap, retry jitter | done |
 | 6 | PyPI simple-index fallback when no browser is found | done |
-| 7 | stale-if-error, `--check-sources` | |
+| 7 | stale-if-error, `--check-sources` | done |
 
 ### Step 1, as built
 
@@ -310,3 +310,40 @@ only looks for it.
 - Peak RSS (`--keyword-only`, PyPI only): 22 MB without the index, 103 MB
   reading it from disk, 171 MB downloading it (decoding 45 MB of JSON). A
   text format on disk would roughly halve the disk case; not done.
+
+### Step 7, as built
+
+- Stale-if-error: `Cache.StaleIfError` (the CLI sets
+  `DefaultStaleIfError`, 24 h; no flag). Prune keeps entries for
+  max(TTL, StaleIfError). After a live search fails (retry included), an
+  entry younger than StaleIfError stands in, unless the search was
+  cancelled. The source then counts as reached (its matches are in, and
+  the verdict's sources_checked lists it, as for a fresh cache hit), and
+  `Outcome.Stale` lists it with the age; the progress line says "not
+  reached now, from the local cache instead: crates.io (3h old)". A
+  rate-limited source that stands in still gets its rate-limit line, so
+  `Outcome.RateLimited` is now in adapter order, failed or stale. The JSON
+  output is unchanged. `--cache-ttl 0` writes no entries, so nothing
+  stands in, as in the parity harness.
+- `--check-sources`: `Searcher.Check` searches each source once for
+  `CheckQuery` ("json", which every source has packages for), all at once,
+  with the normal retry, browser and PyPI index, but with no result cache,
+  no catalogs on disk, and fresh in-memory catalogs (a first version
+  reused the process's, which the tests caught as a leak between tests).
+  Each source is reached / through CloakBrowser / by names only / walled /
+  rate-limited (with `RateLimit.String`, moved from the pipeline) / timed
+  out / failed, with the time. Timeouts are told from other failures by
+  `timeoutError`, which wraps patent's "X timed out" error. Printed to
+  stdout; exit 0 whatever the result, since 1 and 2 are verdict levels.
+  `--sources` and `--exclude` choose the sources; nil means all 19.
+- Tests can fail: dropping the cancellation guard, or pruning at TTL
+  rather than max(TTL, StaleIfError), each fails its test.
+- Live, `--check-sources`: 19 of 19 reached in 3.4 s (PyPI through
+  CloakBrowser, 3.4 s; Hackage 1.7 s; GitHub 2.4 s); with
+  `SILT_BROWSER=off`, PyPI by names only (2.8 s). No result or catalog
+  files written.
+- Live, stale: one search with the cache on; entries backdated 3 h; the
+  same search with `HTTPS_PROXY` pointing at a closed port, so every
+  request fails: "40 matches from 2 sources … not reached now, from the
+  local cache instead: crates.io (3h old), npm (3h old)". Backdated 25 h:
+  not used, and pruned. With the network back: fresh results, new entries.

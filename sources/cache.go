@@ -34,6 +34,10 @@ const cacheVersion = 1
 // cached result is always one the source actually returned. A genuinely empty
 // result is a success and is kept.
 //
+// A source that fails now can be answered with an older entry instead, up to
+// StaleIfError after it was written (RFC 5861's stale-if-error). That entry
+// is reported as such, never as a fresh search.
+//
 // The cache is best effort: an entry that can't be read is a miss, and one
 // that can't be written is skipped. A nil *Cache, or one with a TTL of zero or
 // less, caches nothing.
@@ -42,7 +46,16 @@ type Cache struct {
 	Dir string
 	// TTL is how long an entry is used after it was written.
 	TTL time.Duration
+	// StaleIfError is how long after it was written an entry can still
+	// stand in for a source whose search fails; entries are kept that long.
+	// Zero or less, or no more than TTL, adds nothing to TTL.
+	StaleIfError time.Duration
 }
+
+// DefaultStaleIfError is how old a result may be to stand in for a source
+// that fails, unless the caller says otherwise: a day-old result says more
+// about prior art than none.
+const DefaultStaleIfError = 24 * time.Hour
 
 // DefaultCacheDir is where silt keeps search results:
 // <UserCacheDir>/silt/results, next to the embedding model.
@@ -95,21 +108,44 @@ func (c *Cache) get(a Adapter, q model.Query) ([]model.Match, bool) {
 	if !c.enabled() {
 		return nil, false
 	}
+	matches, _, ok := c.read(a, q, c.TTL)
+	return matches, ok
+}
+
+// stale returns a's cached results for q, and their age, if there is an
+// entry younger than StaleIfError, to stand in for a search that failed.
+func (c *Cache) stale(a Adapter, q model.Query) ([]model.Match, time.Duration, bool) {
+	if !c.enabled() {
+		return nil, 0, false
+	}
+	return c.read(a, q, c.StaleIfError)
+}
+
+// keep is how long entries are kept: the longer of TTL and StaleIfError.
+func (c *Cache) keep() time.Duration { return max(c.TTL, c.StaleIfError) }
+
+// read returns a's cached results for q, and their age, if there is an entry
+// younger than maxAge. c must be enabled.
+func (c *Cache) read(a Adapter, q model.Query, maxAge time.Duration) ([]model.Match, time.Duration, bool) {
 	path := c.path(a, q)
 	fi, err := os.Stat(path)
-	if err != nil || time.Since(fi.ModTime()) >= c.TTL {
-		return nil, false
+	if err != nil {
+		return nil, 0, false
+	}
+	age := time.Since(fi.ModTime())
+	if age >= maxAge {
+		return nil, 0, false
 	}
 	b, err := os.ReadFile(path)
 	if err != nil {
-		return nil, false
+		return nil, 0, false
 	}
 	var e cacheEntry
 	if json.Unmarshal(b, &e) != nil || e.Version != cacheVersion || e.Source != a.ID() ||
 		e.Idea != q.Idea || !slices.Equal(e.Keywords, q.Keywords) {
-		return nil, false
+		return nil, 0, false
 	}
-	return e.Matches, true
+	return e.Matches, age, true
 }
 
 // put keeps matches as a's results for q.
@@ -150,8 +186,9 @@ func writeAtomic(path string, b []byte) error {
 	return err
 }
 
-// prune removes the entries older than TTL, and temporary files a crashed
-// run left behind, so that the directory doesn't grow without bound.
+// prune removes the entries older than TTL and StaleIfError, and temporary
+// files a crashed run left behind, so that the directory doesn't grow
+// without bound.
 func (c *Cache) prune() {
 	if !c.enabled() {
 		return
@@ -165,7 +202,7 @@ func (c *Cache) prune() {
 		if !e.Type().IsRegular() || !strings.HasSuffix(name, ".json") && !strings.HasSuffix(name, ".tmp") {
 			continue
 		}
-		if fi, err := e.Info(); err == nil && time.Since(fi.ModTime()) >= c.TTL {
+		if fi, err := e.Info(); err == nil && time.Since(fi.ModTime()) >= c.keep() {
 			_ = os.Remove(filepath.Join(c.Dir, name))
 		}
 	}

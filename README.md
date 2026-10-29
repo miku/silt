@@ -56,6 +56,7 @@ Binaries for Linux, macOS and Windows are on the
 | `--json` | print JSON instead of opening the TUI |
 | `--print-prompt` | print the verdict prompt, for your own agent, and exit |
 | `--list-sources` | list the source names and exit |
+| `--check-sources` | search each source once, without the caches, print whether it was reached and how long it took, and exit |
 | `--completions SHELL` | print completions for bash, fish, powershell or zsh |
 | `-V`, `--version` | print the version |
 | `-h`, `--help` | print the help |
@@ -92,6 +93,17 @@ doesn't send the same requests to the registries again. A source that failed
 is never cached, and the progress lines say which sources the cache
 answered. `--cache-ttl` or `SILT_CACHE_TTL` sets another duration, such as
 `10m` or `24h`; `0` turns the cache off.
+
+Results are kept for a day, though, and when a source fails, its result
+for the same idea from within the last day stands in, labelled: "not
+reached now, from the local cache instead: crates.io (3h old)".
+
+`silt --check-sources` searches each source once for "json", without the
+caches, and prints whether it was reached (directly, through CloakBrowser,
+or by names only), walled, rate-limited, timed out or failed, and how long
+it took: useful to see whether a network is walled before trusting a
+verdict. It downloads Homebrew's catalogs, and PyPI's names if PyPI needs
+them.
 
 Homebrew has no search API, so silt downloads its whole catalog of formulae
 and casks (51 MB) and searches it locally. It keeps the parts it searches

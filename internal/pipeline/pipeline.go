@@ -106,25 +106,6 @@ func sourceNames(ss []model.Source) string {
 	return strings.Join(names, ", ")
 }
 
-// rateLimitNote says that a source was not reached because of its rate
-// limit, until when, and how to get a higher one: "GitHub: rate-limited until
-// 21:22; set GITHUB_TOKEN for a higher limit". The time is rounded up to the
-// minute, so that it is never before the reset.
-func rateLimitNote(l sources.RateLimit) string {
-	note := l.Source.String() + ": rate-limited"
-	if !l.Reset.IsZero() {
-		reset := l.Reset.Local()
-		if reset.Second() > 0 || reset.Nanosecond() > 0 {
-			reset = reset.Add(time.Minute)
-		}
-		note += " until " + reset.Format("15:04")
-	}
-	if l.Hint != "" {
-		note += "; " + l.Hint
-	}
-	return note
-}
-
 // searcher is the fan-out's configuration in cfg.
 func (cfg Config) searcher() sources.Searcher {
 	return sources.Searcher{Cache: cfg.Cache, Browser: cfg.Browser, Catalogs: cfg.Catalogs, PyPIIndex: cfg.PyPIIndex}
@@ -169,7 +150,14 @@ func Run(ctx context.Context, idea string, cfg Config, log func(string)) (Result
 				ShortDuration(cfg.Cache.TTL), sourceNames(out.Cached)))
 		}
 		for _, l := range out.RateLimited {
-			log("   " + rateLimitNote(l))
+			log("   " + l.Source.String() + ": " + l.String())
+		}
+		if len(out.Stale) > 0 {
+			names := make([]string, len(out.Stale))
+			for i, st := range out.Stale {
+				names[i] = fmt.Sprintf("%s (%s old)", st.Source, ShortDuration(max(st.Age.Truncate(time.Minute), time.Minute)))
+			}
+			log("   not reached now, from the local cache instead: " + strings.Join(names, ", "))
 		}
 	}
 

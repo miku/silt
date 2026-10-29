@@ -495,15 +495,21 @@ func TestRunSaysWhichSourcesWereRateLimited(t *testing.T) {
 	}
 }
 
-func TestRateLimitNoteRoundsTheResetUp(t *testing.T) {
-	for reset, want := range map[time.Time]string{
-		time.Date(2026, 10, 29, 21, 21, 0, 0, time.Local):     "npm: rate-limited until 21:21",
-		time.Date(2026, 10, 29, 21, 21, 0, 1, time.Local):     "npm: rate-limited until 21:22",
-		time.Date(2026, 10, 29, 23, 59, 30, 0, time.Local):    "npm: rate-limited until 00:00",
-		time.Date(2026, 10, 29, 9, 5, 0, 0, time.Local).UTC(): "npm: rate-limited until 09:05",
-	} {
-		if got := rateLimitNote(sources.RateLimit{Source: model.Npm, Reset: reset}); got != want {
-			t.Errorf("%v: %q, want %q", reset, got, want)
-		}
+func TestRunSaysWhichSourcesStoodInFromTheCache(t *testing.T) {
+	fakeSearch(t, sources.Outcome{
+		Matches: []model.Match{match("kill-port", "kill the process on a port")},
+		Reached: []model.Source{model.Npm, model.CratesIO, model.GitHub},
+		Stale: []sources.StaleResult{
+			{Source: model.CratesIO, Age: 5*time.Hour + 12*time.Minute + 30*time.Second},
+			{Source: model.GitHub, Age: 20 * time.Second},
+		},
+	})
+	var logs []string
+	if _, err := Run(context.Background(), "kill process port", Config{Fast: true, KeywordOnly: true, Limit: 50},
+		func(s string) { logs = append(logs, s) }); err != nil {
+		t.Fatal(err)
+	}
+	if want := "   not reached now, from the local cache instead: crates.io (5h12m old), GitHub (1m old)"; len(logs) < 2 || logs[1] != want {
+		t.Errorf("logs = %q, want %q second", logs, want)
 	}
 }

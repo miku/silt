@@ -77,7 +77,8 @@ type flags struct {
 	limit                          limitValue
 	model, apiBase, apiKey         string
 	keywordOnly, fast, printPrompt bool
-	listSources, json              bool
+	listSources, checkSources      bool
+	json                           bool
 	sources, exclude               listValue
 	cacheTTL, catalogTTL           ttlValue
 	completions                    string
@@ -144,6 +145,7 @@ func (f *flags) register(cmd *cobra.Command) {
 	fs.Var(&f.catalogTTL, "catalog-ttl", "How long downloaded catalogs (Homebrew's, PyPI's project names) are kept,\ne.g. 6h or 168h; 0 downloads them on every run. Can also be set via\nSILT_CATALOG_TTL")
 	fs.BoolVar(&f.printPrompt, "print-prompt", false, "Print the verdict prompt to stdout and exit (for BYO-agent workflows)")
 	fs.BoolVar(&f.listSources, "list-sources", false, "List all available source names and exit")
+	fs.BoolVar(&f.checkSources, "check-sources", false, "Search each source once, without the caches, print whether it was reached,\nwalled, rate-limited or timed out, and how long it took, and exit.\n--sources and --exclude choose the sources")
 	fs.BoolVar(&f.json, "json", false, "Print structured JSON instead of launching the TUI")
 	fs.StringVar(&f.completions, "completions", "", "Generate shell completions and exit ("+strings.Join(shells, ", ")+")")
 	fs.BoolP("help", "h", false, "Print help")
@@ -324,7 +326,7 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 	if ttl > 0 {
 		// Without a cache directory (no home directory), search uncached.
 		if dir, err := sources.DefaultCacheDir(); err == nil {
-			pcfg.Cache = &sources.Cache{Dir: dir, TTL: ttl}
+			pcfg.Cache = &sources.Cache{Dir: dir, TTL: ttl, StaleIfError: sources.DefaultStaleIfError}
 		}
 	}
 	if catalogTTL > 0 {
@@ -342,6 +344,10 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 		if dir, err := browser.DefaultProfileDir(); err == nil {
 			pcfg.Browser = &browser.Browser{Path: browserPath, ProfileDir: dir}
 		}
+	}
+	if f.checkSources {
+		checkSources(ctx, pcfg, stdout)
+		return 0, nil
 	}
 	tuiOpts := tui.Options{Search: searcher(pcfg), Backend: backendNote(b, pcfg.Fast)}
 

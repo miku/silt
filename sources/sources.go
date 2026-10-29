@@ -364,9 +364,21 @@ type Outcome struct {
 	// keywords against the names in their index, after their search was
 	// walled, in the same order.
 	ByName []model.Source
-	// RateLimited are the failed sources that refused the search because
-	// silt was over their rate limit, in the same order.
+	// Stale are the reached sources whose search failed now, and whose
+	// results are older ones from the [Cache] (its StaleIfError), in the same
+	// order.
+	Stale []StaleResult
+	// RateLimited are the sources that refused the search because silt was
+	// over their rate limit, failed or stale, in adapter order.
 	RateLimited []RateLimit
+}
+
+// A StaleResult is a source's older result from the [Cache], standing in for
+// a search that failed.
+type StaleResult struct {
+	Source model.Source
+	// Age is how long ago the result was found.
+	Age time.Duration
 }
 
 // A RateLimit is a source's refusal to search because silt was over its rate
@@ -377,6 +389,24 @@ type RateLimit struct {
 	Reset time.Time
 	// Hint says how to get a higher limit, if there is a way.
 	Hint string
+}
+
+// String says when the limit lifts and how to get a higher one, if known:
+// "rate-limited until 21:22; set GITHUB_TOKEN for a higher limit". The time,
+// local, is rounded up to the minute, so that it is never before the reset.
+func (l RateLimit) String() string {
+	s := "rate-limited"
+	if !l.Reset.IsZero() {
+		reset := l.Reset.Local()
+		if reset.Second() > 0 || reset.Nanosecond() > 0 {
+			reset = reset.Add(time.Minute)
+		}
+		s += " until " + reset.Format("15:04")
+	}
+	if l.Hint != "" {
+		s += "; " + l.Hint
+	}
+	return s
 }
 
 // SearchAll fans out to the sources detected for q. Individual source
@@ -497,9 +527,14 @@ func SearchSources(ctx context.Context, adapters []Adapter, q model.Query) Outco
 
 type result struct {
 	matches []model.Match
-	err     error
-	// cached is set when the matches came from the cache.
+	// err is why the search failed, if it did.
+	err error
+	// cached is set when the matches came from the cache, without a search.
 	cached bool
+	// stale is set when the search failed and the matches are an older
+	// result from the cache, found age ago.
+	stale bool
+	age   time.Duration
 	// detour is how the matches were found, if not by the source's search.
 	detour detour
 }
@@ -514,17 +549,20 @@ func (f fanout) search(ctx context.Context, adapters []Adapter, q model.Query) O
 	out := Outcome{Reached: []model.Source{}, Failed: []model.Source{}}
 	var all []model.Match
 	for i, r := range results {
-		if r.err != nil {
+		var limited *rateLimitError
+		if errors.As(r.err, &limited) {
+			out.RateLimited = append(out.RateLimited, RateLimit{Source: adapters[i].ID(), Reset: limited.reset, Hint: limited.hint})
+		}
+		if r.err != nil && !r.stale {
 			out.Failed = append(out.Failed, adapters[i].ID())
-			var limited *rateLimitError
-			if errors.As(r.err, &limited) {
-				out.RateLimited = append(out.RateLimited, RateLimit{Source: adapters[i].ID(), Reset: limited.reset, Hint: limited.hint})
-			}
 			continue
 		}
 		out.Reached = append(out.Reached, adapters[i].ID())
 		if r.cached {
 			out.Cached = append(out.Cached, adapters[i].ID())
+		}
+		if r.stale {
+			out.Stale = append(out.Stale, StaleResult{Source: adapters[i].ID(), Age: r.age})
 		}
 		switch r.detour {
 		case throughBrowser:
@@ -539,7 +577,8 @@ func (f fanout) search(ctx context.Context, adapters []Adapter, q model.Query) O
 }
 
 // searchOne answers a single source's search from the cache, or else
-// searches it and caches a success.
+// searches it and caches a success. A search that failed is answered with an
+// older result from the cache, if there is one, unless it was cancelled.
 func (f fanout) searchOne(ctx context.Context, a Adapter, q model.Query) result {
 	if matches, ok := f.cache.get(a, q); ok {
 		return result{matches: matches, cached: true}
@@ -547,6 +586,12 @@ func (f fanout) searchOne(ctx context.Context, a Adapter, q model.Query) result 
 	r := f.searchLive(ctx, a, q)
 	if r.err == nil {
 		f.cache.put(a, q, r.matches)
+		return r
+	}
+	if !errors.Is(r.err, context.Canceled) {
+		if matches, age, ok := f.cache.stale(a, q); ok {
+			r.matches, r.stale, r.age = matches, true, age
+		}
 	}
 	return r
 }
@@ -586,11 +631,18 @@ func (f fanout) searchLive(ctx context.Context, a Adapter, q model.Query) result
 		default:
 		}
 		if errors.Is(ctx.Err(), context.DeadlineExceeded) {
-			return result{err: &silt.ParseError{Msg: fmt.Sprintf("%s timed out", a.ID())}}
+			return result{err: &timeoutError{&silt.ParseError{Msg: fmt.Sprintf("%s timed out", a.ID())}}}
 		}
 		return result{err: ctx.Err()}
 	}
 }
+
+// timeoutError is a search cut off at the fan-out's deadline. It wraps the
+// error patent reports for it.
+type timeoutError struct{ err error }
+
+func (e *timeoutError) Error() string { return e.err.Error() }
+func (e *timeoutError) Unwrap() error { return e.err }
 
 // retryWait says whether a search that failed with err is tried again, and
 // after how long. A rate-limited search whose source said when the limit

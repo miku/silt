@@ -32,6 +32,10 @@ Where silt differs from patent:
   doesn't send the same requests again (`--cache-ttl`, `SILT_CACHE_TTL`; `0`
   turns it off). Failed searches are never cached. patent sends every
   request on every run.
+- When a source fails, its result for the same idea from the last day
+  stands in, labelled as such (`--cache-ttl 0` turns this off with the
+  cache). `--check-sources` searches each source once and prints whether
+  it was reached, and how long it took.
 - Homebrew's catalogs (51 MB) are downloaded once a day rather than on
   every run that searches Homebrew; silt keeps the 2 MB it searches
   (`--catalog-ttl`, `SILT_CATALOG_TTL`; `0` downloads them every run).

@@ -273,3 +273,20 @@ func TestTheResetMustFitTheCallersDeadline(t *testing.T) {
 		t.Errorf("took %v, failed %v, %d requests", time.Since(start), out.Failed, len(srv.Requests()))
 	}
 }
+
+func TestRateLimitStringRoundsTheResetUp(t *testing.T) {
+	for reset, want := range map[time.Time]string{
+		{}: "rate-limited",
+		time.Date(2026, 10, 29, 21, 21, 0, 0, time.Local):     "rate-limited until 21:21",
+		time.Date(2026, 10, 29, 21, 21, 0, 1, time.Local):     "rate-limited until 21:22",
+		time.Date(2026, 10, 29, 23, 59, 30, 0, time.Local):    "rate-limited until 00:00",
+		time.Date(2026, 10, 29, 9, 5, 0, 0, time.Local).UTC(): "rate-limited until 09:05",
+	} {
+		if got := (RateLimit{Source: model.Npm, Reset: reset}).String(); got != want {
+			t.Errorf("%v: %q, want %q", reset, got, want)
+		}
+	}
+	if got := (RateLimit{Hint: "set GITHUB_TOKEN for a higher limit"}).String(); got != "rate-limited; set GITHUB_TOKEN for a higher limit" {
+		t.Errorf("with a hint: %q", got)
+	}
+}
