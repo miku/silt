@@ -102,23 +102,23 @@ p  [github] rust-embedded/awesome-embedded-rust: Curated list of resources for E
 == 034  load environment variables from a .env file in a node app
 level:
 
-_  [github] mockturtl/dotenv: Loads environment variables from `.env`. (pop 116, updated 2024-05)  <https://github.com/mockturtl/dotenv>
-_  [github] cdimascio/dotenv-java: 🗝️ Dotenv is a no-dep, pure Java module that loads environment variables from a .env file (pop 692, updated 2026-03)  <https://github.com/cdimascio/dotenv-java>
-_  [github] cdimascio/dotenv-kotlin: 🗝️ Dotenv is a module that loads environment variables from a .env file (pop 570, updated 2025-02)  <https://github.com/cdimascio/dotenv-kotlin>
-_  [npm] @dotenv-run/core: core library to load environment variables with monorepo support (pop 1000000, updated 2025-07)  <https://www.npmjs.com/package/@dotenv-run/core>
-_  [github] dotenvx/react-native-dotenv: Load .env into React Native - with support for multiple .env files. (pop 858, updated 2026-10)  <https://github.com/dotenvx/react-native-dotenv>
-_  [npm] @expo/env: hydrate environment variables from .env files into process.env (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/@expo/env>
-_  [npm] dotenv-safe: Load environment variables from .env and ensure they are defined (pop 1000000, updated 2024-02)  <https://www.npmjs.com/package/dotenv-safe>
-_  [github] kerimdzhanov/dotenv-flow: Loads environment variables from .env.[development|test|production][.local] files for Node.js® projects. (pop 903, updated 2025-08)  <https://github.com/kerimdzhanov/dotenv-flow>
-_  [npm] dotenv: Loads environment variables from .env file (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/dotenv>
-_  [github] andrewmclagan/react-env: Runtime environment variables for react apps. (pop 310, updated 2023-03)  <https://github.com/andrewmclagan/react-env>
-_  [github] indexzero/nconf: Hierarchical node.js configuration with files, environment variables, command-line arguments, and atomic object merging. (pop 3860, updated 2026-07)  <https://github.com/indexzero/nconf>
-_  [npm] dotenv-cli: A global executable to run applications with the ENV variables loaded by dotenv (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/dotenv-cli>
-_  [npm] dotenv-flow: Loads environment variables from `.env.[development|test|production][.local]` files (pop 1000000, updated 2023-12)  <https://www.npmjs.com/package/dotenv-flow>
-_  [github] joho/godotenv: A Go port of Ruby's dotenv library (Loads environment variables from .env files) (pop 10677, updated 2026-08)  <https://github.com/joho/godotenv>
-_  [github] rolodato/dotenv-safe: Load environment variables from .env and ensure they are all present (pop 767, updated 2026-01)  <https://github.com/rolodato/dotenv-safe>
-_  [npm] cross-env: Run scripts that set and use environment variables across platforms (pop 1000000, updated 2025-09)  <https://www.npmjs.com/package/cross-env>
-_  [github] motdotla/dotenv: Loads environment variables from .env for nodejs projects. (pop 20557, updated 2026-10)  <https://github.com/motdotla/dotenv>
+n  [github] mockturtl/dotenv: Loads environment variables from `.env`. (pop 116, updated 2024-05)  <https://github.com/mockturtl/dotenv>
+n  [github] cdimascio/dotenv-java: 🗝️ Dotenv is a no-dep, pure Java module that loads environment variables from a .env file (pop 692, updated 2026-03)  <https://github.com/cdimascio/dotenv-java>
+n  [github] cdimascio/dotenv-kotlin: 🗝️ Dotenv is a module that loads environment variables from a .env file (pop 570, updated 2025-02)  <https://github.com/cdimascio/dotenv-kotlin>
+y  [npm] @dotenv-run/core: core library to load environment variables with monorepo support (pop 1000000, updated 2025-07)  <https://www.npmjs.com/package/@dotenv-run/core>
+y  [github] dotenvx/react-native-dotenv: Load .env into React Native - with support for multiple .env files. (pop 858, updated 2026-10)  <https://github.com/dotenvx/react-native-dotenv>
+n  [npm] @expo/env: hydrate environment variables from .env files into process.env (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/@expo/env>
+y  [npm] dotenv-safe: Load environment variables from .env and ensure they are defined (pop 1000000, updated 2024-02)  <https://www.npmjs.com/package/dotenv-safe>
+y  [github] kerimdzhanov/dotenv-flow: Loads environment variables from .env.[development|test|production][.local] files for Node.js® projects. (pop 903, updated 2025-08)  <https://github.com/kerimdzhanov/dotenv-flow>
+y  [npm] dotenv: Loads environment variables from .env file (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/dotenv>
+p  [github] andrewmclagan/react-env: Runtime environment variables for react apps. (pop 310, updated 2023-03)  <https://github.com/andrewmclagan/react-env>
+y  [github] indexzero/nconf: Hierarchical node.js configuration with files, environment variables, command-line arguments, and atomic object merging. (pop 3860, updated 2026-07)  <https://github.com/indexzero/nconf>
+y  [npm] dotenv-cli: A global executable to run applications with the ENV variables loaded by dotenv (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/dotenv-cli>
+y  [npm] dotenv-flow: Loads environment variables from `.env.[development|test|production][.local]` files (pop 1000000, updated 2023-12)  <https://www.npmjs.com/package/dotenv-flow>
+n  [github] joho/godotenv: A Go port of Ruby's dotenv library (Loads environment variables from .env files) (pop 10677, updated 2026-08)  <https://github.com/joho/godotenv>
+y  [github] rolodato/dotenv-safe: Load environment variables from .env and ensure they are all present (pop 767, updated 2026-01)  <https://github.com/rolodato/dotenv-safe>
+y  [npm] cross-env: Run scripts that set and use environment variables across platforms (pop 1000000, updated 2025-09)  <https://www.npmjs.com/package/cross-env>
+y  [github] motdotla/dotenv: Loads environment variables from .env for nodejs projects. (pop 20557, updated 2026-10)  <https://github.com/motdotla/dotenv>
 
 == 039  a friendly command line http client for trying out apis
 level:
