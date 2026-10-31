@@ -18,28 +18,28 @@
 # anywhere, e.g. a well-known tool that should have turned up but didn't.
 
 == 005  CLI tool that kills a process on a given port
-level: 
+level:
 
-_  [hacker-news] Show HN: Portdetective – A tiny, fast rust CLI for port inspection: Hi HN,I kept getting annoyed having to track down which process was sitting on a port so I could kill it, so I built a t… (pop 3)  <https://news.ycombinator.com/item?id=46426086>
-_  [go] kill-port: kill-port (updated 2018-06)  <https://pkg.go.dev/github.com/rimiti/kill-port>
-_  [pypi] portutils: Find processes given a port number and kill them  <https://pypi.org/project/portutils/>
-_  [npm] kill-port-process: Easily kill hanging processes on ports - on any platform! (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/kill-port-process>
-_  [npm] kill-port: Kill process running on given port (pop 1000000, updated 2022-06)  <https://www.npmjs.com/package/kill-port>
-_  [crates-io] port-conflict-resolver: A cross-platform CLI utility to identify and resolve port conflicts by detecting and terminating processes (pop 267, updated 2025-10)  <https://crates.io/crates/port-conflict-resolver>
-_  [pypi] pkiller: Kill the process listening on a given port.  <https://pypi.org/project/pkiller/>
-_  [crates-io] timelimit-cli: Limit a process's absolute execution time - CLI tool (pop 36, updated 2026-08)  <https://crates.io/crates/timelimit-cli>
-_  [pypi] portsmith: Local port management CLI — list, kill, watch, and snapshot listening ports  <https://pypi.org/project/portsmith/>
-_  [pypi] portcheck-cli: Check what's using a port and optionally kill it  <https://pypi.org/project/portcheck-cli/>
-_  [pypi] gruyere: A tiny program for viewing and killing processes on ports  <https://pypi.org/project/gruyere/>
-_  [npm] snipe-port: Kill processes on a port, but only if they belong to the same project (pop 1000000, updated 2026-03)  <https://www.npmjs.com/package/snipe-port>
-_  [crates-io] portctl: Cross-platform CLI to find, kill, and list processes occupying network ports (Linux / macOS / Windows) (pop 30, updated 2026-10)  <https://crates.io/crates/portctl>
-_  [pypi] porthog: CLI/TUI tool to find and kill dev servers hogging your ports  <https://pypi.org/project/porthog/>
-_  [crates-io] portzap: A fast, cross-platform port management tool. Kill, list, and watch processes on network ports. (pop 143, updated 2026-02)  <https://crates.io/crates/portzap>
-_  [pypi] checkport: Port management tool for checking and killing processes on specific ports  <https://pypi.org/project/checkport/>
-_  [github] foreversd/forever: A simple CLI tool for ensuring that a given script runs continuously (i.e. forever) (pop 13815, updated 2023-05)  <https://github.com/foreversd/forever>
+y  [hacker-news] Show HN: Portdetective – A tiny, fast rust CLI for port inspection: Hi HN,I kept getting annoyed having to track down which process was sitting on a port so I could kill it, so I built a t… (pop 3)  <https://news.ycombinator.com/item?id=46426086>
+y  [go] kill-port: kill-port (updated 2018-06)  <https://pkg.go.dev/github.com/rimiti/kill-port>
+y  [pypi] portutils: Find processes given a port number and kill them  <https://pypi.org/project/portutils/>
+y  [npm] kill-port-process: Easily kill hanging processes on ports - on any platform! (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/kill-port-process>
+y  [npm] kill-port: Kill process running on given port (pop 1000000, updated 2022-06)  <https://www.npmjs.com/package/kill-port>
+y  [crates-io] port-conflict-resolver: A cross-platform CLI utility to identify and resolve port conflicts by detecting and terminating processes (pop 267, updated 2025-10)  <https://crates.io/crates/port-conflict-resolver>
+y  [pypi] pkiller: Kill the process listening on a given port.  <https://pypi.org/project/pkiller/>
+p  [crates-io] timelimit-cli: Limit a process's absolute execution time - CLI tool (pop 36, updated 2026-08)  <https://crates.io/crates/timelimit-cli>
+y  [pypi] portsmith: Local port management CLI — list, kill, watch, and snapshot listening ports  <https://pypi.org/project/portsmith/>
+y  [pypi] portcheck-cli: Check what's using a port and optionally kill it  <https://pypi.org/project/portcheck-cli/>
+y  [pypi] gruyere: A tiny program for viewing and killing processes on ports  <https://pypi.org/project/gruyere/>
+p  [npm] snipe-port: Kill processes on a port, but only if they belong to the same project (pop 1000000, updated 2026-03)  <https://www.npmjs.com/package/snipe-port>
+y  [crates-io] portctl: Cross-platform CLI to find, kill, and list processes occupying network ports (Linux / macOS / Windows) (pop 30, updated 2026-10)  <https://crates.io/crates/portctl>
+y  [pypi] porthog: CLI/TUI tool to find and kill dev servers hogging your ports  <https://pypi.org/project/porthog/>
+y  [crates-io] portzap: A fast, cross-platform port management tool. Kill, list, and watch processes on network ports. (pop 143, updated 2026-02)  <https://crates.io/crates/portzap>
+n  [pypi] checkport: Port management tool for checking and killing processes on specific ports  <https://pypi.org/project/checkport/>
+n  [github] foreversd/forever: A simple CLI tool for ensuring that a given script runs continuously (i.e. forever) (pop 13815, updated 2023-05)  <https://github.com/foreversd/forever>
 
 == 016  a vscode extension for markdown preview
-level: 
+level:
 
 _  [vscode-marketplace] Vue block-code renderer for VScode default Markdown Previewer: An extension for rendering Vue code block in Markdown default Previewer of VScode (pop 4, updated 2026-07)  <https://marketplace.visualstudio.com/items?itemName=SaundersHwu.vscode-mdpreview-vue-renderer>
 _  [vscode-marketplace] Offline Markdown Preview: Offline Markdown preview for VS Code and compatible editors, with Mermaid diagrams, KaTeX math, secure local rendering, HTML/PDF export, and scroll sync. (pop 190710, updated 2026-10)  <https://marketplace.visualstudio.com/items?itemName=Bowlerr.offline-markdown-preview>
@@ -58,7 +58,7 @@ _  [vscode-marketplace] Markdown Preview Right Click: A VSCode extension that pr
 _  [vscode-marketplace] Qiita Markdown Preview: VSCode extension to preview Qiita markdown (pop 1946, updated 2022-02)  <https://marketplace.visualstudio.com/items?itemName=ryokat3.vscode-qiita-markdown-preview>
 
 == 020  a helm chart to deploy a kubernetes operator
-level: 
+level:
 
 _  [artifact-hub] kcp-operator: A Helm chart for kcp-operator, a Kubernetes operator to deploy and manage kcp instances. (updated 2026-10)  <https://artifacthub.io/packages/helm/kcp-dev/kcp-operator>
 _  [artifact-hub] altinity-clickhouse-operator: Helm chart to deploy [altinity-clickhouse-operator](https://github.com/Altinity/clickhouse-operator). The ClickHouse Operator creates, configures and manages... (pop 1, updated 2022-11)  <https://artifacthub.io/packages/helm/slamdev/altinity-clickhouse-operator>
@@ -80,7 +80,7 @@ _  [artifact-hub] altinity-clickhouse-operator: Helm chart to deploy [altinity-c
 _  [artifact-hub] dwpk: A Helm chart to deploy dwpk, a development workspace platform for Kubernetes (updated 2026-10)  <https://artifacthub.io/packages/helm/helm-dwpk/dwpk>
 
 == 025  rust crate for embedded firmware
-level: 
+level:
 
 _  [github] stm32-rs/stm32f407g-disc: Rust BSP crate for the STM32F4DISCOVERY (STM32F407G-DISC) development board (pop 48, updated 2023-11)  <https://github.com/stm32-rs/stm32f407g-disc>
 _  [github] pop-os/firmware-manager: Generic framework and GTK UI for firmware updates from system76-firmware and fwupd, written in Rust. (pop 159, updated 2026-10)  <https://github.com/pop-os/firmware-manager>
@@ -100,7 +100,7 @@ _  [github] rust-unofficial/awesome-rust: A curated list of Rust code and resour
 _  [github] rust-embedded/awesome-embedded-rust: Curated list of resources for Embedded and Low-level development in the Rust programming language (pop 8170, updated 2026-10)  <https://github.com/rust-embedded/awesome-embedded-rust>
 
 == 034  load environment variables from a .env file in a node app
-level: 
+level:
 
 _  [github] mockturtl/dotenv: Loads environment variables from `.env`. (pop 116, updated 2024-05)  <https://github.com/mockturtl/dotenv>
 _  [github] cdimascio/dotenv-java: 🗝️ Dotenv is a no-dep, pure Java module that loads environment variables from a .env file (pop 692, updated 2026-03)  <https://github.com/cdimascio/dotenv-java>
@@ -121,7 +121,7 @@ _  [npm] cross-env: Run scripts that set and use environment variables across pl
 _  [github] motdotla/dotenv: Loads environment variables from .env for nodejs projects. (pop 20557, updated 2026-10)  <https://github.com/motdotla/dotenv>
 
 == 039  a friendly command line http client for trying out apis
-level: 
+level:
 
 _  [crates-io] mcpacker: A command-line tool to convert client modpacks into ready-to-run Minecraft servers (pop 236, updated 2026-04)  <https://crates.io/crates/mcpacker>
 _  [github] apache/apisix: The Cloud-Native API Gateway and AI Gateway (pop 17275, updated 2026-10)  <https://github.com/apache/apisix>
@@ -143,7 +143,7 @@ _  [npm] @actions/http-client: Actions Http Client (pop 1000000, updated 2026-04
 _  [go] cmclient: Command cmclient logs into Steam's Connection Manager over WebSocket — the session the desktop client maintains — goes online, and prints friend messages, pe... (updated 2026-07)  <https://pkg.go.dev/github.com/k64z/steamstacks/examples/cmclient>
 
 == 040  a python library that watches a directory for file changes
-level: 
+level:
 
 _  [pypi] rstwatch: Watch directories for changes to RST files and generate HTML  <https://pypi.org/project/rstwatch/>
 _  [pypi] dirwatcher: Watch directory to reload script on file changes  <https://pypi.org/project/dirwatcher/>
@@ -162,7 +162,7 @@ _  [pypi] Python-Directory-Compiler: A wrapper for Nuitka that walks through a d
 _  [github] borntyping/spotter: A command line tool for watching files and running shell commands when they change (pop 27, updated 2018-03)  <https://github.com/borntyping/spotter>
 
 == 049  user sign up and login for a rails application
-level: 
+level:
 
 _  [github] basecamp/google_sign_in: Sign in (or up) with Google for Rails applications (pop 565, updated 2025-08)  <https://github.com/basecamp/google_sign_in>
 _  [github] excid3/revise_auth: A pure Rails authentication system like Devise. (pop 427, updated 2026-09)  <https://github.com/excid3/revise_auth>
@@ -183,7 +183,7 @@ _  [github] janko/rodauth-rails: Rails integration for Rodauth authentication fr
 _  [github] RailsApps/rails-devise-pundit: Rails 5.0 starter app with Devise for authentication and Pundit for authorization. (pop 479, updated 2018-09)  <https://github.com/RailsApps/rails-devise-pundit>
 
 == 066  a vscode extension that estimates the carbon footprint of a cloud deployment
-level: 
+level:
 
 _  [vscode-marketplace] CodeTogether Cloud: CodeTogether improves collaboration for teams by providing improved transparency and insights. (pop 195602, updated 2025-10)  <https://marketplace.visualstudio.com/items?itemName=genuitecllc.codetogether>
 _  [vscode-marketplace] Tencent Cloud CodeBuddy: Your AI pair programmer (pop 682678, updated 2026-10)  <https://marketplace.visualstudio.com/items?itemName=Tencent-Cloud.coding-copilot>
@@ -204,7 +204,7 @@ _  [vscode-marketplace] VSCode Great Icons: A big pack of icons (200+) for your 
 _  [npm] @vscode-logging/logger: Logger Library for VSCode Extensions (pop 1000000, updated 2026-08)  <https://www.npmjs.com/package/@vscode-logging/logger>
 
 == 068  a python library to read and write gpx track files
-level: 
+level:
 
 _  [pypi] fastgpx: An experimental Python library for parsing GPX files fast.  <https://pypi.org/project/fastgpx/>
 _  [github] dodo-saba/fit2gpx: A simple Python library for converting .FIT files to .GPX files. It also includes tools to convert Strava data downloads in bulk to GPX. (pop 140, updated 2025-06)  <https://github.com/dodo-saba/fit2gpx>
@@ -225,7 +225,7 @@ _  [pypi] pyosmogps: Extract the GPS data from the Osmo Action video files  <htt
 _  [github] tkrajina/gpxgo: GPX library for golang (pop 110, updated 2026-08)  <https://github.com/tkrajina/gpxgo>
 
 == 070  an elixir library for rate limiting with a token bucket
-level: 
+level:
 
 _  [hex] ex_limiter: Token bucket rate limiter written in elixir with configurable backends (pop 39260, updated 2019-06)  <https://hex.pm/packages/ex_limiter>
 _  [hex] limitex: A pure Elixir distributed rate limiter (pop 4406, updated 2019-11)  <https://hex.pm/packages/limitex>
@@ -245,7 +245,7 @@ _  [hex] atomic_bucket: Fast single node rate limiter implementing Token Bucket 
 _  [hacker-news] Java rate-limiting library based on the token-bucket algorithm: Hi everyone! My name is Maxim Bartkov, I'm a co-author of Bucket4J library. I want to present the greatest library to pr… (pop 2)  <https://news.ycombinator.com/item?id=29533948>
 
 == 078  a command line tool that checks a bibliography for retracted papers
-level: 
+level:
 
 _  [pypi] citeguard-cli: Check a bibliography for retracted papers -- retractions, corrections, and expressions of concern via Crossref (including Retraction Watch records). CLI, Pyt...  <https://pypi.org/project/citeguard-cli/>
 _  [github] tekstrom11/DONTCITEME: Application to check citations against a database of academic retractions (pop 0, updated 2026-10)  <https://github.com/tekstrom11/DONTCITEME>
