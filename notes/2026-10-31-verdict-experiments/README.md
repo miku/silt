@@ -51,3 +51,63 @@ The problem has two parts:
 - Which per-match method works best.
 - Whether a small model beats the floor's fixed thresholds.
 - Whether the LLM is needed for the level at all.
+
+## Files
+
+| file | what |
+|---|---|
+| `ideas.tsv` | the ideas: id, stratum, target (for positives: the package the idea rewords), idea |
+| `scripts/record.sh` | runs silt on every idea, once; `make record` |
+| `data/runs.jsonl` | one line per idea: silt's JSON output with every candidate, twice (embeddings, keyword-only) |
+| `scripts/e1.py` | summary of the data; `make e1` writes `results/e1-*.tsv` |
+| `scripts/labelsheet.py` | writes a labelling sheet; `make sheets` |
+| `labels/human.txt`, `labels/claude.txt` | labelling sheets: a sample of 12 ideas for a person, every idea for Claude |
+
+## E1: the data set
+
+Recorded 2026-10-31, 10:30–10:42 UTC, silt at 9550edd, `--fast --limit
+10000`, with a result cache of its own, so no earlier search leaked in. Per
+idea silt ran twice: with the embedding model against the live registries,
+then with `--keyword-only` on the same results (from the cache the first run
+filled), so both rankings see the same candidates.
+
+97 ideas in four strata:
+
+- **parity** (32): the reference ideas of `scripts/parity`, which include the
+  22 of the differential test.
+- **positive** (30): a well-known package's description in other words, e.g.
+  "a fast recursive grep that skips files listed in .gitignore" for ripgrep.
+  The package should turn up, and the level should be at least Crowded.
+- **specific** (20): narrow ideas, some likely Open.
+- **vague** (15): "a python library", "a database".
+
+| stratum | ideas | rejected | candidates (median) | floor O/C/S | keyword floor O/C/S | package found | package in top 15 |
+|---|---|---|---|---|---|---|---|
+| parity | 32 | 0 | 86 | 3/9/20 | 9/5/18 | | |
+| positive | 30 | 0 | 89 | 1/9/20 | 12/8/10 | 18/30 | 14/30 |
+| specific | 20 | 0 | 92 | 3/7/10 | 13/6/1 | | |
+| vague | 15 | 10 | 128 | 1/0/4 | 1/0/4 | | |
+| all | 97 | 10 | 89 | 8/25/54 | 35/19/33 | | |
+
+Per idea: `results/e1-ideas.tsv`.
+
+What the data shows before any labelling:
+
+- **Every source was reached in every run**, PyPI through CloakBrowser. So
+  missing coverage doesn't explain anything in this data set.
+- **silt turns down 10 of the 15 vague ideas itself** ("Too vague"). Of the
+  5 that get through, 4 come out Saturated, which is true but tells you
+  nothing.
+- **Search, not judgement, limits the positives.** The reworded package was
+  among the candidates for 18 of 30 ideas, and in the top 15 for 14. Missing
+  entirely: rich, black, watchdog, clap, tokei, cobra, lazygit,
+  Newtonsoft.Json, tldr, vaultwarden, cert-manager, nvd. No scorer can rank a
+  package that wasn't retrieved, so for these ideas the best any judge can
+  do is find other implementations.
+- **The two floors disagree a lot**: 8 Open with embeddings, 35 with keyword
+  scores, on the same candidates. The thresholds were set for cosines; the
+  keyword fraction lives on another scale.
+- **The floor's rule makes false Opens of its own.** "a rust crate for
+  parsing marc21 library catalog records" has 4 candidates; the first,
+  marc-rs (0.62), is exactly that. The floor says Open: one match ≥ 0.60
+  counts only from 0.70.

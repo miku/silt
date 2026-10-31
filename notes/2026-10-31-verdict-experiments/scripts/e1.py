@@ -20,15 +20,22 @@ import sys
 
 
 def target_rank(target, matches):
+    """The rank of the first match that is target, 0 if none is, None if the
+    idea has no target. target is "source:name|other name|..."; a name with
+    a slash must match as a whole (owner/repo, module path), one without may
+    also match the last part of a match's name ("ripgrep" for
+    "BurntSushi/ripgrep")."""
     if target == "-":
         return None
     names = target.split(":", 1)[1].lower().split("|")
     for i, m in enumerate(matches, 1):
         name = m["name"].lower()
+        url = (m.get("url") or "").lower().rstrip("/")
         last = re.split(r"[/:]", name)[-1]
         for t in names:
-            if name == t or name.endswith("/" + t) or name.endswith(":" + t) or last == t \
-                    or name.startswith(t + " "):
+            if name == t or name.endswith("/" + t) or name.endswith(":" + t) \
+                    or url.endswith("/" + t) or name.startswith(t + " ") \
+                    or ("/" not in t and last == t):
                 return i
     return 0
 
@@ -83,8 +90,15 @@ def write(path, rows):
 
 
 def main():
+    # The targets come from ideas.tsv, not from the recording, so that a
+    # corrected target needs no new recording.
+    with open("ideas.tsv") as f:
+        targets = {r["id"]: r["target"] for r in csv.DictReader(f, delimiter="\t")}
     with open("data/runs.jsonl") as f:
-        rows = sorted((row(json.loads(l)) for l in f), key=lambda r: r["id"])
+        runs = [json.loads(l) for l in f]
+    for r in runs:
+        r["target"] = targets[r["id"]]
+    rows = sorted(map(row, runs), key=lambda r: r["id"])
     os.makedirs("results", exist_ok=True)
     write("results/e1-ideas.tsv", rows)
     st = strata(rows)

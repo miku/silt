@@ -43,23 +43,23 @@ id	stratum	target	idea
 042	positive	crates-io:bat	a cat replacement with syntax highlighting and git integration
 043	positive	crates-io:clap	a rust library for parsing command line arguments
 044	positive	crates-io:tokei	count lines of code per programming language in a project
-045	positive	go:github.com/spf13/cobra	a go library for building command line apps with subcommands
-046	positive	go:github.com/charmbracelet/bubbletea	a go framework for terminal apps based on the elm architecture
-047	positive	github:jesseduffield/lazygit	a terminal user interface for git
-048	positive	github:junegunn/fzf	an interactive fuzzy finder for the command line
+045	positive	go:github.com/spf13/cobra|spf13/cobra	a go library for building command line apps with subcommands
+046	positive	go:github.com/charmbracelet/bubbletea|charmbracelet/bubbletea	a go framework for terminal apps based on the elm architecture
+047	positive	github:jesseduffield/lazygit|lazygit	a terminal user interface for git
+048	positive	github:junegunn/fzf|fzf	an interactive fuzzy finder for the command line
 049	positive	rubygems:devise	user sign up and login for a rails application
 050	positive	rubygems:sidekiq	background job processing for ruby with redis
 051	positive	hex:oban	elixir background jobs stored in postgresql
 052	positive	hackage:pandoc	a haskell tool to convert documents between markdown, latex and word
 053	positive	maven:jackson-databind	a java library to map json to objects and back
-054	positive	nuget:Newtonsoft.Json	a c# library for serializing objects to json
-055	positive	packagist:guzzlehttp/guzzle	a php library for sending http requests
+054	positive	nuget:newtonsoft.json|jamesnk/newtonsoft.json	a c# library for serializing objects to json
+055	positive	packagist:guzzlehttp/guzzle|guzzle/guzzle	a php library for sending http requests
 056	positive	homebrew:htop	an interactive process viewer for the terminal
 057	positive	homebrew:tldr|tealdeer|tlrc	short practical examples for command line tools instead of man pages
 058	positive	vscode-marketplace:gitlens	a vscode extension that shows who last changed each line, from git
 059	positive	jetbrains:rainbow brackets	an intellij plugin that gives matching brackets their own colours
-060	positive	docker-hub:vaultwarden/server	a docker image for a self-hosted password manager that works with bitwarden clients
-061	positive	artifact-hub:cert-manager	a kubernetes controller that gets tls certificates from let's encrypt automatically
+060	positive	docker-hub:vaultwarden/server|dani-garcia/vaultwarden|vaultwarden	a docker image for a self-hosted password manager that works with bitwarden clients
+061	positive	artifact-hub:cert-manager|cert-manager/cert-manager|jetstack/cert-manager	a kubernetes controller that gets tls certificates from let's encrypt automatically
 062	positive	nixpkgs:nvd	a nix tool that shows which packages changed between two system generations
 063	specific	-	a cargo subcommand that lists dependencies whose build scripts make network requests
 064	specific	-	a git hook that strips output cells from jupyter notebooks before commit

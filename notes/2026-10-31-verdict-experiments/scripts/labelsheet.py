@@ -2,7 +2,7 @@
 with a "_" to replace by y, p or n.
 
     python3 -I scripts/labelsheet.py labels/claude.txt              # every idea
-    python3 -I scripts/labelsheet.py --sample 3 labels/human.txt    # 3 per stratum
+    python3 -I scripts/labelsheet.py --sample 4 labels/human.txt    # 4 per stratum
 
 The matches per idea are the top 15 by similarity and the top 5 by keyword
 score, so that the labels don't only cover what the cosine ranks high. They
@@ -89,8 +89,10 @@ def main():
         runs = [r for r in map(json.loads, f) if "embeddings" in r and r["embeddings"]["matches"]]
     runs.sort(key=lambda r: r["id"])
     if args.sample:
+        # Not from the vague ideas: "does this implement 'a tool for
+        # developers'?" has no answer, so they only get a level.
         rng = random.Random(SEED)
-        strata = sorted({r["stratum"] for r in runs})
+        strata = sorted({r["stratum"] for r in runs} - {"vague"})
         chosen = set()
         for s in strata:
             ids = [r["id"] for r in runs if r["stratum"] == s]

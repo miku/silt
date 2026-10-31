@@ -1,0 +1,98 @@
+id	stratum	idea	floor	floor_kw	candidates	max_sim	c55	sources_ok	sources_failed	target_rank	seconds
+001	parity	embedded vector database for mobile apps	crowded	saturated	114	0.73	6	crates-io,github,npm,hacker-news,maven			12.1
+002	parity	react component for infinite scroll	saturated	saturated	70	0.91	26	github,npm,hacker-news			2.4
+003	parity	kubernetes log viewer with live filtering	crowded	crowded	105	0.65	8	github,hacker-news,go,docker-hub,artifact-hub			2.8
+004	parity	interactive cli to kill whatever's on a port	saturated	crowded	108	0.82	12	crates-io,github,npm,pypi,hacker-news,go,homebrew			2.9
+005	parity	CLI tool that kills a process on a given port	saturated	open	111	0.80	17	crates-io,github,npm,pypi,hacker-news,go,homebrew			2.9
+006	parity	kubernetes log viewer	saturated	saturated	84	0.88	14	github,hacker-news,go,docker-hub,artifact-hub			2.8
+007	parity	a vector database for embeddings	saturated	saturated	130	0.87	17	crates-io,github,npm,pypi,hacker-news			3.1
+008	parity	a fast async runtime for rust	saturated	saturated	84	0.85	23	crates-io,github,hacker-news			2.8
+009	parity	an ide plugin that highlights spelling mistakes in code comments	crowded	open	89	0.70	2	github,npm,hacker-news,vscode-marketplace,jetbrains			2.7
+010	parity	a python pandas data pipeline	crowded	saturated	109	0.73	9	github,npm,pypi,hacker-news			2.9
+011	parity	a typescript react frontend component	crowded	saturated	87	0.60	3	github,npm,hacker-news			2.9
+012	parity	a golang microservice framework	saturated	saturated	116	0.92	27	github,npm,pypi,hacker-news,go			2.8
+013	parity	a java spring boot service	saturated	saturated	82	0.72	28	github,hacker-news,maven			11.6
+014	parity	a ruby on rails gem for pagination	saturated	saturated	57	0.85	11	github,hacker-news,rubygems			3.1
+015	parity	a docker container for kubernetes logging	saturated	saturated	116	0.80	19	github,hacker-news,go,docker-hub,artifact-hub			3.5
+016	parity	a vscode extension for markdown preview	saturated	saturated	109	0.90	38	github,npm,hacker-news,vscode-marketplace,jetbrains			2.7
+017	parity	a macos homebrew tool for managing dotfiles	saturated	crowded	49	0.77	18	github,hacker-news,homebrew			2.3
+018	parity	a php composer package for laravel queues	saturated	saturated	58	0.70	8	github,hacker-news,packagist			2.5
+019	parity	an elixir phoenix library for caching	saturated	saturated	365	0.79	37	github,hacker-news,hex			3.8
+020	parity	a helm chart to deploy a kubernetes operator	saturated	saturated	111	0.87	50	github,hacker-news,go,docker-hub,artifact-hub			4.0
+021	parity	a haskell cabal library for parsing json	saturated	open	70	0.75	17	github,hacker-news,hackage			2.4
+022	parity	a nix flake for building containers	crowded	open	60	0.71	9	github,hacker-news,nixpkgs			2.8
+023	parity	端口杀手命令行工具	open	open	77	0.50	0	crates-io,github,npm,pypi,hacker-news			3.4
+024	parity	a terminal ui for exploring large json documents with jq-style filters and fuzzy search	saturated	open	69	0.72	7	crates-io,github,npm,pypi,hacker-news			2.8
+025	parity	rust crate for embedded firmware	saturated	crowded	70	0.73	16	crates-io,github,hacker-news			2.5
+026	parity	a c# dotnet unity game	crowded	saturated	76	0.58	3	crates-io,github,hacker-news,nuget			2.7
+027	parity	a pacman helper for installing arch linux aur packages	crowded	crowded	70	0.68	7	github,hacker-news,aur			2.4
+028	parity	anything at all with no signal	open	open	102	0.41	0	crates-io,github,npm,pypi,hacker-news			3.1
+029	parity	django admin theme with dark mode	saturated	saturated	64	0.88	10	github,pypi,hacker-news			2.7
+030	parity	c# library for .net json parsing	saturated	saturated	89	0.90	13	github,hacker-news,nuget			3.4
+031	parity	cloud-native secret manager for k8s clusters	crowded	open	94	0.61	2	github,hacker-news,go,docker-hub,artifact-hub			2.7
+032	parity	ターミナルでポートを使っているプロセスを終了するツール	open	open	63	0.55	0	crates-io,github,npm,pypi,hacker-news			3.0
+033	positive	a node library for coloring text in the terminal	crowded	crowded	75	0.69	7	github,npm,hacker-news		8	2.3
+034	positive	load environment variables from a .env file in a node app	saturated	saturated	68	0.78	14	github,npm,hacker-news		1	2.6
+035	positive	build command line interfaces with react components	crowded	crowded	126	0.70	3	crates-io,github,npm,pypi,hacker-news,go,homebrew		3	2.9
+036	positive	a javascript library of small functions to format and manipulate dates	saturated	open	83	0.74	7	github,npm,hacker-news		1	2.1
+037	positive	a python library for colourful text, tables and progress bars in the terminal	saturated	open	59	0.75	6	github,pypi,hacker-news		0	2.9
+038	positive	a python code formatter with almost no configuration options	saturated	open	69	0.74	7	github,pypi,hacker-news		0	2.7
+039	positive	a friendly command line http client for trying out apis	crowded	crowded	130	0.73	2	crates-io,github,npm,pypi,hacker-news,go,homebrew		1	3.1
+040	positive	a python library that watches a directory for file changes	saturated	open	70	0.77	8	github,pypi,hacker-news		0	2.9
+041	positive	a fast recursive grep that skips files listed in .gitignore	crowded	open	106	0.76	9	crates-io,github,npm,pypi,hacker-news		3	6.6
+042	positive	a cat replacement with syntax highlighting and git integration	saturated	open	115	0.81	12	crates-io,github,npm,pypi,hacker-news		90	2.9
+043	positive	a rust library for parsing command line arguments	saturated	saturated	150	0.97	31	crates-io,github,npm,pypi,hacker-news,go,homebrew		0	3.2
+044	positive	count lines of code per programming language in a project	crowded	crowded	109	0.74	5	crates-io,github,npm,pypi,hacker-news		0	2.9
+045	positive	a go library for building command line apps with subcommands	saturated	saturated	117	0.85	11	crates-io,github,npm,pypi,hacker-news,go,homebrew		0	4.3
+046	positive	a go framework for terminal apps based on the elm architecture	saturated	saturated	85	0.71	18	github,hacker-news,go		1	2.5
+047	positive	a terminal user interface for git	saturated	saturated	128	0.92	19	crates-io,github,npm,pypi,hacker-news		0	2.8
+048	positive	an interactive fuzzy finder for the command line	saturated	saturated	130	0.82	14	crates-io,github,npm,pypi,hacker-news,go,homebrew		2	2.8
+049	positive	user sign up and login for a rails application	crowded	crowded	50	0.67	10	github,hacker-news,rubygems		11	3.1
+050	positive	background job processing for ruby with redis	saturated	saturated	63	0.82	26	github,hacker-news,rubygems		18	3.0
+051	positive	elixir background jobs stored in postgresql	saturated	crowded	281	0.75	17	github,hacker-news,hex		3	3.7
+052	positive	a haskell tool to convert documents between markdown, latex and word	saturated	crowded	87	0.71	12	github,hacker-news,hackage		23	3.1
+053	positive	a java library to map json to objects and back	saturated	crowded	89	0.67	7	github,hacker-news,maven		17	12.2
+054	positive	a c# library for serializing objects to json	saturated	saturated	60	0.74	15	github,hacker-news,nuget		0	2.5
+055	positive	a php library for sending http requests	saturated	saturated	74	0.85	16	github,hacker-news,packagist		6	4.1
+056	positive	an interactive process viewer for the terminal	saturated	saturated	129	0.80	12	crates-io,github,npm,pypi,hacker-news		3	2.9
+057	positive	short practical examples for command line tools instead of man pages	crowded	open	148	0.63	7	crates-io,github,npm,pypi,hacker-news,go,homebrew		0	3.1
+058	positive	a vscode extension that shows who last changed each line, from git	crowded	open	116	0.63	4	github,npm,hacker-news,vscode-marketplace,jetbrains		2	3.0
+059	positive	an intellij plugin that gives matching brackets their own colours	saturated	open	91	0.75	9	github,npm,hacker-news,vscode-marketplace,jetbrains		3	2.7
+060	positive	a docker image for a self-hosted password manager that works with bitwarden clients	crowded	open	68	0.73	7	github,hacker-news,go,docker-hub		0	2.2
+061	positive	a kubernetes controller that gets tls certificates from let's encrypt automatically	saturated	open	88	0.82	12	github,hacker-news,go,docker-hub,artifact-hub		0	2.8
+062	positive	a nix tool that shows which packages changed between two system generations	open	open	77	0.53	0	github,hacker-news,nixpkgs		0	2.6
+063	specific	a cargo subcommand that lists dependencies whose build scripts make network requests	open	open	78	0.56	1	crates-io,github,hacker-news			2.8
+064	specific	a git hook that strips output cells from jupyter notebooks before commit	crowded	open	83	0.69	8	crates-io,github,npm,pypi,hacker-news			2.8
+065	specific	a cli that converts bibtex files to csl-json and removes duplicates by doi	crowded	open	96	0.60	2	crates-io,github,npm,pypi,hacker-news,go,homebrew			3.0
+066	specific	a vscode extension that estimates the carbon footprint of a cloud deployment	crowded	open	101	0.73	3	github,npm,hacker-news,vscode-marketplace,jetbrains			2.7
+067	specific	a neovim plugin that shows git blame for the current line as virtual text	saturated	crowded	104	0.84	12	github,npm,hacker-news,vscode-marketplace,jetbrains			2.5
+068	specific	a python library to read and write gpx track files	saturated	crowded	88	0.81	7	github,pypi,hacker-news			3.1
+069	specific	a tool that diffs two openapi specs and reports breaking changes	saturated	open	117	0.81	16	crates-io,github,npm,pypi,hacker-news			3.1
+070	specific	an elixir library for rate limiting with a token bucket	saturated	saturated	349	0.84	43	github,hacker-news,hex			4.3
+071	specific	a rust crate for parsing marc21 library catalog records	open	open	4	0.62	1	crates-io,github,hacker-news			1.6
+072	specific	a postgres extension for h3 hexagonal geospatial indexes	crowded	open	78	0.69	2	github,npm,hacker-news,vscode-marketplace,jetbrains			3.1
+073	specific	a cli that renders mermaid diagrams as ascii art in the terminal	saturated	crowded	116	0.90	39	crates-io,github,npm,pypi,hacker-news,go,homebrew			2.9
+074	specific	a static site generator that builds a website from a zotero library	saturated	crowded	129	0.74	13	crates-io,github,npm,pypi,hacker-news			3.0
+075	specific	a go library for sqlite without cgo	saturated	crowded	73	0.89	15	github,hacker-news,go			2.7
+076	specific	a kubernetes operator that scales deployments to zero outside office hours	saturated	open	121	0.77	20	github,hacker-news,go,docker-hub,artifact-hub			2.9
+077	specific	a haskell library for parsing icalendar files	crowded	open	55	0.73	2	github,hacker-news,hackage			2.3
+078	specific	a command line tool that checks a bibliography for retracted papers	saturated	open	85	0.77	8	crates-io,github,npm,pypi,hacker-news,go,homebrew			3.1
+079	specific	a terminal ui for browsing oai-pmh metadata endpoints	crowded	open	116	0.63	2	crates-io,github,npm,pypi,hacker-news			3.3
+080	specific	a github action that fails a pull request if the changelog was not updated	saturated	crowded	111	0.81	12	crates-io,github,npm,pypi,hacker-news			3.0
+081	specific	a docker image that backs up postgres to s3 on a schedule	crowded	open	68	0.83	2	github,hacker-news,go,docker-hub			2.7
+082	specific	a php library to generate epub ebooks from markdown	open	open	76	0.60	1	github,hacker-news,packagist			2.4
+083	vague	a python library	rejected	rejected							
+084	vague	a web framework	rejected	rejected							
+085	vague	a tool for developers	saturated	saturated	130	0.72	25	crates-io,github,npm,pypi,hacker-news			3.3
+086	vague	a rust crate for data	saturated	saturated	90	0.64	18	crates-io,github,hacker-news			2.9
+087	vague	a javascript utility	rejected	rejected							
+088	vague	a go cli	rejected	rejected							
+089	vague	a database	rejected	rejected							
+090	vague	a mobile app	rejected	rejected							
+091	vague	a library for machine learning	saturated	saturated	110	0.74	42	github,npm,pypi,hacker-news			2.7
+092	vague	a vscode extension	rejected	rejected							
+093	vague	an api client	rejected	rejected							
+094	vague	a kubernetes tool	rejected	rejected							
+095	vague	something to make coding easier	open	open	128	0.51	0	crates-io,github,npm,pypi,hacker-news			3.2
+096	vague	a data processing library	saturated	saturated	129	0.92	11	crates-io,github,npm,pypi,hacker-news			2.9
+097	vague	a react hook	rejected	rejected							

@@ -17,7 +17,7 @@ record:
 .PHONY: e1
 e1: results/e1-strata.tsv
 
-results/e1-strata.tsv results/e1-ideas.tsv: scripts/e1.py data/runs.jsonl
+results/e1-strata.tsv results/e1-ideas.tsv: scripts/e1.py data/runs.jsonl ideas.tsv
 	$(PYTHON) scripts/e1.py
 
 .PHONY: sheets
@@ -27,4 +27,4 @@ labels/claude.txt:
 	$(PYTHON) scripts/labelsheet.py $@
 
 labels/human.txt:
-	$(PYTHON) scripts/labelsheet.py --sample 3 $@
+	$(PYTHON) scripts/labelsheet.py --sample 4 $@
