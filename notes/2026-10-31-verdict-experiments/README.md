@@ -1,7 +1,8 @@
 # Verdict experiments
 
 Started 2026-10-31. Runs experiments E1–E4 from
-[2026-10-29-verdict.md](../2026-10-29-verdict.md).
+[2026-10-29-verdict.md](../2026-10-29-verdict.md). Where things stand:
+[Status and next steps](#status-and-next-steps) at the end.
 
 ## The question
 
@@ -111,3 +112,72 @@ What the data shows before any labelling:
   parsing marc21 library catalog records" has 4 candidates; the first,
   marc-rs (0.62), is exactly that. The floor says Open: one match ≥ 0.60
   counts only from 0.70.
+
+## Status and next steps
+
+As of 2026-10-31.
+
+### Decided
+
+- **Labels:** Claude labels every idea (`labels/claude.txt`); a person labels
+  a random sample of 12 (`labels/human.txt`), and the agreement between the
+  two is reported. Vague ideas get a level only, no per-match labels, since
+  "does this implement 'a tool for developers'?" has no answer.
+- **Tools:** E3 and E4 in Python, offline, with `uv run` and dependencies
+  pinned inline in each script (sentence-transformers, scikit-learn).
+  Timings from Python are indicative only. Only a scorer that wins gets
+  ported to Go (the cross-encoder can reuse `internal/minilm`).
+- **LLM baseline (E2):** qwen3.5 on the homelab GPU if it serves the model;
+  otherwise locally on the CPU (~3 min per idea), parity ideas only.
+- **Location:** this directory; generated tables in `results/`.
+
+### Done
+
+- E1: ideas, recording, summary (above).
+- Labelling sheets generated: `labels/claude.txt` (87 ideas, 1437 matches),
+  `labels/human.txt` (12 ideas, 4 each from parity, positive and specific;
+  203 matches).
+
+### Next
+
+1. **Labels, round 1.** Fill in both sheets: each `_` becomes y, p or n;
+   each `level:` gets open, crowded, saturated or vague. Claude doesn't look
+   at `labels/human.txt` before finishing its own sheet.
+2. **Parse the sheets** into `data/pairs.tsv` (idea id, URL, label,
+   labeller) and `data/levels.tsv` (idea id, level, labeller). Not written
+   yet; a match line is `<label>  [source] name: description  <url>`, the
+   URL being the key. Then report the agreement on the 12 shared ideas
+   (Cohen's kappa, per match and per level).
+3. **E2, baselines.** Compare the floor (`embeddings.verdict.level`), the
+   keyword floor (`keyword_only.verdict.level`) and qwen3.5 with the level
+   labels. The LLM gets the prompt from `verdict.BuildPrompt` over the
+   recorded matches, not a new search.
+4. **E3, per-match scorers.** Rescore the recorded candidates with each
+   scorer: MiniLM cosine (recorded), lexical IDF, bge-small and e5-small,
+   the ms-marco cross-encoder (raw and Platt-calibrated), an NLI
+   cross-encoder, Qwen3-Reranker-0.6B (homelab). Output per scorer:
+   `scores/<scorer>.tsv` (idea id, URL, score, ms). Then **labels, round
+   2**: each scorer's top 5 per idea that round 1 didn't cover gets
+   labelled too, so that no scorer is judged only on the cosine's picks.
+   Report AUC, NDCG@10 and ms per idea.
+5. **E4, aggregators.** Features per idea from the best E3 scorer (see the
+   verdict note, "(b) Aggregation into a level"); refit floor, ordinal
+   logistic regression, depth-3 tree; leave-one-out cross-validation; the
+   floor stays a lower bound. Report confusion matrices, QWK and false
+   Opens against the floor.
+
+### Things to know
+
+- `scripts/record.sh` doesn't need to run again: `data/runs.jsonl` is the
+  frozen data. It resumes and skips recorded ids if it does run. It uses
+  its own cache in `work/` (ignored by git), with the model, catalogs and
+  browser profile linked in from `~/.cache/silt`.
+- The keyword-only run excludes the sources that failed in the embedding
+  run, so both rank the same candidates. None failed in this recording.
+- A rejected idea has an `error` field and no `embeddings`.
+- The positives' targets are read from `ideas.tsv`, not from the
+  recording, so they can be corrected without recording again.
+- `labelsheet.py` never overwrites a sheet; delete one to regenerate it
+  (only if it holds no labels).
+- `data/runs.jsonl` is 4.2 MB; gzip it if that is too big for the
+  repository (the scripts then need to read the .gz).
