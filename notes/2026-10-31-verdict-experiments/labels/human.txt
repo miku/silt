@@ -80,7 +80,7 @@ y  [artifact-hub] altinity-clickhouse-operator: Helm chart to deploy [altinity-c
 y  [artifact-hub] dwpk: A Helm chart to deploy dwpk, a development workspace platform for Kubernetes (updated 2026-10)  <https://artifacthub.io/packages/helm/helm-dwpk/dwpk>
 
 == 025  rust crate for embedded firmware
-level:
+level: crowded
 
 y  [github] stm32-rs/stm32f407g-disc: Rust BSP crate for the STM32F4DISCOVERY (STM32F407G-DISC) development board (pop 48, updated 2023-11)  <https://github.com/stm32-rs/stm32f407g-disc>
 p  [github] pop-os/firmware-manager: Generic framework and GTK UI for firmware updates from system76-firmware and fwupd, written in Rust. (pop 159, updated 2026-10)  <https://github.com/pop-os/firmware-manager>
@@ -100,7 +100,7 @@ p  [github] rust-unofficial/awesome-rust: A curated list of Rust code and resour
 p  [github] rust-embedded/awesome-embedded-rust: Curated list of resources for Embedded and Low-level development in the Rust programming language (pop 8170, updated 2026-10)  <https://github.com/rust-embedded/awesome-embedded-rust>
 
 == 034  load environment variables from a .env file in a node app
-level:
+level: saturated
 
 n  [github] mockturtl/dotenv: Loads environment variables from `.env`. (pop 116, updated 2024-05)  <https://github.com/mockturtl/dotenv>
 n  [github] cdimascio/dotenv-java: 🗝️ Dotenv is a no-dep, pure Java module that loads environment variables from a .env file (pop 692, updated 2026-03)  <https://github.com/cdimascio/dotenv-java>
@@ -121,45 +121,45 @@ y  [npm] cross-env: Run scripts that set and use environment variables across pl
 y  [github] motdotla/dotenv: Loads environment variables from .env for nodejs projects. (pop 20557, updated 2026-10)  <https://github.com/motdotla/dotenv>
 
 == 039  a friendly command line http client for trying out apis
-level:
+level: crowded
 
-_  [crates-io] mcpacker: A command-line tool to convert client modpacks into ready-to-run Minecraft servers (pop 236, updated 2026-04)  <https://crates.io/crates/mcpacker>
-_  [github] apache/apisix: The Cloud-Native API Gateway and AI Gateway (pop 17275, updated 2026-10)  <https://github.com/apache/apisix>
-_  [github] auth0/auth0-cli: Build, manage and test your Auth0 integrations from the command line (pop 343, updated 2026-10)  <https://github.com/auth0/auth0-cli>
-_  [crates-io] rattery: rattery: a sandboxed terminal host that runs ratatui apps delivered over HTTP, as a CLI and as a library (pop 145, updated 2026-10)  <https://crates.io/crates/rattery>
-_  [github] danirod/cartero: The free, lightweight and multiplatform graphical HTTP client that respects your privacy. (pop 1052, updated 2026-10)  <https://github.com/danirod/cartero>
-_  [github] cardano-foundation/cardano-wallet: HTTP server & command-line for managing UTxOs and HD wallets in Cardano. (pop 822, updated 2026-10)  <https://github.com/cardano-foundation/cardano-wallet>
-_  [pypi] testy-command-line: A Testing Script/Module for Command-line Programs  <https://pypi.org/project/testy-command-line/>
-_  [crates-io] rusty-cat: Async HTTP client for resumable file upload and download. (pop 482, updated 2026-10)  <https://crates.io/crates/rusty-cat>
-_  [github] fullstorydev/grpcurl: Like cURL, but for gRPC: Command-line tool for interacting with gRPC servers (pop 12871, updated 2026-10)  <https://github.com/fullstorydev/grpcurl>
-_  [homebrew] httpie: User-friendly cURL replacement (command-line HTTP client)  <https://httpie.io/>
-_  [npm] googleapis: Google APIs Client Library for Node.js (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/googleapis>
-_  [github] sahat/hackathon-starter: A boilerplate for Node.js web applications (pop 35260, updated 2026-10)  <https://github.com/sahat/hackathon-starter>
-_  [crates-io] treq: A Cli client to make HTTP requests for Hacker Users (pop 26375, updated 2024-02)  <https://crates.io/crates/treq>
-_  [go] http: http (updated 2026-02)  <https://pkg.go.dev/github.com/adamijak/http>
-_  [github] eBay/restcommander: Fast Parallel Async HTTP client as a Service to monitor and manage 10,000 web servers. (Java+Akka) (pop 899, updated 2017-04)  <https://github.com/eBay/restcommander>
-_  [github] acl-dev/acl: C/C++ server and network library, including coroutine,redis client,http/https/websocket,mqtt, mysql/postgresql/sqlite client with C/C++ for Linux, Android, i... (pop 3106, updated 2026-10)  <https://github.com/acl-dev/acl>
-_  [npm] @actions/http-client: Actions Http Client (pop 1000000, updated 2026-04)  <https://www.npmjs.com/package/@actions/http-client>
-_  [go] cmclient: Command cmclient logs into Steam's Connection Manager over WebSocket — the session the desktop client maintains — goes online, and prints friend messages, pe... (updated 2026-07)  <https://pkg.go.dev/github.com/k64z/steamstacks/examples/cmclient>
+n  [crates-io] mcpacker: A command-line tool to convert client modpacks into ready-to-run Minecraft servers (pop 236, updated 2026-04)  <https://crates.io/crates/mcpacker>
+n  [github] apache/apisix: The Cloud-Native API Gateway and AI Gateway (pop 17275, updated 2026-10)  <https://github.com/apache/apisix>
+n  [github] auth0/auth0-cli: Build, manage and test your Auth0 integrations from the command line (pop 343, updated 2026-10)  <https://github.com/auth0/auth0-cli>
+n  [crates-io] rattery: rattery: a sandboxed terminal host that runs ratatui apps delivered over HTTP, as a CLI and as a library (pop 145, updated 2026-10)  <https://crates.io/crates/rattery>
+n  [github] danirod/cartero: The free, lightweight and multiplatform graphical HTTP client that respects your privacy. (pop 1052, updated 2026-10)  <https://github.com/danirod/cartero>
+n  [github] cardano-foundation/cardano-wallet: HTTP server & command-line for managing UTxOs and HD wallets in Cardano. (pop 822, updated 2026-10)  <https://github.com/cardano-foundation/cardano-wallet>
+n  [pypi] testy-command-line: A Testing Script/Module for Command-line Programs  <https://pypi.org/project/testy-command-line/>
+n  [crates-io] rusty-cat: Async HTTP client for resumable file upload and download. (pop 482, updated 2026-10)  <https://crates.io/crates/rusty-cat>
+n  [github] fullstorydev/grpcurl: Like cURL, but for gRPC: Command-line tool for interacting with gRPC servers (pop 12871, updated 2026-10)  <https://github.com/fullstorydev/grpcurl>
+y  [homebrew] httpie: User-friendly cURL replacement (command-line HTTP client)  <https://httpie.io/>
+n  [npm] googleapis: Google APIs Client Library for Node.js (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/googleapis>
+n  [github] sahat/hackathon-starter: A boilerplate for Node.js web applications (pop 35260, updated 2026-10)  <https://github.com/sahat/hackathon-starter>
+y  [crates-io] treq: A Cli client to make HTTP requests for Hacker Users (pop 26375, updated 2024-02)  <https://crates.io/crates/treq>
+p  [go] http: http (updated 2026-02)  <https://pkg.go.dev/github.com/adamijak/http>
+n  [github] eBay/restcommander: Fast Parallel Async HTTP client as a Service to monitor and manage 10,000 web servers. (Java+Akka) (pop 899, updated 2017-04)  <https://github.com/eBay/restcommander>
+n  [github] acl-dev/acl: C/C++ server and network library, including coroutine,redis client,http/https/websocket,mqtt, mysql/postgresql/sqlite client with C/C++ for Linux, Android, i... (pop 3106, updated 2026-10)  <https://github.com/acl-dev/acl>
+n  [npm] @actions/http-client: Actions Http Client (pop 1000000, updated 2026-04)  <https://www.npmjs.com/package/@actions/http-client>
+n  [go] cmclient: Command cmclient logs into Steam's Connection Manager over WebSocket — the session the desktop client maintains — goes online, and prints friend messages, pe... (updated 2026-07)  <https://pkg.go.dev/github.com/k64z/steamstacks/examples/cmclient>
 
 == 040  a python library that watches a directory for file changes
-level:
+level: crowded
 
-_  [pypi] rstwatch: Watch directories for changes to RST files and generate HTML  <https://pypi.org/project/rstwatch/>
-_  [pypi] dirwatcher: Watch directory to reload script on file changes  <https://pypi.org/project/dirwatcher/>
-_  [pypi] probe-rdirwatcher: watch remote directory for changes  <https://pypi.org/project/probe-rdirwatcher/>
-_  [pypi] squire: Watch a directory and run a command on changes  <https://pypi.org/project/squire/>
-_  [pypi] Grigori: Watches a directory for file changes.  <https://pypi.org/project/grigori/>
-_  [pypi] watchit: Watch a directory for file changes and exit  <https://pypi.org/project/watchit/>
-_  [pypi] directory-file-mapping: A simple Python class that lets you treat the files in a directory as a mapping object, like a dict.  <https://pypi.org/project/directory-file-mapping/>
-_  [pypi] python-active-directory: An Active Directory client library for Python  <https://pypi.org/project/python-active-directory/>
-_  [github] e-dant/watcher: Filesystem watcher. Works anywhere. Simple, efficient and friendly. (pop 809, updated 2026-07)  <https://github.com/e-dant/watcher>
-_  [pypi] changes: Generates a github changelog, tags and uploads your python library  <https://pypi.org/project/changes/>
-_  [pypi] wotw: Watcher On The Wall watches directories for changes  <https://pypi.org/project/wotw/>
-_  [github] watchexec/watchexec: Executes commands in response to file modifications (pop 7265, updated 2026-10)  <https://github.com/watchexec/watchexec>
-_  [github] dsoprea/PyInotify: An efficient and elegant inotify (Linux filesystem activity monitor) library for Python (pop 259, updated 2025-07)  <https://github.com/dsoprea/PyInotify>
-_  [pypi] Python-Directory-Compiler: A wrapper for Nuitka that walks through a directory tree and compiles all .py Python source files into (.so/.pyd) files.  <https://pypi.org/project/python-directory-compiler/>
-_  [github] borntyping/spotter: A command line tool for watching files and running shell commands when they change (pop 27, updated 2018-03)  <https://github.com/borntyping/spotter>
+p  [pypi] rstwatch: Watch directories for changes to RST files and generate HTML  <https://pypi.org/project/rstwatch/>
+y  [pypi] dirwatcher: Watch directory to reload script on file changes  <https://pypi.org/project/dirwatcher/>
+p  [pypi] probe-rdirwatcher: watch remote directory for changes  <https://pypi.org/project/probe-rdirwatcher/>
+p  [pypi] squire: Watch a directory and run a command on changes  <https://pypi.org/project/squire/>
+y  [pypi] Grigori: Watches a directory for file changes.  <https://pypi.org/project/grigori/>
+p  [pypi] watchit: Watch a directory for file changes and exit  <https://pypi.org/project/watchit/>
+n  [pypi] directory-file-mapping: A simple Python class that lets you treat the files in a directory as a mapping object, like a dict.  <https://pypi.org/project/directory-file-mapping/>
+n  [pypi] python-active-directory: An Active Directory client library for Python  <https://pypi.org/project/python-active-directory/>
+y  [github] e-dant/watcher: Filesystem watcher. Works anywhere. Simple, efficient and friendly. (pop 809, updated 2026-07)  <https://github.com/e-dant/watcher>
+n  [pypi] changes: Generates a github changelog, tags and uploads your python library  <https://pypi.org/project/changes/>
+n  [pypi] wotw: Watcher On The Wall watches directories for changes  <https://pypi.org/project/wotw/>
+p  [github] watchexec/watchexec: Executes commands in response to file modifications (pop 7265, updated 2026-10)  <https://github.com/watchexec/watchexec>
+y  [github] dsoprea/PyInotify: An efficient and elegant inotify (Linux filesystem activity monitor) library for Python (pop 259, updated 2025-07)  <https://github.com/dsoprea/PyInotify>
+n  [pypi] Python-Directory-Compiler: A wrapper for Nuitka that walks through a directory tree and compiles all .py Python source files into (.so/.pyd) files.  <https://pypi.org/project/python-directory-compiler/>
+p  [github] borntyping/spotter: A command line tool for watching files and running shell commands when they change (pop 27, updated 2018-03)  <https://github.com/borntyping/spotter>
 
 == 049  user sign up and login for a rails application
 level:
