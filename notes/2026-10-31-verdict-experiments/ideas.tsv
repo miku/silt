@@ -1,0 +1,98 @@
+id	stratum	target	idea
+001	parity	-	embedded vector database for mobile apps
+002	parity	-	react component for infinite scroll
+003	parity	-	kubernetes log viewer with live filtering
+004	parity	-	interactive cli to kill whatever's on a port
+005	parity	-	CLI tool that kills a process on a given port
+006	parity	-	kubernetes log viewer
+007	parity	-	a vector database for embeddings
+008	parity	-	a fast async runtime for rust
+009	parity	-	an ide plugin that highlights spelling mistakes in code comments
+010	parity	-	a python pandas data pipeline
+011	parity	-	a typescript react frontend component
+012	parity	-	a golang microservice framework
+013	parity	-	a java spring boot service
+014	parity	-	a ruby on rails gem for pagination
+015	parity	-	a docker container for kubernetes logging
+016	parity	-	a vscode extension for markdown preview
+017	parity	-	a macos homebrew tool for managing dotfiles
+018	parity	-	a php composer package for laravel queues
+019	parity	-	an elixir phoenix library for caching
+020	parity	-	a helm chart to deploy a kubernetes operator
+021	parity	-	a haskell cabal library for parsing json
+022	parity	-	a nix flake for building containers
+023	parity	-	端口杀手命令行工具
+024	parity	-	a terminal ui for exploring large json documents with jq-style filters and fuzzy search
+025	parity	-	rust crate for embedded firmware
+026	parity	-	a c# dotnet unity game
+027	parity	-	a pacman helper for installing arch linux aur packages
+028	parity	-	anything at all with no signal
+029	parity	-	django admin theme with dark mode
+030	parity	-	c# library for .net json parsing
+031	parity	-	cloud-native secret manager for k8s clusters
+032	parity	-	ターミナルでポートを使っているプロセスを終了するツール
+033	positive	npm:chalk	a node library for coloring text in the terminal
+034	positive	npm:dotenv	load environment variables from a .env file in a node app
+035	positive	npm:ink	build command line interfaces with react components
+036	positive	npm:date-fns	a javascript library of small functions to format and manipulate dates
+037	positive	pypi:rich	a python library for colourful text, tables and progress bars in the terminal
+038	positive	pypi:black	a python code formatter with almost no configuration options
+039	positive	pypi:httpie	a friendly command line http client for trying out apis
+040	positive	pypi:watchdog	a python library that watches a directory for file changes
+041	positive	crates-io:ripgrep	a fast recursive grep that skips files listed in .gitignore
+042	positive	crates-io:bat	a cat replacement with syntax highlighting and git integration
+043	positive	crates-io:clap	a rust library for parsing command line arguments
+044	positive	crates-io:tokei	count lines of code per programming language in a project
+045	positive	go:github.com/spf13/cobra	a go library for building command line apps with subcommands
+046	positive	go:github.com/charmbracelet/bubbletea	a go framework for terminal apps based on the elm architecture
+047	positive	github:jesseduffield/lazygit	a terminal user interface for git
+048	positive	github:junegunn/fzf	an interactive fuzzy finder for the command line
+049	positive	rubygems:devise	user sign up and login for a rails application
+050	positive	rubygems:sidekiq	background job processing for ruby with redis
+051	positive	hex:oban	elixir background jobs stored in postgresql
+052	positive	hackage:pandoc	a haskell tool to convert documents between markdown, latex and word
+053	positive	maven:jackson-databind	a java library to map json to objects and back
+054	positive	nuget:Newtonsoft.Json	a c# library for serializing objects to json
+055	positive	packagist:guzzlehttp/guzzle	a php library for sending http requests
+056	positive	homebrew:htop	an interactive process viewer for the terminal
+057	positive	homebrew:tldr|tealdeer|tlrc	short practical examples for command line tools instead of man pages
+058	positive	vscode-marketplace:gitlens	a vscode extension that shows who last changed each line, from git
+059	positive	jetbrains:rainbow brackets	an intellij plugin that gives matching brackets their own colours
+060	positive	docker-hub:vaultwarden/server	a docker image for a self-hosted password manager that works with bitwarden clients
+061	positive	artifact-hub:cert-manager	a kubernetes controller that gets tls certificates from let's encrypt automatically
+062	positive	nixpkgs:nvd	a nix tool that shows which packages changed between two system generations
+063	specific	-	a cargo subcommand that lists dependencies whose build scripts make network requests
+064	specific	-	a git hook that strips output cells from jupyter notebooks before commit
+065	specific	-	a cli that converts bibtex files to csl-json and removes duplicates by doi
+066	specific	-	a vscode extension that estimates the carbon footprint of a cloud deployment
+067	specific	-	a neovim plugin that shows git blame for the current line as virtual text
+068	specific	-	a python library to read and write gpx track files
+069	specific	-	a tool that diffs two openapi specs and reports breaking changes
+070	specific	-	an elixir library for rate limiting with a token bucket
+071	specific	-	a rust crate for parsing marc21 library catalog records
+072	specific	-	a postgres extension for h3 hexagonal geospatial indexes
+073	specific	-	a cli that renders mermaid diagrams as ascii art in the terminal
+074	specific	-	a static site generator that builds a website from a zotero library
+075	specific	-	a go library for sqlite without cgo
+076	specific	-	a kubernetes operator that scales deployments to zero outside office hours
+077	specific	-	a haskell library for parsing icalendar files
+078	specific	-	a command line tool that checks a bibliography for retracted papers
+079	specific	-	a terminal ui for browsing oai-pmh metadata endpoints
+080	specific	-	a github action that fails a pull request if the changelog was not updated
+081	specific	-	a docker image that backs up postgres to s3 on a schedule
+082	specific	-	a php library to generate epub ebooks from markdown
+083	vague	-	a python library
+084	vague	-	a web framework
+085	vague	-	a tool for developers
+086	vague	-	a rust crate for data
+087	vague	-	a javascript utility
+088	vague	-	a go cli
+089	vague	-	a database
+090	vague	-	a mobile app
+091	vague	-	a library for machine learning
+092	vague	-	a vscode extension
+093	vague	-	an api client
+094	vague	-	a kubernetes tool
+095	vague	-	something to make coding easier
+096	vague	-	a data processing library
+097	vague	-	a react hook
