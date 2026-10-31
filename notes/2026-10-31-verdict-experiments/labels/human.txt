@@ -18,7 +18,7 @@
 # anywhere, e.g. a well-known tool that should have turned up but didn't.
 
 == 005  CLI tool that kills a process on a given port
-level:
+level: saturated
 
 y  [hacker-news] Show HN: Portdetective – A tiny, fast rust CLI for port inspection: Hi HN,I kept getting annoyed having to track down which process was sitting on a port so I could kill it, so I built a t… (pop 3)  <https://news.ycombinator.com/item?id=46426086>
 y  [go] kill-port: kill-port (updated 2018-06)  <https://pkg.go.dev/github.com/rimiti/kill-port>
@@ -39,65 +39,65 @@ n  [pypi] checkport: Port management tool for checking and killing processes on 
 n  [github] foreversd/forever: A simple CLI tool for ensuring that a given script runs continuously (i.e. forever) (pop 13815, updated 2023-05)  <https://github.com/foreversd/forever>
 
 == 016  a vscode extension for markdown preview
-level:
+level: saturated
 
-_  [vscode-marketplace] Vue block-code renderer for VScode default Markdown Previewer: An extension for rendering Vue code block in Markdown default Previewer of VScode (pop 4, updated 2026-07)  <https://marketplace.visualstudio.com/items?itemName=SaundersHwu.vscode-mdpreview-vue-renderer>
-_  [vscode-marketplace] Offline Markdown Preview: Offline Markdown preview for VS Code and compatible editors, with Mermaid diagrams, KaTeX math, secure local rendering, HTML/PDF export, and scroll sync. (pop 190710, updated 2026-10)  <https://marketplace.visualstudio.com/items?itemName=Bowlerr.offline-markdown-preview>
+p  [vscode-marketplace] Vue block-code renderer for VScode default Markdown Previewer: An extension for rendering Vue code block in Markdown default Previewer of VScode (pop 4, updated 2026-07)  <https://marketplace.visualstudio.com/items?itemName=SaundersHwu.vscode-mdpreview-vue-renderer>
+y  [vscode-marketplace] Offline Markdown Preview: Offline Markdown preview for VS Code and compatible editors, with Mermaid diagrams, KaTeX math, secure local rendering, HTML/PDF export, and scroll sync. (pop 190710, updated 2026-10)  <https://marketplace.visualstudio.com/items?itemName=Bowlerr.offline-markdown-preview>
 _  [vscode-marketplace] MarkDown Showdown Preview (MDSP): A markdown preview vscode extension for showdown.js (pop 18, updated 2019-12)  <https://marketplace.visualstudio.com/items?itemName=jhuix.markdown-showdown-preview>
-_  [vscode-marketplace] markdown-inline-preview-vscode: A VS Code extension for improving the display of markdown directly in the editor (pop 2060, updated 2026-02)  <https://marketplace.visualstudio.com/items?itemName=domdomegg.markdown-inline-preview-vscode>
-_  [github] cweijan/vscode-office: Let VSCode support previewing PDF, Excel, Word and other formats, and add markdown WYSIWYG editor. (pop 1725, updated 2026-10)  <https://github.com/cweijan/vscode-office>
-_  [vscode-marketplace] VSMD - Markdown Preview: A VSCode extension to render Markdown files as HTML (pop 33, updated 2026-09)  <https://marketplace.visualstudio.com/items?itemName=huachao.vsmd>
-_  [github] mjbvz/vscode-github-markdown-preview-style: VS Code extension that changes the built-in markdown preview to match Github's styling (pop 370, updated 2026-10)  <https://github.com/mjbvz/vscode-github-markdown-preview-style>
-_  [jetbrains] Markdown Browser Preview: Preview Markdown files in a configurable browser; auto-refresh on save. Also available as a VSCode extension with the sa… (pop 180, updated 2026-08)  <https://plugins.jetbrains.com/plugin/33866-markdown-browser-preview>
-_  [github] raycon/vscode-markdown-style: Markdown styles for vscode (pop 149, updated 2019-01)  <https://github.com/raycon/vscode-markdown-style>
-_  [github] yzane/vscode-markdown-pdf: Markdown converter for Visual Studio Code (pop 1344, updated 2026-10)  <https://github.com/yzane/vscode-markdown-pdf>
-_  [vscode-marketplace] Asciimath for Markdown Preview: Asciimath extension for VSCode's built-in markdown preview (pop 881, updated 2023-09)  <https://marketplace.visualstudio.com/items?itemName=zmx0142857.vscode-markdown-asciimath>
-_  [github] dbankier/vscode-instant-markdown: vscode extension for instant markdown previews (pop 54, updated 2022-12)  <https://github.com/dbankier/vscode-instant-markdown>
-_  [vscode-marketplace] Markdown Preview Extended Syntax: A collection of syntax extensions for VSCode's Markdown Preview (pop 91, updated 2026-10)  <https://marketplace.visualstudio.com/items?itemName=saeris.markdown-preview-extended-syntax>
-_  [vscode-marketplace] Markdown Preview Right Click: A VSCode extension that provides Markdown preview with right-click context menu integration using Chrome's rendering engine (pop 196, updated 2025-06)  <https://marketplace.visualstudio.com/items?itemName=tomorrow56.markdown-preview-right-click>
-_  [vscode-marketplace] Qiita Markdown Preview: VSCode extension to preview Qiita markdown (pop 1946, updated 2022-02)  <https://marketplace.visualstudio.com/items?itemName=ryokat3.vscode-qiita-markdown-preview>
+p  [vscode-marketplace] markdown-inline-preview-vscode: A VS Code extension for improving the display of markdown directly in the editor (pop 2060, updated 2026-02)  <https://marketplace.visualstudio.com/items?itemName=domdomegg.markdown-inline-preview-vscode>
+y  [github] cweijan/vscode-office: Let VSCode support previewing PDF, Excel, Word and other formats, and add markdown WYSIWYG editor. (pop 1725, updated 2026-10)  <https://github.com/cweijan/vscode-office>
+y  [vscode-marketplace] VSMD - Markdown Preview: A VSCode extension to render Markdown files as HTML (pop 33, updated 2026-09)  <https://marketplace.visualstudio.com/items?itemName=huachao.vsmd>
+y  [github] mjbvz/vscode-github-markdown-preview-style: VS Code extension that changes the built-in markdown preview to match Github's styling (pop 370, updated 2026-10)  <https://github.com/mjbvz/vscode-github-markdown-preview-style>
+y  [jetbrains] Markdown Browser Preview: Preview Markdown files in a configurable browser; auto-refresh on save. Also available as a VSCode extension with the sa… (pop 180, updated 2026-08)  <https://plugins.jetbrains.com/plugin/33866-markdown-browser-preview>
+p  [github] raycon/vscode-markdown-style: Markdown styles for vscode (pop 149, updated 2019-01)  <https://github.com/raycon/vscode-markdown-style>
+p  [github] yzane/vscode-markdown-pdf: Markdown converter for Visual Studio Code (pop 1344, updated 2026-10)  <https://github.com/yzane/vscode-markdown-pdf>
+p  [vscode-marketplace] Asciimath for Markdown Preview: Asciimath extension for VSCode's built-in markdown preview (pop 881, updated 2023-09)  <https://marketplace.visualstudio.com/items?itemName=zmx0142857.vscode-markdown-asciimath>
+y  [github] dbankier/vscode-instant-markdown: vscode extension for instant markdown previews (pop 54, updated 2022-12)  <https://github.com/dbankier/vscode-instant-markdown>
+y  [vscode-marketplace] Markdown Preview Extended Syntax: A collection of syntax extensions for VSCode's Markdown Preview (pop 91, updated 2026-10)  <https://marketplace.visualstudio.com/items?itemName=saeris.markdown-preview-extended-syntax>
+y  [vscode-marketplace] Markdown Preview Right Click: A VSCode extension that provides Markdown preview with right-click context menu integration using Chrome's rendering engine (pop 196, updated 2025-06)  <https://marketplace.visualstudio.com/items?itemName=tomorrow56.markdown-preview-right-click>
+y  [vscode-marketplace] Qiita Markdown Preview: VSCode extension to preview Qiita markdown (pop 1946, updated 2022-02)  <https://marketplace.visualstudio.com/items?itemName=ryokat3.vscode-qiita-markdown-preview>
 
 == 020  a helm chart to deploy a kubernetes operator
-level:
+level: vague
 
-_  [artifact-hub] kcp-operator: A Helm chart for kcp-operator, a Kubernetes operator to deploy and manage kcp instances. (updated 2026-10)  <https://artifacthub.io/packages/helm/kcp-dev/kcp-operator>
-_  [artifact-hub] altinity-clickhouse-operator: Helm chart to deploy [altinity-clickhouse-operator](https://github.com/Altinity/clickhouse-operator). The ClickHouse Operator creates, configures and manages... (pop 1, updated 2022-11)  <https://artifacthub.io/packages/helm/slamdev/altinity-clickhouse-operator>
-_  [artifact-hub] capsule: A Helm chart to deploy the Capsule Operator for easily implementing, managing, and maintaining multitenancy and access control in Kubernetes. (pop 4, updated 2026-10)  <https://artifacthub.io/packages/helm/projectcapsule/capsule>
-_  [artifact-hub] telegraf-operator: A Helm chart for Kubernetes to deploy telegraf-operator (pop 1, updated 2024-03)  <https://artifacthub.io/packages/helm/influxdata/telegraf-operator>
-_  [artifact-hub] spark-kubernetes-operator: The official Helm chart to deploy Apache Spark, an unified engine for large-scale data analytics (pop 3, updated 2026-07)  <https://artifacthub.io/packages/helm/spark-kubernetes-operator/spark-kubernetes-operator>
-_  [github] keel-hq/keel: Kubernetes Operator to automate Helm, DaemonSet, StatefulSet & Deployment updates (pop 2741, updated 2026-10)  <https://github.com/keel-hq/keel>
-_  [github] arttor/helmify: Creates Helm chart from Kubernetes yaml (pop 1744, updated 2026-05)  <https://github.com/arttor/helmify>
-_  [artifact-hub] supabase-operator: Helm chart to deploy a Supabase Operator (updated 2026-07)  <https://artifacthub.io/packages/helm/supabse/supabase-operator>
-_  [github] falcosecurity/charts: Community managed Helm charts for running Falco with Kubernetes (pop 296, updated 2026-10)  <https://github.com/falcosecurity/charts>
-_  [artifact-hub] superset-operator: The official Helm chart for deploying and managing Apache Superset with the Superset Kubernetes Operator (updated 2026-10)  <https://artifacthub.io/packages/helm/superset-kubernetes-operator/superset-operator>
-_  [artifact-hub] toolhive-operator: A Helm chart for deploying the ToolHive Operator into Kubernetes. (pop 1, updated 2026-10)  <https://artifacthub.io/packages/helm/toolhive-operator/toolhive-operator>
-_  [artifact-hub] mongodb: A Helm chart for deploying MongoDB Community ReplicaSet via the MongoDB Kubernetes Operator (updated 2026-01)  <https://artifacthub.io/packages/helm/barravar/mongodb>
-_  [artifact-hub] mongodb-operator: Helm chart to deploy and manage MongoDB operator in Kubernetes. (updated 2023-04)  <https://artifacthub.io/packages/helm/ot-container-kit/mongodb-operator>
-_  [github] mattermost/mattermost-helm: Mattermost Helm charts for Kubernetes (pop 202, updated 2026-10)  <https://github.com/mattermost/mattermost-helm>
-_  [artifact-hub] capsule: A Helm chart to deploy the Capsule Operator for easily implementing, managing, and maintaining multitenancy and access control in Kubernetes. (pop 1, updated 2026-10)  <https://artifacthub.io/packages/helm/capsule/capsule>
-_  [artifact-hub] mysql-operator: MySQL Operator Helm Chart for deploying MySQL InnoDB Cluster in Kubernetes (pop 13, updated 2026-10)  <https://artifacthub.io/packages/helm/mysql-operator/mysql-operator>
-_  [artifact-hub] altinity-clickhouse-operator: Helm chart to deploy [altinity-clickhouse-operator](https://github.com/Altinity/clickhouse-operator). The ClickHouse Operator creates, configures and manages... (pop 7, updated 2026-09)  <https://artifacthub.io/packages/helm/altinity-clickhouse-operator/altinity-clickhouse-operator>
-_  [artifact-hub] dwpk: A Helm chart to deploy dwpk, a development workspace platform for Kubernetes (updated 2026-10)  <https://artifacthub.io/packages/helm/helm-dwpk/dwpk>
+y  [artifact-hub] kcp-operator: A Helm chart for kcp-operator, a Kubernetes operator to deploy and manage kcp instances. (updated 2026-10)  <https://artifacthub.io/packages/helm/kcp-dev/kcp-operator>
+y  [artifact-hub] altinity-clickhouse-operator: Helm chart to deploy [altinity-clickhouse-operator](https://github.com/Altinity/clickhouse-operator). The ClickHouse Operator creates, configures and manages... (pop 1, updated 2022-11)  <https://artifacthub.io/packages/helm/slamdev/altinity-clickhouse-operator>
+y  [artifact-hub] capsule: A Helm chart to deploy the Capsule Operator for easily implementing, managing, and maintaining multitenancy and access control in Kubernetes. (pop 4, updated 2026-10)  <https://artifacthub.io/packages/helm/projectcapsule/capsule>
+y  [artifact-hub] telegraf-operator: A Helm chart for Kubernetes to deploy telegraf-operator (pop 1, updated 2024-03)  <https://artifacthub.io/packages/helm/influxdata/telegraf-operator>
+y  [artifact-hub] spark-kubernetes-operator: The official Helm chart to deploy Apache Spark, an unified engine for large-scale data analytics (pop 3, updated 2026-07)  <https://artifacthub.io/packages/helm/spark-kubernetes-operator/spark-kubernetes-operator>
+y  [github] keel-hq/keel: Kubernetes Operator to automate Helm, DaemonSet, StatefulSet & Deployment updates (pop 2741, updated 2026-10)  <https://github.com/keel-hq/keel>
+p  [github] arttor/helmify: Creates Helm chart from Kubernetes yaml (pop 1744, updated 2026-05)  <https://github.com/arttor/helmify>
+y  [artifact-hub] supabase-operator: Helm chart to deploy a Supabase Operator (updated 2026-07)  <https://artifacthub.io/packages/helm/supabse/supabase-operator>
+y  [github] falcosecurity/charts: Community managed Helm charts for running Falco with Kubernetes (pop 296, updated 2026-10)  <https://github.com/falcosecurity/charts>
+y  [artifact-hub] superset-operator: The official Helm chart for deploying and managing Apache Superset with the Superset Kubernetes Operator (updated 2026-10)  <https://artifacthub.io/packages/helm/superset-kubernetes-operator/superset-operator>
+y  [artifact-hub] toolhive-operator: A Helm chart for deploying the ToolHive Operator into Kubernetes. (pop 1, updated 2026-10)  <https://artifacthub.io/packages/helm/toolhive-operator/toolhive-operator>
+p  [artifact-hub] mongodb: A Helm chart for deploying MongoDB Community ReplicaSet via the MongoDB Kubernetes Operator (updated 2026-01)  <https://artifacthub.io/packages/helm/barravar/mongodb>
+y  [artifact-hub] mongodb-operator: Helm chart to deploy and manage MongoDB operator in Kubernetes. (updated 2023-04)  <https://artifacthub.io/packages/helm/ot-container-kit/mongodb-operator>
+y  [github] mattermost/mattermost-helm: Mattermost Helm charts for Kubernetes (pop 202, updated 2026-10)  <https://github.com/mattermost/mattermost-helm>
+y  [artifact-hub] capsule: A Helm chart to deploy the Capsule Operator for easily implementing, managing, and maintaining multitenancy and access control in Kubernetes. (pop 1, updated 2026-10)  <https://artifacthub.io/packages/helm/capsule/capsule>
+y  [artifact-hub] mysql-operator: MySQL Operator Helm Chart for deploying MySQL InnoDB Cluster in Kubernetes (pop 13, updated 2026-10)  <https://artifacthub.io/packages/helm/mysql-operator/mysql-operator>
+y  [artifact-hub] altinity-clickhouse-operator: Helm chart to deploy [altinity-clickhouse-operator](https://github.com/Altinity/clickhouse-operator). The ClickHouse Operator creates, configures and manages... (pop 7, updated 2026-09)  <https://artifacthub.io/packages/helm/altinity-clickhouse-operator/altinity-clickhouse-operator>
+y  [artifact-hub] dwpk: A Helm chart to deploy dwpk, a development workspace platform for Kubernetes (updated 2026-10)  <https://artifacthub.io/packages/helm/helm-dwpk/dwpk>
 
 == 025  rust crate for embedded firmware
 level:
 
-_  [github] stm32-rs/stm32f407g-disc: Rust BSP crate for the STM32F4DISCOVERY (STM32F407G-DISC) development board (pop 48, updated 2023-11)  <https://github.com/stm32-rs/stm32f407g-disc>
-_  [github] pop-os/firmware-manager: Generic framework and GTK UI for firmware updates from system76-firmware and fwupd, written in Rust. (pop 159, updated 2026-10)  <https://github.com/pop-os/firmware-manager>
-_  [github] rust-embedded/not-yet-awesome-embedded-rust: A collection of items that are not yet awesome in Embedded Rust (pop 135, updated 2025-07)  <https://github.com/rust-embedded/not-yet-awesome-embedded-rust>
-_  [github] rust-embedded-community/usb-device: Experimental device-side USB framework for microcontrollers in Rust. (pop 531, updated 2026-06)  <https://github.com/rust-embedded-community/usb-device>
-_  [github] CodeConstruct/mctp-rs: Rust crates for MCTP protocol support, on Linux and embedded (pop 20, updated 2026-10)  <https://github.com/CodeConstruct/mctp-rs>
-_  [github] rustsbi/rustsbi: RISC-V Supervisor Binary Interface (RISC-V SBI) library in Rust; runs on M or HS mode; good support for embedded Rust ecosystem. For binary download see firm... (pop 1342, updated 2026-10)  <https://github.com/rustsbi/rustsbi>
-_  [crates-io] embedded-build-tools: Reusable building blocks for bare-metal Rust kernel build pipelines: bootable disk-image assembly (FAT32/ESP/MBR), QEMU launching, cargo-build driving + arti... (pop 47, updated 2026-06)  <https://crates.io/crates/embedded-build-tools>
-_  [crates-io] embedded-nn: A pure Rust, #![no_std] neural network inference library inspired by CMSIS-NN for microcontrollers and embedded targets. (pop 188, updated 2026-09)  <https://crates.io/crates/embedded-nn>
-_  [github] nrf-rs/microbit: A Rust crate for BBC micro:bit development (pop 339, updated 2026-10)  <https://github.com/nrf-rs/microbit>
-_  [github] ivmarkov/rust-esp32-std-demo: Rust on ESP32 STD demo app. A demo STD binary crate for the ESP32[XX] and ESP-IDF, which connects to WiFi, Ethernet, drives a small HTTP server and draws on ... (pop 801, updated 2024-08)  <https://github.com/ivmarkov/rust-esp32-std-demo>
-_  [github] TeXitoi/keyberon: A rust crate to create a pure rust keyboard firmware. (pop 1192, updated 2025-10)  <https://github.com/TeXitoi/keyberon>
-_  [github] rust-embedded/book: Documentation on how to use the Rust Programming Language to develop firmware for bare metal (microcontroller) devices (pop 1355, updated 2026-10)  <https://github.com/rust-embedded/book>
-_  [crates-io] jitpomi-ferrisup: A versatile Rust project bootstrapping tool - start anywhere, scale anywhere (pop 606, updated 2025-03)  <https://crates.io/crates/jitpomi-ferrisup>
-_  [github] Univa/rumcake: A rust-based keyboard firmware (pop 82, updated 2024-12)  <https://github.com/Univa/rumcake>
-_  [github] rust-unofficial/awesome-rust: A curated list of Rust code and resources. (pop 60230, updated 2026-10)  <https://github.com/rust-unofficial/awesome-rust>
-_  [github] rust-embedded/awesome-embedded-rust: Curated list of resources for Embedded and Low-level development in the Rust programming language (pop 8170, updated 2026-10)  <https://github.com/rust-embedded/awesome-embedded-rust>
+y  [github] stm32-rs/stm32f407g-disc: Rust BSP crate for the STM32F4DISCOVERY (STM32F407G-DISC) development board (pop 48, updated 2023-11)  <https://github.com/stm32-rs/stm32f407g-disc>
+p  [github] pop-os/firmware-manager: Generic framework and GTK UI for firmware updates from system76-firmware and fwupd, written in Rust. (pop 159, updated 2026-10)  <https://github.com/pop-os/firmware-manager>
+p  [github] rust-embedded/not-yet-awesome-embedded-rust: A collection of items that are not yet awesome in Embedded Rust (pop 135, updated 2025-07)  <https://github.com/rust-embedded/not-yet-awesome-embedded-rust>
+y  [github] rust-embedded-community/usb-device: Experimental device-side USB framework for microcontrollers in Rust. (pop 531, updated 2026-06)  <https://github.com/rust-embedded-community/usb-device>
+y  [github] CodeConstruct/mctp-rs: Rust crates for MCTP protocol support, on Linux and embedded (pop 20, updated 2026-10)  <https://github.com/CodeConstruct/mctp-rs>
+y  [github] rustsbi/rustsbi: RISC-V Supervisor Binary Interface (RISC-V SBI) library in Rust; runs on M or HS mode; good support for embedded Rust ecosystem. For binary download see firm... (pop 1342, updated 2026-10)  <https://github.com/rustsbi/rustsbi>
+p  [crates-io] embedded-build-tools: Reusable building blocks for bare-metal Rust kernel build pipelines: bootable disk-image assembly (FAT32/ESP/MBR), QEMU launching, cargo-build driving + arti... (pop 47, updated 2026-06)  <https://crates.io/crates/embedded-build-tools>
+p  [crates-io] embedded-nn: A pure Rust, #![no_std] neural network inference library inspired by CMSIS-NN for microcontrollers and embedded targets. (pop 188, updated 2026-09)  <https://crates.io/crates/embedded-nn>
+y  [github] nrf-rs/microbit: A Rust crate for BBC micro:bit development (pop 339, updated 2026-10)  <https://github.com/nrf-rs/microbit>
+p  [github] ivmarkov/rust-esp32-std-demo: Rust on ESP32 STD demo app. A demo STD binary crate for the ESP32[XX] and ESP-IDF, which connects to WiFi, Ethernet, drives a small HTTP server and draws on ... (pop 801, updated 2024-08)  <https://github.com/ivmarkov/rust-esp32-std-demo>
+y  [github] TeXitoi/keyberon: A rust crate to create a pure rust keyboard firmware. (pop 1192, updated 2025-10)  <https://github.com/TeXitoi/keyberon>
+p  [github] rust-embedded/book: Documentation on how to use the Rust Programming Language to develop firmware for bare metal (microcontroller) devices (pop 1355, updated 2026-10)  <https://github.com/rust-embedded/book>
+y  [crates-io] jitpomi-ferrisup: A versatile Rust project bootstrapping tool - start anywhere, scale anywhere (pop 606, updated 2025-03)  <https://crates.io/crates/jitpomi-ferrisup>
+y  [github] Univa/rumcake: A rust-based keyboard firmware (pop 82, updated 2024-12)  <https://github.com/Univa/rumcake>
+p  [github] rust-unofficial/awesome-rust: A curated list of Rust code and resources. (pop 60230, updated 2026-10)  <https://github.com/rust-unofficial/awesome-rust>
+p  [github] rust-embedded/awesome-embedded-rust: Curated list of resources for Embedded and Low-level development in the Rust programming language (pop 8170, updated 2026-10)  <https://github.com/rust-embedded/awesome-embedded-rust>
 
 == 034  load environment variables from a .env file in a node app
 level:
