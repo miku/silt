@@ -3,6 +3,8 @@
 VERSION ?=
 LDFLAGS := $(if $(VERSION),-X github.com/miku/silt.version=$(VERSION))
 
+SHELL := /bin/bash
+
 # Built with the module's own toolchain: a golangci-lint binary built with an
 # older Go cannot load this module's export data.
 GOLANGCI_LINT ?= go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0
@@ -12,7 +14,7 @@ build:
 	go build -ldflags "$(LDFLAGS)" -o silt ./cmd/silt
 
 # Twice: the numeric golden tests are skipped under the race detector, which
-# slows instrumented float loops many times over.
+# slows instrumented float loops many times over. TODO: revisit
 .PHONY: test
 test:
 	go test ./...
@@ -31,3 +33,5 @@ lint:
 .PHONY: clean
 clean:
 	rm -f silt
+	# -C is nightly only
+	cd scripts/patent-harness/ && cargo clean
