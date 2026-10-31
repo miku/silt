@@ -225,7 +225,7 @@ p  [pypi] pyosmogps: Extract the GPS data from the Osmo Action video files  <htt
 n  [github] tkrajina/gpxgo: GPX library for golang (pop 110, updated 2026-08)  <https://github.com/tkrajina/gpxgo>
 
 == 070  an elixir library for rate limiting with a token bucket
-level:
+level: crowded
 
 y  [hex] ex_limiter: Token bucket rate limiter written in elixir with configurable backends (pop 39260, updated 2019-06)  <https://hex.pm/packages/ex_limiter>
 y  [hex] limitex: A pure Elixir distributed rate limiter (pop 4406, updated 2019-11)  <https://hex.pm/packages/limitex>
@@ -245,25 +245,25 @@ y  [hex] atomic_bucket: Fast single node rate limiter implementing Token Bucket 
 n  [hacker-news] Java rate-limiting library based on the token-bucket algorithm: Hi everyone! My name is Maxim Bartkov, I'm a co-author of Bucket4J library. I want to present the greatest library to pr… (pop 2)  <https://news.ycombinator.com/item?id=29533948>
 
 == 078  a command line tool that checks a bibliography for retracted papers
-level:
+level: saturated
 
-_  [pypi] citeguard-cli: Check a bibliography for retracted papers -- retractions, corrections, and expressions of concern via Crossref (including Retraction Watch records). CLI, Pyt...  <https://pypi.org/project/citeguard-cli/>
-_  [github] tekstrom11/DONTCITEME: Application to check citations against a database of academic retractions (pop 0, updated 2026-10)  <https://github.com/tekstrom11/DONTCITEME>
-_  [github] maoji-y/refproof: Catch fake, wrong and retracted references in your paper. Checks BibTeX, LaTeX, Word and pasted reference lists against Crossref, arXiv and OpenAlex. CLI, br... (pop 2, updated 2026-09)  <https://github.com/maoji-y/refproof>
-_  [pypi] retraction-check: A Python package to check whether papers in your .bib file have been listed on Retraction Watch  <https://pypi.org/project/retraction-check/>
-_  [pypi] citegate: Citation integrity as a CI gate: verify BibTeX references against Crossref, OpenAlex, and DBLP, catch fabricated citations, and get alerted when a paper you ...  <https://pypi.org/project/citegate/>
-_  [pypi] retractguard: Free, open, OpenAlex-native watchdog for retracted and problematic citations  <https://pypi.org/project/retractguard/>
-_  [pypi] refproof: Catch fake, wrong and retracted references in your paper's bibliography.  <https://pypi.org/project/refproof/>
-_  [github] Shannon-Whitlock/VeraCite: A lightweight, auditable tool for checking the accuracy and conformity of BibTeX/biblatex bibliographies in scientific articles (pop 15, updated 2026-06)  <https://github.com/Shannon-Whitlock/VeraCite>
-_  [pypi] openpapercheck: Fast, honest scholarly retraction and reference integrity checker with verified open labels.  <https://pypi.org/project/openpapercheck/>
-_  [npm] command-line-tool: command-line-tool (pop 1000000, updated 2018-01)  <https://www.npmjs.com/package/command-line-tool>
-_  [pypi] starbuck: Reference-integrity checks for manuscripts: do the cited works exist, match their citations, and still stand?  <https://pypi.org/project/starbuck/>
-_  [github] Sanika0212/Citeright: Check every citation in a draft: the reference exists, it is the paper you meant, it is not retracted, and it supports the sentence that cites it (pop 0, updated 2026-10)  <https://github.com/Sanika0212/Citeright>
-_  [npm] liftoff: Launch your command line tool with ease. (pop 1000000, updated 2025-06)  <https://www.npmjs.com/package/liftoff>
-_  [github] markrussinovich/refchecker: A tool that validates academic paper references (pop 560, updated 2026-10)  <https://github.com/markrussinovich/refchecker>
-_  [npm] liftup: Launch your command line tool with ease. (pop 1000000, updated 2021-03)  <https://www.npmjs.com/package/liftup>
-_  [github] Shivam2005Goel/Project-Geiger: An immersive 3D graph application powered by CognoDB that tracks the "blast radius" of retracted scientific papers through complex citation networks. (pop 0, updated 2026-08)  <https://github.com/Shivam2005Goel/Project-Geiger>
-_  [github] rktreddy/refscan: Local CLI for research-paper reference integrity: fetch reference PDFs, scan for plagiarism & paraphrase, verify citations (flag fabricated + retracted), and... (pop 3, updated 2026-07)  <https://github.com/rktreddy/refscan>
-_  [github] isoglu/benthic: Checks reference lists from language models for invented, misattributed and retracted sources and fetches the real papers from open access. macOS. (pop 1, updated 2026-10)  <https://github.com/isoglu/benthic>
-_  [github] vibhorxpandey/Aurelius-IDE: Aurelius is a language server that treats research papers like source code. Write LaTeX, and it checks your document live — inline diagnostics for undefined ... (pop 0, updated 2026-09)  <https://github.com/vibhorxpandey/Aurelius-IDE>
-_  [github] arhancanli/citation-check-mcp: Verifies citations: finds fabricated or mismatched references and retractions, returns clean BibTeX. (pop 1, updated 2026-10)  <https://github.com/arhancanli/citation-check-mcp>
+y  [pypi] citeguard-cli: Check a bibliography for retracted papers -- retractions, corrections, and expressions of concern via Crossref (including Retraction Watch records). CLI, Pyt...  <https://pypi.org/project/citeguard-cli/>
+p  [github] tekstrom11/DONTCITEME: Application to check citations against a database of academic retractions (pop 0, updated 2026-10)  <https://github.com/tekstrom11/DONTCITEME>
+y  [github] maoji-y/refproof: Catch fake, wrong and retracted references in your paper. Checks BibTeX, LaTeX, Word and pasted reference lists against Crossref, arXiv and OpenAlex. CLI, br... (pop 2, updated 2026-09)  <https://github.com/maoji-y/refproof>
+y  [pypi] retraction-check: A Python package to check whether papers in your .bib file have been listed on Retraction Watch  <https://pypi.org/project/retraction-check/>
+y  [pypi] citegate: Citation integrity as a CI gate: verify BibTeX references against Crossref, OpenAlex, and DBLP, catch fabricated citations, and get alerted when a paper you ...  <https://pypi.org/project/citegate/>
+y  [pypi] retractguard: Free, open, OpenAlex-native watchdog for retracted and problematic citations  <https://pypi.org/project/retractguard/>
+y  [pypi] refproof: Catch fake, wrong and retracted references in your paper's bibliography.  <https://pypi.org/project/refproof/>
+y  [github] Shannon-Whitlock/VeraCite: A lightweight, auditable tool for checking the accuracy and conformity of BibTeX/biblatex bibliographies in scientific articles (pop 15, updated 2026-06)  <https://github.com/Shannon-Whitlock/VeraCite>
+y  [pypi] openpapercheck: Fast, honest scholarly retraction and reference integrity checker with verified open labels.  <https://pypi.org/project/openpapercheck/>
+n  [npm] command-line-tool: command-line-tool (pop 1000000, updated 2018-01)  <https://www.npmjs.com/package/command-line-tool>
+y  [pypi] starbuck: Reference-integrity checks for manuscripts: do the cited works exist, match their citations, and still stand?  <https://pypi.org/project/starbuck/>
+y  [github] Sanika0212/Citeright: Check every citation in a draft: the reference exists, it is the paper you meant, it is not retracted, and it supports the sentence that cites it (pop 0, updated 2026-10)  <https://github.com/Sanika0212/Citeright>
+n  [npm] liftoff: Launch your command line tool with ease. (pop 1000000, updated 2025-06)  <https://www.npmjs.com/package/liftoff>
+y  [github] markrussinovich/refchecker: A tool that validates academic paper references (pop 560, updated 2026-10)  <https://github.com/markrussinovich/refchecker>
+n  [npm] liftup: Launch your command line tool with ease. (pop 1000000, updated 2021-03)  <https://www.npmjs.com/package/liftup>
+p  [github] Shivam2005Goel/Project-Geiger: An immersive 3D graph application powered by CognoDB that tracks the "blast radius" of retracted scientific papers through complex citation networks. (pop 0, updated 2026-08)  <https://github.com/Shivam2005Goel/Project-Geiger>
+y  [github] rktreddy/refscan: Local CLI for research-paper reference integrity: fetch reference PDFs, scan for plagiarism & paraphrase, verify citations (flag fabricated + retracted), and... (pop 3, updated 2026-07)  <https://github.com/rktreddy/refscan>
+p  [github] isoglu/benthic: Checks reference lists from language models for invented, misattributed and retracted sources and fetches the real papers from open access. macOS. (pop 1, updated 2026-10)  <https://github.com/isoglu/benthic>
+y  [github] vibhorxpandey/Aurelius-IDE: Aurelius is a language server that treats research papers like source code. Write LaTeX, and it checks your document live — inline diagnostics for undefined ... (pop 0, updated 2026-09)  <https://github.com/vibhorxpandey/Aurelius-IDE>
+y  [github] arhancanli/citation-check-mcp: Verifies citations: finds fabricated or mismatched references and retractions, returns clean BibTeX. (pop 1, updated 2026-10)  <https://github.com/arhancanli/citation-check-mcp>
