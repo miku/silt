@@ -164,85 +164,85 @@ p  [github] borntyping/spotter: A command line tool for watching files and runni
 == 049  user sign up and login for a rails application
 level:
 
-_  [github] basecamp/google_sign_in: Sign in (or up) with Google for Rails applications (pop 565, updated 2025-08)  <https://github.com/basecamp/google_sign_in>
-_  [github] excid3/revise_auth: A pure Rails authentication system like Devise. (pop 427, updated 2026-09)  <https://github.com/excid3/revise_auth>
-_  [github] heartcombo/devise: Flexible authentication solution for Rails with Warden. (pop 24357, updated 2026-10)  <https://github.com/heartcombo/devise>
+y  [github] basecamp/google_sign_in: Sign in (or up) with Google for Rails applications (pop 565, updated 2025-08)  <https://github.com/basecamp/google_sign_in>
+y  [github] excid3/revise_auth: A pure Rails authentication system like Devise. (pop 427, updated 2026-09)  <https://github.com/excid3/revise_auth>
+y  [github] heartcombo/devise: Flexible authentication solution for Rails with Warden. (pop 24357, updated 2026-10)  <https://github.com/heartcombo/devise>
 _  [github] rubycas/rubycas-client: Ruby client for Yale's Central Authentication Service protocol -- an open source enterprise single sign on system for web applications. (pop 335, updated 2023-06)  <https://github.com/rubycas/rubycas-client>
-_  [github] cedarcode/webauthn-ruby: WebAuthn ruby server library ― Make your Ruby/Rails web server become a conformant WebAuthn Relying Party (pop 777, updated 2026-10)  <https://github.com/cedarcode/webauthn-ruby>
-_  [github] mikker/passwordless: 🗝 Authentication for your Rails app without the icky-ness of passwords (pop 1341, updated 2026-06)  <https://github.com/mikker/passwordless>
-_  [github] igorkasyanchuk/any_login: Easy way to login as any user in system (pop 385, updated 2025-05)  <https://github.com/igorkasyanchuk/any_login>
-_  [github] starterkits/rails4-starterkit: Rails 4.1 starter app with production ready performance, security, and authentication. (pop 383, updated 2015-04)  <https://github.com/starterkits/rails4-starterkit>
-_  [github] RailsApps/rails-omniauth: Rails 5.0 starter app with OmniAuth for authentication. (pop 279, updated 2022-03)  <https://github.com/RailsApps/rails-omniauth>
-_  [github] spree/spree_auth_devise: Provides authentication (user accounts, login & signup) for @spree 4 by using Devise (pop 137, updated 2025-04)  <https://github.com/spree/spree_auth_devise>
-_  [rubygems] idi_captcha_generator: The idi_captcha_generator gem provides a customizable CAPTCHA solution tailored for high-traffic applications, ensuring that only legitimate users can access... (pop 1298)  <https://rubygems.org/gems/idi_captcha_generator>
-_  [github] lazaronixon/authentication-zero: An authentication system generator for Rails applications. (pop 1873, updated 2024-12)  <https://github.com/lazaronixon/authentication-zero>
-_  [github] RailsApps/rails-devise: Rails 5.0 starter app with Devise for authentication. (pop 511, updated 2020-09)  <https://github.com/RailsApps/rails-devise>
-_  [rubygems] myspaceid-sdk: MySpaceID lets your users log on using their MySpace account info, after which their MySpaceID data becomes available; that is, your web servers will be able... (pop 16985)  <https://rubygems.org/gems/myspaceid-sdk>
-_  [github] thoughtbot/clearance: Rails authentication with email & password. (pop 3731, updated 2026-07)  <https://github.com/thoughtbot/clearance>
-_  [github] janko/rodauth-rails: Rails integration for Rodauth authentication framework (pop 759, updated 2026-10)  <https://github.com/janko/rodauth-rails>
-_  [github] RailsApps/rails-devise-pundit: Rails 5.0 starter app with Devise for authentication and Pundit for authorization. (pop 479, updated 2018-09)  <https://github.com/RailsApps/rails-devise-pundit>
+p  [github] cedarcode/webauthn-ruby: WebAuthn ruby server library ― Make your Ruby/Rails web server become a conformant WebAuthn Relying Party (pop 777, updated 2026-10)  <https://github.com/cedarcode/webauthn-ruby>
+p  [github] mikker/passwordless: 🗝 Authentication for your Rails app without the icky-ness of passwords (pop 1341, updated 2026-06)  <https://github.com/mikker/passwordless>
+p  [github] igorkasyanchuk/any_login: Easy way to login as any user in system (pop 385, updated 2025-05)  <https://github.com/igorkasyanchuk/any_login>
+p  [github] starterkits/rails4-starterkit: Rails 4.1 starter app with production ready performance, security, and authentication. (pop 383, updated 2015-04)  <https://github.com/starterkits/rails4-starterkit>
+p  [github] RailsApps/rails-omniauth: Rails 5.0 starter app with OmniAuth for authentication. (pop 279, updated 2022-03)  <https://github.com/RailsApps/rails-omniauth>
+p  [github] spree/spree_auth_devise: Provides authentication (user accounts, login & signup) for @spree 4 by using Devise (pop 137, updated 2025-04)  <https://github.com/spree/spree_auth_devise>
+n  [rubygems] idi_captcha_generator: The idi_captcha_generator gem provides a customizable CAPTCHA solution tailored for high-traffic applications, ensuring that only legitimate users can access... (pop 1298)  <https://rubygems.org/gems/idi_captcha_generator>
+y  [github] lazaronixon/authentication-zero: An authentication system generator for Rails applications. (pop 1873, updated 2024-12)  <https://github.com/lazaronixon/authentication-zero>
+y  [github] RailsApps/rails-devise: Rails 5.0 starter app with Devise for authentication. (pop 511, updated 2020-09)  <https://github.com/RailsApps/rails-devise>
+n  [rubygems] myspaceid-sdk: MySpaceID lets your users log on using their MySpace account info, after which their MySpaceID data becomes available; that is, your web servers will be able... (pop 16985)  <https://rubygems.org/gems/myspaceid-sdk>
+y  [github] thoughtbot/clearance: Rails authentication with email & password. (pop 3731, updated 2026-07)  <https://github.com/thoughtbot/clearance>
+y  [github] janko/rodauth-rails: Rails integration for Rodauth authentication framework (pop 759, updated 2026-10)  <https://github.com/janko/rodauth-rails>
+p  [github] RailsApps/rails-devise-pundit: Rails 5.0 starter app with Devise for authentication and Pundit for authorization. (pop 479, updated 2018-09)  <https://github.com/RailsApps/rails-devise-pundit>
 
 == 066  a vscode extension that estimates the carbon footprint of a cloud deployment
-level:
+level: open
 
-_  [vscode-marketplace] CodeTogether Cloud: CodeTogether improves collaboration for teams by providing improved transparency and insights. (pop 195602, updated 2025-10)  <https://marketplace.visualstudio.com/items?itemName=genuitecllc.codetogether>
-_  [vscode-marketplace] Tencent Cloud CodeBuddy: Your AI pair programmer (pop 682678, updated 2026-10)  <https://marketplace.visualstudio.com/items?itemName=Tencent-Cloud.coding-copilot>
-_  [npm] @vscode/vsce-sign: Visual Studio Code extension package signing and verification module (pop 1000000, updated 2026-08)  <https://www.npmjs.com/package/@vscode/vsce-sign>
-_  [npm] @vscode/vsce: VS Code Extensions Manager (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/@vscode/vsce>
-_  [vscode-marketplace] Footprint: Automatic visual identity for VS Code workspaces. (pop 16, updated 2026-10)  <https://marketplace.visualstudio.com/items?itemName=waka.footprint>
-_  [vscode-marketplace] vscode-pets: Pets for your VS Code (pop 2752648, updated 2026-07)  <https://marketplace.visualstudio.com/items?itemName=tonybaloney.vscode-pets>
-_  [npm] @cloud-carbon-footprint/common: Common functionality to be shared among other cloud carbon footprint packages (pop 1000000, updated 2026-04)  <https://www.npmjs.com/package/@cloud-carbon-footprint/common>
-_  [vscode-marketplace] Vue VSCode Snippets: Snippets that will supercharge your Vue workflow (pop 3537615, updated 2024-11)  <https://marketplace.visualstudio.com/items?itemName=sdras.vue-vscode-snippets>
-_  [vscode-marketplace] vscode: extensions for vscode (pop 15803, updated 2022-12)  <https://marketplace.visualstudio.com/items?itemName=1YiB.vscode-bundle>
-_  [vscode-marketplace] Google Cloud Code: Tools for Google Cloud (pop 2179492, updated 2026-08)  <https://marketplace.visualstudio.com/items?itemName=GoogleCloudTools.cloudcode>
-_  [npm] @cloud-carbon-footprint/core: The core logic to get cloud usage data and estimate energy and carbon emissions. (pop 1000000, updated 2026-04)  <https://www.npmjs.com/package/@cloud-carbon-footprint/core>
-_  [npm] @opentelemetry/resource-detector-alibaba-cloud: OpenTelemetry resource detector for Alibaba Cloud (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/@opentelemetry/resource-detector-alibaba-cloud>
-_  [npm] @vscode/test-cli: Command-line runner for VS Code extension tests (pop 1000000, updated 2026-06)  <https://www.npmjs.com/package/@vscode/test-cli>
-_  [vscode-marketplace] vscode-proto3: Protobuf 3 support for Visual Studio Code (pop 3015620, updated 2021-11)  <https://marketplace.visualstudio.com/items?itemName=zxh404.vscode-proto3>
-_  [npm] @cloud-carbon-footprint/aws: The core logic to get cloud usage data and estimate energy and carbon emissions from Amazon Web Services. (pop 1000000, updated 2026-04)  <https://www.npmjs.com/package/@cloud-carbon-footprint/aws>
-_  [vscode-marketplace] VSCode Great Icons: A big pack of icons (200+) for your files. (pop 2364969, updated 2026-04)  <https://marketplace.visualstudio.com/items?itemName=emmanuelbeziat.vscode-great-icons>
-_  [npm] @vscode-logging/logger: Logger Library for VSCode Extensions (pop 1000000, updated 2026-08)  <https://www.npmjs.com/package/@vscode-logging/logger>
+n  [vscode-marketplace] CodeTogether Cloud: CodeTogether improves collaboration for teams by providing improved transparency and insights. (pop 195602, updated 2025-10)  <https://marketplace.visualstudio.com/items?itemName=genuitecllc.codetogether>
+n  [vscode-marketplace] Tencent Cloud CodeBuddy: Your AI pair programmer (pop 682678, updated 2026-10)  <https://marketplace.visualstudio.com/items?itemName=Tencent-Cloud.coding-copilot>
+n  [npm] @vscode/vsce-sign: Visual Studio Code extension package signing and verification module (pop 1000000, updated 2026-08)  <https://www.npmjs.com/package/@vscode/vsce-sign>
+n  [npm] @vscode/vsce: VS Code Extensions Manager (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/@vscode/vsce>
+n  [vscode-marketplace] Footprint: Automatic visual identity for VS Code workspaces. (pop 16, updated 2026-10)  <https://marketplace.visualstudio.com/items?itemName=waka.footprint>
+n  [vscode-marketplace] vscode-pets: Pets for your VS Code (pop 2752648, updated 2026-07)  <https://marketplace.visualstudio.com/items?itemName=tonybaloney.vscode-pets>
+p  [npm] @cloud-carbon-footprint/common: Common functionality to be shared among other cloud carbon footprint packages (pop 1000000, updated 2026-04)  <https://www.npmjs.com/package/@cloud-carbon-footprint/common>
+n  [vscode-marketplace] Vue VSCode Snippets: Snippets that will supercharge your Vue workflow (pop 3537615, updated 2024-11)  <https://marketplace.visualstudio.com/items?itemName=sdras.vue-vscode-snippets>
+n  [vscode-marketplace] vscode: extensions for vscode (pop 15803, updated 2022-12)  <https://marketplace.visualstudio.com/items?itemName=1YiB.vscode-bundle>
+n  [vscode-marketplace] Google Cloud Code: Tools for Google Cloud (pop 2179492, updated 2026-08)  <https://marketplace.visualstudio.com/items?itemName=GoogleCloudTools.cloudcode>
+p  [npm] @cloud-carbon-footprint/core: The core logic to get cloud usage data and estimate energy and carbon emissions. (pop 1000000, updated 2026-04)  <https://www.npmjs.com/package/@cloud-carbon-footprint/core>
+n  [npm] @opentelemetry/resource-detector-alibaba-cloud: OpenTelemetry resource detector for Alibaba Cloud (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/@opentelemetry/resource-detector-alibaba-cloud>
+n  [npm] @vscode/test-cli: Command-line runner for VS Code extension tests (pop 1000000, updated 2026-06)  <https://www.npmjs.com/package/@vscode/test-cli>
+n  [vscode-marketplace] vscode-proto3: Protobuf 3 support for Visual Studio Code (pop 3015620, updated 2021-11)  <https://marketplace.visualstudio.com/items?itemName=zxh404.vscode-proto3>
+p  [npm] @cloud-carbon-footprint/aws: The core logic to get cloud usage data and estimate energy and carbon emissions from Amazon Web Services. (pop 1000000, updated 2026-04)  <https://www.npmjs.com/package/@cloud-carbon-footprint/aws>
+n  [vscode-marketplace] VSCode Great Icons: A big pack of icons (200+) for your files. (pop 2364969, updated 2026-04)  <https://marketplace.visualstudio.com/items?itemName=emmanuelbeziat.vscode-great-icons>
+n  [npm] @vscode-logging/logger: Logger Library for VSCode Extensions (pop 1000000, updated 2026-08)  <https://www.npmjs.com/package/@vscode-logging/logger>
 
 == 068  a python library to read and write gpx track files
-level:
+level: crowded
 
-_  [pypi] fastgpx: An experimental Python library for parsing GPX files fast.  <https://pypi.org/project/fastgpx/>
-_  [github] dodo-saba/fit2gpx: A simple Python library for converting .FIT files to .GPX files. It also includes tools to convert Strava data downloads in bulk to GPX. (pop 140, updated 2025-06)  <https://github.com/dodo-saba/fit2gpx>
-_  [pypi] gpx: gpx is a zero-dependency, pure Python package for reading, manipulating, writing and converting GPX files.  <https://pypi.org/project/gpx/>
-_  [pypi] write-read-file: Some useful functions for reading/writing files  <https://pypi.org/project/write-read-file/>
-_  [pypi] gpx-openmap: Analyse and display your gps tracks on a map.  <https://pypi.org/project/gpx-openmap/>
-_  [hacker-news] Borb – A Python library to read, write, and edit PDF files: Borb – A Python library to read, write, and edit PDF files (pop 262)  <https://news.ycombinator.com/item?id=28574298>
-_  [pypi] gpx-player: Visualise & animate GPX race tracks.  <https://pypi.org/project/gpx-player/>
-_  [pypi] gpx-poi-enricher: Enrich GPX tracks with Points of Interest from OpenStreetMap via configurable YAML profiles  <https://pypi.org/project/gpx-poi-enricher/>
-_  [pypi] fitcxgp: Fast, all-in-one GPX/TCX/FIT toolkit  <https://pypi.org/project/fitcxgp/>
-_  [pypi] gpx2exif: Simple command-line tool to add GPS info from a GPX file to EXIF tags in images  <https://pypi.org/project/gpx2exif/>
-_  [pypi] gpx-reader: A tool to read GPX files and rename the files according to the location and time of the track.  <https://pypi.org/project/gpx-reader/>
-_  [pypi] gpxpy: GPX file parser and GPS track manipulation library  <https://pypi.org/project/gpxpy/>
-_  [pypi] gpxslicer: Slice up gpx tracks based on distance from the start or custom waypoints  <https://pypi.org/project/gpxslicer/>
-_  [pypi] Gpxity: A uniform interface to GPX services like mapmytracks or gpsies  <https://pypi.org/project/gpxity/>
-_  [hacker-news] Show HN: I am building a new Python library to read/write PDF files: Hi HN! This is my pet project, written from scratch because there is so much to discover and learn in the process. The f… (pop 279)  <https://news.ycombinator.com/item?id=33646951>
-_  [pypi] pyosmogps: Extract the GPS data from the Osmo Action video files  <https://pypi.org/project/pyosmogps/>
-_  [github] tkrajina/gpxgo: GPX library for golang (pop 110, updated 2026-08)  <https://github.com/tkrajina/gpxgo>
+y  [pypi] fastgpx: An experimental Python library for parsing GPX files fast.  <https://pypi.org/project/fastgpx/>
+n  [github] dodo-saba/fit2gpx: A simple Python library for converting .FIT files to .GPX files. It also includes tools to convert Strava data downloads in bulk to GPX. (pop 140, updated 2025-06)  <https://github.com/dodo-saba/fit2gpx>
+y  [pypi] gpx: gpx is a zero-dependency, pure Python package for reading, manipulating, writing and converting GPX files.  <https://pypi.org/project/gpx/>
+n  [pypi] write-read-file: Some useful functions for reading/writing files  <https://pypi.org/project/write-read-file/>
+p  [pypi] gpx-openmap: Analyse and display your gps tracks on a map.  <https://pypi.org/project/gpx-openmap/>
+n  [hacker-news] Borb – A Python library to read, write, and edit PDF files: Borb – A Python library to read, write, and edit PDF files (pop 262)  <https://news.ycombinator.com/item?id=28574298>
+p  [pypi] gpx-player: Visualise & animate GPX race tracks.  <https://pypi.org/project/gpx-player/>
+n  [pypi] gpx-poi-enricher: Enrich GPX tracks with Points of Interest from OpenStreetMap via configurable YAML profiles  <https://pypi.org/project/gpx-poi-enricher/>
+y  [pypi] fitcxgp: Fast, all-in-one GPX/TCX/FIT toolkit  <https://pypi.org/project/fitcxgp/>
+p  [pypi] gpx2exif: Simple command-line tool to add GPS info from a GPX file to EXIF tags in images  <https://pypi.org/project/gpx2exif/>
+p  [pypi] gpx-reader: A tool to read GPX files and rename the files according to the location and time of the track.  <https://pypi.org/project/gpx-reader/>
+y  [pypi] gpxpy: GPX file parser and GPS track manipulation library  <https://pypi.org/project/gpxpy/>
+p  [pypi] gpxslicer: Slice up gpx tracks based on distance from the start or custom waypoints  <https://pypi.org/project/gpxslicer/>
+p  [pypi] Gpxity: A uniform interface to GPX services like mapmytracks or gpsies  <https://pypi.org/project/gpxity/>
+n  [hacker-news] Show HN: I am building a new Python library to read/write PDF files: Hi HN! This is my pet project, written from scratch because there is so much to discover and learn in the process. The f… (pop 279)  <https://news.ycombinator.com/item?id=33646951>
+p  [pypi] pyosmogps: Extract the GPS data from the Osmo Action video files  <https://pypi.org/project/pyosmogps/>
+n  [github] tkrajina/gpxgo: GPX library for golang (pop 110, updated 2026-08)  <https://github.com/tkrajina/gpxgo>
 
 == 070  an elixir library for rate limiting with a token bucket
 level:
 
-_  [hex] ex_limiter: Token bucket rate limiter written in elixir with configurable backends (pop 39260, updated 2019-06)  <https://hex.pm/packages/ex_limiter>
-_  [hex] limitex: A pure Elixir distributed rate limiter (pop 4406, updated 2019-11)  <https://hex.pm/packages/limitex>
-_  [hex] ex_limit: Fast, Redis-backed token-bucket rate limiter (pop 207, updated 2025-08)  <https://hex.pm/packages/ex_limit>
-_  [hacker-news] Java rate-limiting library based on the token-bucket algorithm: Java rate-limiting library based on the token-bucket algorithm (pop 3)  <https://news.ycombinator.com/item?id=29538645>
-_  [hex] simple_rate_limiter: A simple rate limiter for Elixir. (pop 817, updated 2023-06)  <https://hex.pm/packages/simple_rate_limiter>
-_  [hex] crabbucket_pgo: Gleam + Postgres token bucket rate limiting library (pop 301, updated 2024-07)  <https://hex.pm/packages/crabbucket_pgo>
-_  [hacker-news] Java rate-limiting library based on token-bucket algorithm: Java rate-limiting library based on token-bucket algorithm (pop 1)  <https://news.ycombinator.com/item?id=29557398>
-_  [hex] rate_limiter_man: A simple rate limiter implementation (currently supports leaky bucket only) (pop 1639, updated 2026-10)  <https://hex.pm/packages/rate_limiter_man>
-_  [hex] ralitobu_plug: Elixir Plug for Ralitobu, the Rate Limiter with Token Bucket algorithm (pop 748, updated 2016-04)  <https://hex.pm/packages/ralitobu_plug>
-_  [github] servusdei2018/kotyle: distributed token-bucket rate limiter in elixir (pop 0, updated 2026-09)  <https://github.com/servusdei2018/kotyle>
-_  [hex] ralitobu: The Rate Limiter with Token Bucket algorithm (pop 1223, updated 2016-04)  <https://hex.pm/packages/ralitobu>
-_  [hex] philiprehberger_rate_limiter: In-process rate limiter with token bucket and sliding window algorithms (pop 145, updated 2026-04)  <https://hex.pm/packages/philiprehberger_rate_limiter>
-_  [hex] bucket_hydra: A bucket-based rate limit algorithm with support for clusters (pop 11093, updated 2023-08)  <https://hex.pm/packages/bucket_hydra>
-_  [hacker-news] Java rate-limiting library based on the token-bucket algorithm: Java rate-limiting library based on the token-bucket algorithm (pop 5)  <https://news.ycombinator.com/item?id=29615718>
-_  [hex] atomic_bucket: Fast single node rate limiter implementing Token Bucket algorithm. (pop 2682, updated 2026-10)  <https://hex.pm/packages/atomic_bucket>
-_  [hacker-news] Java rate-limiting library based on the token-bucket algorithm: Hi everyone! My name is Maxim Bartkov, I'm a co-author of Bucket4J library. I want to present the greatest library to pr… (pop 2)  <https://news.ycombinator.com/item?id=29533948>
+y  [hex] ex_limiter: Token bucket rate limiter written in elixir with configurable backends (pop 39260, updated 2019-06)  <https://hex.pm/packages/ex_limiter>
+y  [hex] limitex: A pure Elixir distributed rate limiter (pop 4406, updated 2019-11)  <https://hex.pm/packages/limitex>
+y  [hex] ex_limit: Fast, Redis-backed token-bucket rate limiter (pop 207, updated 2025-08)  <https://hex.pm/packages/ex_limit>
+n  [hacker-news] Java rate-limiting library based on the token-bucket algorithm: Java rate-limiting library based on the token-bucket algorithm (pop 3)  <https://news.ycombinator.com/item?id=29538645>
+p  [hex] simple_rate_limiter: A simple rate limiter for Elixir. (pop 817, updated 2023-06)  <https://hex.pm/packages/simple_rate_limiter>
+y  [hex] crabbucket_pgo: Gleam + Postgres token bucket rate limiting library (pop 301, updated 2024-07)  <https://hex.pm/packages/crabbucket_pgo>
+n  [hacker-news] Java rate-limiting library based on token-bucket algorithm: Java rate-limiting library based on token-bucket algorithm (pop 1)  <https://news.ycombinator.com/item?id=29557398>
+p  [hex] rate_limiter_man: A simple rate limiter implementation (currently supports leaky bucket only) (pop 1639, updated 2026-10)  <https://hex.pm/packages/rate_limiter_man>
+p  [hex] ralitobu_plug: Elixir Plug for Ralitobu, the Rate Limiter with Token Bucket algorithm (pop 748, updated 2016-04)  <https://hex.pm/packages/ralitobu_plug>
+y  [github] servusdei2018/kotyle: distributed token-bucket rate limiter in elixir (pop 0, updated 2026-09)  <https://github.com/servusdei2018/kotyle>
+y  [hex] ralitobu: The Rate Limiter with Token Bucket algorithm (pop 1223, updated 2016-04)  <https://hex.pm/packages/ralitobu>
+y  [hex] philiprehberger_rate_limiter: In-process rate limiter with token bucket and sliding window algorithms (pop 145, updated 2026-04)  <https://hex.pm/packages/philiprehberger_rate_limiter>
+y  [hex] bucket_hydra: A bucket-based rate limit algorithm with support for clusters (pop 11093, updated 2023-08)  <https://hex.pm/packages/bucket_hydra>
+n  [hacker-news] Java rate-limiting library based on the token-bucket algorithm: Java rate-limiting library based on the token-bucket algorithm (pop 5)  <https://news.ycombinator.com/item?id=29615718>
+y  [hex] atomic_bucket: Fast single node rate limiter implementing Token Bucket algorithm. (pop 2682, updated 2026-10)  <https://hex.pm/packages/atomic_bucket>
+n  [hacker-news] Java rate-limiting library based on the token-bucket algorithm: Hi everyone! My name is Maxim Bartkov, I'm a co-author of Bucket4J library. I want to present the greatest library to pr… (pop 2)  <https://news.ycombinator.com/item?id=29533948>
 
 == 078  a command line tool that checks a bibliography for retracted papers
 level:
