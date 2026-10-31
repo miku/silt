@@ -1,0 +1,100 @@
+idea	level	labeller	y	p	n	unlabelled	from_y	note
+001	crowded	claude	3	10	5	0	crowded	ObjectBox, sqlite-vector and VelesDB target mobile; most others are embedded vector DBs without a mobile focus (p)
+002	saturated	claude	11	3	1	0	saturated	
+003	crowded	claude	2	3	12	0	crowded	stern, k9s, kubetail, kail turned up only for 006; with them it would be saturated
+004	saturated	claude	12	1	3	0	saturated	"""interactive"" taken as a feature: plain port killers count y"
+005	saturated	claude	14	1	2	0	saturated	
+006	saturated	claude	10	1	4	0	saturated	
+007	saturated	claude	9	3	5	0	saturated	
+008	saturated	claude	6	0	9	0	saturated	the 6 y are 2 projects (smol 5 times, tokio once); both dominate the space
+009	crowded	claude	1	1	16	0	crowded	one y, but Code Spell Checker has 18M installs and JetBrains IDEs spellcheck comments built in
+010	vague	claude	0	0	0	17	open	no job named: a pipeline doing what?
+011	vague	claude	0	0	0	16	open	no job named: which component?
+012	saturated	claude	8	3	4	0	saturated	
+013	vague	claude	0	0	0	18	open	no job named: a service doing what?
+014	saturated	claude	5	6	6	0	saturated	
+015	saturated	claude	5	4	8	0	saturated	read as a containerized log collector for Kubernetes; fluentd/fluent-bit didn't turn up
+016	saturated	claude	6	8	1	0	saturated	
+017	open	claude	0	2	14	0	open	personal dotfiles repos only; chezmoi, yadm, GNU stow, dotbot, rcm (all in Homebrew) didn't turn up
+018	saturated	claude	7	0	9	0	saturated	read as any package that extends Laravel's queues: drivers, monitors, helpers
+019	saturated	claude	12	3	5	0	saturated	nothing Phoenix-specific except one Plug; cachex didn't turn up
+020	vague	claude	0	0	0	18	open	every operator's chart deploys an operator; no particular one named
+021	crowded	claude	1	1	15	0	crowded	aeson, the standard Haskell JSON library, didn't turn up
+022	open	claude	0	3	13	0	open	nix2container and nixpkgs' dockerTools didn't turn up
+023	open	claude	0	0	15	0	open	"""port killer CLI tool"" in Chinese; nothing related turned up, though 004 and 005 show the space is saturated"
+024	crowded	claude	4	4	9	0	crowded	jless, fx, jnv, jqp didn't turn up
+025	vague	claude	0	0	0	16	open	no job named: a crate doing what?
+026	vague	claude	0	0	0	20	open	no game described
+027	crowded	claude	3	5	9	0	crowded	yay, paru and pikaur, the common AUR helpers, didn't turn up; with them it would be saturated
+028	vague	claude	0	0	0	18	open	no idea stated
+029	saturated	claude	7	7	2	0	saturated	Django's own admin has had dark mode since 3.2
+030	saturated	claude	7	4	5	0	saturated	Newtonsoft.Json and System.Text.Json didn't turn up
+031	crowded	claude	2	0	14	0	crowded	sealed-secrets, external-secrets, Vault and Infisical didn't turn up; with them it would be saturated
+032	open	claude	0	0	15	0	open	"""a tool to kill the process using a port, in the terminal"" in Japanese; nothing related turned up, though 004 and 005 show the space is saturated"
+033	saturated	claude	5	3	7	0	saturated	
+034	saturated	claude	9	7	1	0	saturated	
+035	crowded	claude	2	0	15	0	crowded	both y are Ink, the dominant one (40k stars)
+036	saturated	claude	5	5	7	0	saturated	moment, Day.js and Luxon didn't turn up
+037	crowded	claude	2	5	10	0	crowded	rich itself didn't turn up; it dominates this space
+038	crowded	claude	2	1	14	0	crowded	black, ruff format, yapf and autopep8 didn't turn up
+039	crowded	claude	3	2	13	0	crowded	xh and curlie didn't turn up
+040	saturated	claude	5	6	4	0	saturated	watchdog itself didn't turn up
+041	saturated	claude	5	6	6	0	saturated	
+042	crowded	claude	1	6	9	0	crowded	one y, but several cats with highlighting and no git part; bat didn't turn up
+043	saturated	claude	7	6	3	0	saturated	
+044	saturated	claude	3	4	10	0	crowded	3 y, but cloc and scc are the standard tools here; tokei didn't turn up
+045	crowded	claude	7	7	3	0	saturated	7 y, but 5 are gocmd and its proxy mirrors: 3 small projects; cobra and urfave/cli didn't turn up
+046	crowded	claude	15	0	0	0	saturated	15 y, all Bubble Tea or its forks: one project, though a dominant one
+047	crowded	claude	4	4	8	0	crowded	lazygit and tig didn't turn up
+048	saturated	claude	5	8	3	0	saturated	
+049	saturated	claude	6	8	3	0	saturated	
+050	crowded	claude	11	6	0	0	saturated	11 y, but 8 are Resque and its republished forks: 3 projects (Resque, qu, fiber_job), one large; Sidekiq didn't turn up
+051	saturated	claude	6	10	1	0	saturated	
+052	open	claude	0	7	8	0	open	pandoc didn't turn up; only one-way converters or other languages
+053	saturated	claude	5	4	7	0	saturated	Jackson didn't turn up
+054	crowded	claude	1	13	2	0	crowded	one y; Newtonsoft.Json and System.Text.Json didn't turn up; most others are the same job in other languages
+055	saturated	claude	8	1	8	0	saturated	
+056	saturated	claude	5	2	10	0	saturated	btop, bottom and glances didn't turn up
+057	crowded	claude	1	0	16	0	crowded	tldr, cheat and navi didn't turn up; with them it would be saturated
+058	saturated	claude	2	2	15	0	crowded	2 y, but GitLens (53M installs) and Git Blame (3.9M) are the standard extensions for this
+059	open	claude	0	6	14	0	open	only VS Code extensions and a Shiki transformer colour brackets; the IntelliJ Rainbow Brackets plugin didn't turn up
+060	open	claude	0	5	11	0	open	Vaultwarden itself didn't turn up
+061	saturated	claude	8	3	4	0	saturated	
+062	crowded	claude	1	4	12	0	crowded	nvd didn't turn up
+063	open	claude	0	1	16	0	open	
+064	crowded	claude	4	4	8	0	crowded	
+065	open	claude	0	8	9	0	open	pandoc also converts BibTeX to CSL-JSON, but didn't turn up; nothing listed also dedupes by DOI
+066	open	claude	0	3	14	0	open	
+067	crowded	claude	4	7	4	0	crowded	
+068	crowded	claude	2	6	9	0	crowded	
+069	saturated	claude	11	4	0	0	saturated	
+070	saturated	claude	8	8	0	0	saturated	Hammer didn't turn up
+071	crowded	claude	2	0	2	0	crowded	both y are marc-rs
+072	open	claude	0	0	16	0	open	h3-pg didn't turn up
+073	saturated	claude	11	5	0	0	saturated	
+074	crowded	claude	1	0	14	0	crowded	
+075	crowded	claude	5	6	4	0	saturated	5 y, but 3 are sqinn-go and a fork: 3 projects, none large; modernc.org/sqlite and ncruces/go-sqlite3 didn't turn up
+076	crowded	claude	1	0	15	0	crowded	kube-downscaler and kube-green didn't turn up
+077	crowded	claude	2	1	13	0	crowded	
+078	saturated	claude	11	5	4	0	saturated	
+079	open	claude	0	6	13	0	open	
+080	open	claude	0	1	16	0	open	changelog-enforcer style actions didn't turn up
+081	crowded	claude	3	2	10	0	crowded	
+082	open	claude	0	1	16	0	open	Ibis, a PHP tool that makes eBooks from Markdown, didn't turn up
+085	vague	claude	0	0	0	18	open	
+086	vague	claude	0	0	0	18	open	
+091	vague	claude	0	0	0	18	open	
+095	vague	claude	0	0	0	18	open	
+096	vague	claude	0	0	0	18	open	
+005	saturated	human	13	2	2	0	saturated	
+016	saturated	human	9	5	0	1	saturated	
+020	vague	human	16	2	0	0	saturated	
+025	crowded	human	8	8	0	0	saturated	
+034	saturated	human	11	1	5	0	saturated	
+039	crowded	human	2	1	15	0	crowded	
+040	crowded	human	4	6	5	0	crowded	
+049	crowded	human	7	7	2	1	saturated	
+066	open	human	0	3	14	0	open	
+068	crowded	human	4	7	6	0	crowded	
+070	crowded	human	9	3	4	0	saturated	
+078	saturated	human	14	3	3	0	saturated	

@@ -63,6 +63,10 @@ The problem has two parts:
 | `scripts/e1.py` | summary of the data; `make e1` writes `results/e1-*.tsv` |
 | `scripts/labelsheet.py` | writes a labelling sheet; `make sheets` |
 | `labels/human.txt`, `labels/claude.txt` | labelling sheets: a sample of 12 ideas for a person, every idea for Claude |
+| `scripts/labels.py` | reads the sheets, checks them, reports the agreement; `make labels` |
+| `data/pairs.tsv` | one line per labelled match: idea id, URL, label, labeller, note |
+| `data/levels.tsv` | one line per level: idea id, level, labeller, the y/p/n counts, the level the y count gives |
+| `results/labels-agreement.tsv` | agreement between labellers, per match and per level |
 
 ## E1: the data set
 
@@ -113,6 +117,14 @@ What the data shows before any labelling:
   marc-rs (0.62), is exactly that. The floor says Open: one match ≥ 0.60
   counts only from 0.70.
 
+## Labels, round 1
+
+The person's sheet is done (2026-10-31): 201 of 203 matches and 11 of 12
+levels. What it shows is in `labels/human-notes.md`. Those notes stay out of
+this file until Claude's sheet is done, so that Claude's labeller doesn't
+see the person's labels. `make labels` reads the sheets. The agreement goes
+here once both sheets are done.
+
 ## Status and next steps
 
 As of 2026-10-31.
@@ -123,6 +135,13 @@ As of 2026-10-31.
   a random sample of 12 (`labels/human.txt`), and the agreement between the
   two is reported. Vague ideas get a level only, no per-match labels, since
   "does this implement 'a tool for developers'?" has no answer.
+- **The level is the labeller's judgement** of how crowded the space is.
+  The number of y (0, 1 to 4, 5 or more) is a guide, not the rule: the age,
+  size and quality of the matches may move it. `data/levels.tsv` keeps the
+  level as labelled and, as `from_y`, the level the y count gives. E4 uses
+  the first as its target and reports the second alongside.
+- **Claude's sheet is labelled in a new session** that hasn't seen the
+  person's labels. This session had seen them.
 - **Tools:** E3 and E4 in Python, offline, with `uv run` and dependencies
   pinned inline in each script (sentence-transformers, scikit-learn).
   Timings from Python are indicative only. Only a scorer that wins gets
@@ -137,22 +156,29 @@ As of 2026-10-31.
 - Labelling sheets generated: `labels/claude.txt` (87 ideas, 1437 matches),
   `labels/human.txt` (12 ideas, 4 each from parity, positive and specific;
   203 matches).
+- The person's sheet is labelled (see `labels/human-notes.md`).
+- `scripts/labels.py` (`make labels`): reads the sheets into
+  `data/pairs.tsv` and `data/levels.tsv`, flags unlabelled matches, missing
+  levels and levels that don't fit the y count, and reports Cohen's kappa
+  per match (y/p/n, y against the rest, y+p against n) and per level.
 
 ### Next
 
-1. **Labels, round 1.** Fill in both sheets: each `_` becomes y, p or n;
-   each `level:` gets open, crowded, saturated or vague. Claude doesn't look
-   at `labels/human.txt` before finishing its own sheet.
-2. **Parse the sheets** into `data/pairs.tsv` (idea id, URL, label,
-   labeller) and `data/levels.tsv` (idea id, level, labeller). Not written
-   yet; a match line is `<label>  [source] name: description  <url>`, the
-   URL being the key. Then report the agreement on the 12 shared ideas
-   (Cohen's kappa, per match and per level).
-3. **E2, baselines.** Compare the floor (`embeddings.verdict.level`), the
+1. **Claude's sheet**, in a new session. Each `_` becomes y, p or n. Each
+   `level:` gets open, crowded, saturated or vague, by the rules in the
+   sheet's header. That session must not open `labels/human.txt`,
+   `labels/human-notes.md`, `data/pairs.tsv`, `data/levels.tsv` or
+   `results/labels-*`, and must not look at their git history. It checks
+   its progress with `python3 -I scripts/labels.py labels/claude.txt`,
+   because `make labels` also prints the checks of the person's sheet.
+   The level of 049 in `labels/human.txt` is still empty; the person fills
+   it in. Then `make labels` for the agreement on the 12 shared ideas, and
+   `labels/human-notes.md` goes back into this file.
+2. **E2, baselines.** Compare the floor (`embeddings.verdict.level`), the
    keyword floor (`keyword_only.verdict.level`) and qwen3.5 with the level
    labels. The LLM gets the prompt from `verdict.BuildPrompt` over the
    recorded matches, not a new search.
-4. **E3, per-match scorers.** Rescore the recorded candidates with each
+3. **E3, per-match scorers.** Rescore the recorded candidates with each
    scorer: MiniLM cosine (recorded), lexical IDF, bge-small and e5-small,
    the ms-marco cross-encoder (raw and Platt-calibrated), an NLI
    cross-encoder, Qwen3-Reranker-0.6B (homelab). Output per scorer:
@@ -160,7 +186,7 @@ As of 2026-10-31.
    2**: each scorer's top 5 per idea that round 1 didn't cover gets
    labelled too, so that no scorer is judged only on the cosine's picks.
    Report AUC, NDCG@10 and ms per idea.
-5. **E4, aggregators.** Features per idea from the best E3 scorer (see the
+4. **E4, aggregators.** Features per idea from the best E3 scorer (see the
    verdict note, "(b) Aggregation into a level"); refit floor, ordinal
    logistic regression, depth-3 tree; leave-one-out cross-validation; the
    floor stays a lower bound. Report confusion matrices, QWK and false

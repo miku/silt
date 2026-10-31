@@ -1,0 +1,1426 @@
+idea	url	label	labeller	note
+001	https://news.ycombinator.com/item?id=46988028	p	claude	
+001	https://news.ycombinator.com/item?id=46374243	p	claude	
+001	https://github.com/IPADS-SAI/MobiAgent	n	claude	
+001	https://news.ycombinator.com/item?id=35964660	p	claude	
+001	https://www.npmjs.com/package/@upstash/vector	n	claude	
+001	https://news.ycombinator.com/item?id=46809092	p	claude	
+001	https://www.npmjs.com/package/realm	n	claude	
+001	https://crates.io/crates/vecq-core	p	claude	
+001	https://news.ycombinator.com/item?id=45319922	p	claude	
+001	https://github.com/Constella-OS/constella-desktop	n	claude	
+001	https://github.com/sqliteai/sqlite-vector	y	claude	SQLite extension, runs on iOS/Android
+001	https://news.ycombinator.com/item?id=47121616	p	claude	
+001	https://github.com/SoftInstigate/restheart	n	claude	
+001	https://news.ycombinator.com/item?id=46882163	p	claude	
+001	https://crates.io/crates/velesdb-mobile	y	claude	VelesDB's iOS/Android bindings
+001	https://github.com/objectbox/objectbox-java	y	claude	on-device vector DB for Android
+001	https://crates.io/crates/embedvec	p	claude	
+001	https://news.ycombinator.com/item?id=46178312	p	claude	
+002	https://github.com/jsdevkr/react-chatview	y	claude	
+002	https://github.com/guillaumervls/react-infinite-scroll	y	claude	
+002	https://www.npmjs.com/package/react-infinite-scroll-hook	y	claude	
+002	https://www.npmjs.com/package/react-infinite-scroller	y	claude	
+002	https://www.npmjs.com/package/reactjs-scroll-pagination	y	claude	
+002	https://github.com/expo/react-native-infinite-scroll-view	p	claude	React Native
+002	https://github.com/onderonur/react-infinite-scroll-hook	y	claude	
+002	https://www.npmjs.com/package/react-infinite-scroll-component	y	claude	
+002	https://www.npmjs.com/package/react-easy-infinite-scroll-hook	y	claude	
+002	https://www.npmjs.com/package/react-scroll	n	claude	
+002	https://github.com/upmostly/react-hooks-infinite-scroll	p	claude	an example, not a library
+002	https://github.com/civiccc/react-waypoint	p	claude	fires on scroll; a common building block for infinite scroll
+002	https://github.com/caseywebdev/react-list	y	claude	
+002	https://github.com/dcurletti/redux-infinite-scroll	y	claude	
+002	https://github.com/ankeetmaini/react-infinite-scroll-component	y	claude	
+003	https://github.com/skyhook-io/radar	p	claude	Kubernetes UI with pod logs
+003	https://news.ycombinator.com/item?id=27469627	n	claude	
+003	https://artifacthub.io/packages/helm/kubernetes-events-exporter/kubernetes-events-exporter	n	claude	
+003	https://github.com/iamtelescope/telescope	y	claude	log viewer with Kubernetes as a source
+003	https://artifacthub.io/packages/helm/kubernetes-homelab-helm-charts/adguard-home	n	claude	
+003	https://artifacthub.io/packages/helm/oreonit/otel-collector-baseline	n	claude	
+003	https://pkg.go.dev/github.com/toyamagu-2021/k8s-manifest-diff/pkg/filter	n	claude	
+003	https://github.com/dockloghq/docklog	p	claude	Docker, not Kubernetes
+003	https://pkg.go.dev/github.com/sourcehawk/operator-component-framework/pkg/mutation/selectors	n	claude	
+003	https://pkg.go.dev/github.com/sapcc/kubernetes-eventexporter	n	claude	
+003	https://pkg.go.dev/github.com/Netcracker/qubership-logging-operator/test/fluent-pipeline/stage/kubeapi	n	claude	
+003	https://pkg.go.dev/github.com/mchmarny/kusage/pkg/filters	n	claude	
+003	https://hub.docker.com/r/grafana/kubernetes-diff-logger	n	claude	
+003	https://pkg.go.dev/github.com/zchee/kt/pkg/options	y	claude	the options package of kt, a stern-like Kubernetes log tailer with include/exclude filters
+003	https://hub.docker.com/r/k8ssandra/system-logger	n	claude	
+003	https://github.com/sivasamyk/logtrail	p	claude	live tail and search, Kibana not Kubernetes
+003	https://news.ycombinator.com/item?id=42709017	n	claude	
+004	https://www.npmjs.com/package/snipe-port	y	claude	
+004	https://crates.io/crates/fuckport	y	claude	
+004	https://www.npmjs.com/package/kill-port-process	y	claude	
+004	https://www.npmjs.com/package/cross-port-killer	y	claude	
+004	https://pypi.org/project/portcheck-cli/	y	claude	
+004	https://pypi.org/project/porthog/	y	claude	
+004	https://pypi.org/project/lsport/	p	claude	
+004	https://pypi.org/project/kill-this-port/	y	claude	
+004	https://www.npmjs.com/package/@types/kill-port	n	claude	type definitions only
+004	https://www.npmjs.com/package/kill-port	y	claude	
+004	https://crates.io/crates/vacate	y	claude	
+004	https://crates.io/crates/oneharness	n	claude	
+004	https://www.npmjs.com/package/fkill-cli	y	claude	
+004	https://crates.io/crates/portrm	y	claude	
+004	https://pypi.org/project/port-doctor/	y	claude	
+004	https://github.com/vercel-labs/portless	n	claude	
+005	https://news.ycombinator.com/item?id=46426086	p	claude	inspection; killing not clear from the description
+005	https://pkg.go.dev/github.com/rimiti/kill-port	y	claude	
+005	https://pypi.org/project/portutils/	y	claude	
+005	https://www.npmjs.com/package/kill-port-process	y	claude	
+005	https://www.npmjs.com/package/kill-port	y	claude	
+005	https://crates.io/crates/port-conflict-resolver	y	claude	
+005	https://pypi.org/project/pkiller/	y	claude	
+005	https://crates.io/crates/timelimit-cli	n	claude	
+005	https://pypi.org/project/portsmith/	y	claude	
+005	https://pypi.org/project/portcheck-cli/	y	claude	
+005	https://pypi.org/project/gruyere/	y	claude	
+005	https://www.npmjs.com/package/snipe-port	y	claude	
+005	https://crates.io/crates/portctl	y	claude	
+005	https://pypi.org/project/porthog/	y	claude	
+005	https://crates.io/crates/portzap	y	claude	
+005	https://pypi.org/project/checkport/	y	claude	
+005	https://github.com/foreversd/forever	n	claude	
+006	https://github.com/sivasamyk/logtrail	p	claude	Kibana plugin, not Kubernetes-specific
+006	https://hub.docker.com/r/k8ssandra/system-logger	n	claude	
+006	https://news.ycombinator.com/item?id=33582238	y	claude	
+006	https://github.com/boz/kail	y	claude	
+006	https://news.ycombinator.com/item?id=41590664	y	claude	
+006	https://github.com/collabnix/kubetools	n	claude	
+006	https://hub.docker.com/r/grafana/kubernetes-diff-logger	n	claude	
+006	https://news.ycombinator.com/item?id=47039722	y	claude	
+006	https://pkg.go.dev/github.com/fredsmith/k8s-simple-logs	y	claude	in-cluster web viewer streaming every pod's logs
+006	https://github.com/Lifailon/lazyjournal	y	claude	
+006	https://github.com/GoogleCloudPlatform/khi	y	claude	
+006	https://github.com/iamtelescope/telescope	y	claude	
+006	https://pkg.go.dev/github.com/HamzaZo/kubectl-pod-viewer	n	claude	shows pods, not logs
+006	https://news.ycombinator.com/item?id=39355998	y	claude	
+006	https://github.com/robinovitch61/kl	y	claude	
+007	https://news.ycombinator.com/item?id=42255959	n	claude	
+007	https://news.ycombinator.com/item?id=41188932	y	claude	a learning project, still a vector DB
+007	https://pypi.org/project/impera/	n	claude	
+007	https://github.com/zilliztech/VectorDBBench	n	claude	
+007	https://crates.io/crates/recern-vector	y	claude	
+007	https://crates.io/crates/miyabi-knowledge	p	claude	
+007	https://pypi.org/project/vectorlitedb/	y	claude	
+007	https://pypi.org/project/vector-database-loader/	n	claude	
+007	https://pypi.org/project/vector-database/	p	claude	
+007	https://crates.io/crates/vellev-core	n	claude	
+007	https://news.ycombinator.com/item?id=28552034	y	claude	
+007	https://pypi.org/project/polarisdb/	y	claude	
+007	https://pypi.org/project/binaryvectordb/	y	claude	
+007	https://crates.io/crates/citadeldb-vector	p	claude	
+007	https://pypi.org/project/openvector/	y	claude	
+007	https://pypi.org/project/elips/	y	claude	
+007	https://crates.io/crates/opendata-vector	y	claude	
+008	https://news.ycombinator.com/item?id=47115662	n	claude	
+008	https://github.com/smol-rs/smol	y	claude	
+008	https://github.com/dizda/fast-socks5	n	claude	
+008	https://github.com/http-rs/tide	n	claude	
+008	https://github.com/not-fl3/macroquad	n	claude	
+008	https://news.ycombinator.com/item?id=23000790	y	claude	
+008	https://news.ycombinator.com/item?id=43627649	n	claude	
+008	https://news.ycombinator.com/item?id=23066007	y	claude	
+008	https://news.ycombinator.com/item?id=37449532	y	claude	
+008	https://crates.io/crates/openheim	n	claude	
+008	https://github.com/sparckles/Robyn	n	claude	
+008	https://news.ycombinator.com/item?id=22995361	y	claude	
+008	https://github.com/tokio-rs/tokio	y	claude	
+008	https://github.com/webrtc-rs/webrtc	n	claude	
+008	https://news.ycombinator.com/item?id=43804172	n	claude	
+009	https://github.com/Correia-jpv/fucking-static-analysis	n	claude	
+009	https://github.com/zebbern/claude-code-guide	n	claude	
+009	https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments	n	claude	
+009	https://github.com/Cranot/claude-code-guide	n	claude	
+009	https://marketplace.visualstudio.com/items?itemName=mads-hartmann.bash-ide-vscode	n	claude	
+009	https://www.npmjs.com/package/strip-json-comments	n	claude	
+009	https://www.npmjs.com/package/eslint-plugin-eslint-comments	n	claude	
+009	https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode	n	claude	
+009	https://news.ycombinator.com/item?id=46891998	n	claude	
+009	https://marketplace.visualstudio.com/items?itemName=SonarSource.sonarlint-vscode	n	claude	
+009	https://github.com/hashgraph-online/awesome-ai-plugins	n	claude	
+009	https://www.npmjs.com/package/comment-json	n	claude	
+009	https://www.npmjs.com/package/spellchecker-cli	p	claude	CLI, not an IDE plugin
+009	https://github.com/MGrin/awesome-bb-plugins	n	claude	
+009	https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker	y	claude	
+009	https://news.ycombinator.com/item?id=43538136	n	claude	
+009	https://www.npmjs.com/package/retext-spell	n	claude	
+009	https://www.npmjs.com/package/eslint-plugin-no-mistakes	n	claude	
+012	https://github.com/go-kit/kit	y	claude	
+012	https://pkg.go.dev/github.com/mxstrv/go-gin-microservice-study	n	claude	a study project
+012	https://news.ycombinator.com/item?id=18086157	y	claude	
+012	https://github.com/TarsCloud/TarsGo	y	claude	
+012	https://pkg.go.dev/github.com/claygod/microservice	p	claude	a microservice template package
+012	https://news.ycombinator.com/item?id=18024606	y	claude	
+012	https://github.com/zeromicro/go-zero	y	claude	
+012	https://pkg.go.dev/dubbo.apache.org/dubbo-go/v3	y	claude	
+012	https://github.com/aceld/zinx	p	claude	TCP server framework
+012	https://news.ycombinator.com/item?id=9202587	y	claude	
+012	https://pypi.org/project/golang/	n	claude	
+012	https://github.com/gofr-dev/gofr	y	claude	
+012	https://news.ycombinator.com/item?id=15796858	n	claude	
+012	https://github.com/meysamhadeli/shop-golang-microservices	n	claude	
+012	https://github.com/cloudwego/hertz	p	claude	HTTP framework for microservices; CloudWeGo's RPC framework is Kitex
+014	https://github.com/leikind/wice_grid	p	claude	grid with pagination
+014	https://github.com/jbox-web/ajax-datatables-rails	p	claude	server-side pagination for DataTables only
+014	https://github.com/ddnexus/pagy	y	claude	
+014	https://github.com/gramantin/awesome-rails	n	claude	
+014	https://github.com/mislav/will_paginate	y	claude	
+014	https://rubygems.org/gems/scryer	n	claude	
+014	https://github.com/Sology/smart_listing	p	claude	listing with sorting and filtering
+014	https://github.com/DamageLabs/paper_trail_manager	n	claude	
+014	https://github.com/meilisearch/meilisearch-rails	n	claude	
+014	https://github.com/bootstrap-ruby/will_paginate-bootstrap	p	claude	Bootstrap styling for will_paginate
+014	https://rubygems.org/gems/angsa	y	claude	
+014	https://news.ycombinator.com/item?id=17090151	p	claude	article about pagy
+014	https://news.ycombinator.com/item?id=17313768	p	claude	article about pagy
+014	https://github.com/comfy/comfortable-mexican-sofa	n	claude	
+014	https://github.com/kaminari/kaminari	y	claude	
+014	https://github.com/trailblazer/cells	n	claude	
+014	https://github.com/Uysim/pagy-cursor	y	claude	cursor pagination on top of pagy
+015	https://github.com/derailed/k9s	n	claude	
+015	https://hub.docker.com/r/mcp/kubernetes	n	claude	
+015	https://github.com/gliderlabs/logspout	p	claude	Docker logs, not Kubernetes
+015	https://artifacthub.io/packages/helm/lagoon-charts/lagoon-logging	y	claude	
+015	https://artifacthub.io/packages/helm/cloudnativeapp/logdna-agent	y	claude	
+015	https://artifacthub.io/packages/meshery/meshery-catalog/jaeger-operator	n	claude	
+015	https://github.com/boz/kail	p	claude	log viewer CLI, not a collector
+015	https://github.com/stern/stern	p	claude	log tailer CLI, not a collector
+015	https://artifacthub.io/packages/helm/ot-container-kit/logging-operator	y	claude	
+015	https://hub.docker.com/r/newrelic/nri-kubernetes	n	claude	
+015	https://news.ycombinator.com/item?id=18416403	n	claude	
+015	https://artifacthub.io/packages/helm/newrelic/newrelic-logging	y	claude	
+015	https://github.com/jpetazzo/container.training	n	claude	
+015	https://artifacthub.io/packages/meshery/meshery-catalog/argocd-application-controller	n	claude	
+015	https://artifacthub.io/packages/helm/sematext/sematext-agent	y	claude	
+015	https://github.com/cri-o/cri-o	n	claude	
+015	https://github.com/kubetail-org/kubetail	p	claude	log dashboard that can run in a container
+016	https://marketplace.visualstudio.com/items?itemName=SaundersHwu.vscode-mdpreview-vue-renderer	p	claude	renders Vue blocks in the built-in preview
+016	https://marketplace.visualstudio.com/items?itemName=Bowlerr.offline-markdown-preview	y	claude	
+016	https://marketplace.visualstudio.com/items?itemName=jhuix.markdown-showdown-preview	y	claude	
+016	https://marketplace.visualstudio.com/items?itemName=domdomegg.markdown-inline-preview-vscode	p	claude	renders markdown inline in the editor
+016	https://github.com/cweijan/vscode-office	p	claude	preview of Office files plus a markdown editor
+016	https://marketplace.visualstudio.com/items?itemName=huachao.vsmd	y	claude	
+016	https://github.com/mjbvz/vscode-github-markdown-preview-style	p	claude	restyles the built-in preview
+016	https://plugins.jetbrains.com/plugin/33866-markdown-browser-preview	p	claude	JetBrains plugin (a VS Code version is mentioned)
+016	https://github.com/raycon/vscode-markdown-style	p	claude	styles for the preview
+016	https://github.com/yzane/vscode-markdown-pdf	n	claude	converts to PDF, no preview
+016	https://marketplace.visualstudio.com/items?itemName=zmx0142857.vscode-markdown-asciimath	p	claude	adds Asciimath to the built-in preview
+016	https://github.com/dbankier/vscode-instant-markdown	y	claude	
+016	https://marketplace.visualstudio.com/items?itemName=saeris.markdown-preview-extended-syntax	p	claude	adds syntax to the built-in preview
+016	https://marketplace.visualstudio.com/items?itemName=tomorrow56.markdown-preview-right-click	y	claude	
+016	https://marketplace.visualstudio.com/items?itemName=ryokat3.vscode-qiita-markdown-preview	y	claude	
+017	https://github.com/basnijholt/dotfiles	n	claude	
+017	https://github.com/joshukraine/mac-bootstrap	p	claude	Mac provisioning scripts with dotfiles, not a tool
+017	https://github.com/atomantic/dotfiles	p	claude	setup scripts for macOS, meant to be forked
+017	https://github.com/helderberto/dotfiles	n	claude	
+017	https://github.com/nicknisi/dotfiles	n	claude	
+017	https://github.com/freekmurze/dotfiles	n	claude	
+017	https://github.com/TechDufus/dotfiles	n	claude	
+017	https://github.com/ohmyzsh/ohmyzsh	n	claude	
+017	https://github.com/narze/dotfiles	n	claude	
+017	https://github.com/kunchenguid/dotfiles-mac-nix	n	claude	
+017	https://news.ycombinator.com/item?id=36048011	n	claude	
+017	https://github.com/OzzyCzech/dotfiles	n	claude	
+017	https://github.com/hendrikmi/dotfiles	n	claude	
+017	https://github.com/rgomezcasas/dotfiles	n	claude	
+017	https://github.com/joshukraine/dotfiles	n	claude	
+017	https://github.com/webpro/awesome-dotfiles	n	claude	
+018	https://github.com/barryvdh/laravel-async-queue	y	claude	
+018	https://packagist.org/packages/webparking/laravel-queue-ensurer	y	claude	
+018	https://github.com/spatie/laravel-failed-job-monitor	y	claude	
+018	https://github.com/spatie/laravel-queueable-action	y	claude	
+018	https://github.com/jrean/laravel-user-verification	n	claude	
+018	https://github.com/serversideup/docker-php	n	claude	
+018	https://github.com/squigg/azure-queue-laravel	y	claude	
+018	https://github.com/rapideinternet/laravel-queue-kafka	y	claude	
+018	https://news.ycombinator.com/item?id=14774116	n	claude	
+018	https://github.com/chiraggude/awesome-laravel	n	claude	
+018	https://github.com/antonioribeiro/tddd	n	claude	
+018	https://github.com/laradock/laradock	n	claude	
+018	https://github.com/vyuldashev/laravel-queue-rabbitmq	y	claude	
+018	https://github.com/vinkius-labs/laravel-page-speed	n	claude	
+018	https://news.ycombinator.com/item?id=47232776	n	claude	
+018	https://github.com/TimothyDJones/awesome-laravel	n	claude	
+019	https://news.ycombinator.com/item?id=16494596	n	claude	
+019	https://hex.pm/packages/gibreel	y	claude	
+019	https://hex.pm/packages/gomomento	p	claude	client for a hosted cache
+019	https://hex.pm/packages/erl_cache	y	claude	
+019	https://hex.pm/packages/elixir_cache	y	claude	
+019	https://hex.pm/packages/cache_tab	y	claude	
+019	https://hex.pm/packages/ex_cache	y	claude	
+019	https://hex.pm/packages/dcache	y	claude	
+019	https://news.ycombinator.com/item?id=40253774	n	claude	
+019	https://hex.pm/packages/ditto	y	claude	
+019	https://hex.pm/packages/elli_cache	p	claude	middleware for Elli, not Phoenix
+019	https://github.com/handnot2/samly	n	claude	
+019	https://news.ycombinator.com/item?id=41111634	n	claude	
+019	https://news.ycombinator.com/item?id=19330972	n	claude	
+019	https://hex.pm/packages/data_fetcher	p	claude	fetch-and-cache jobs
+019	https://hex.pm/packages/booklet	y	claude	
+019	https://hex.pm/packages/cache_money	y	claude	
+019	https://github.com/elixir-nebulex/nebulex	y	claude	
+019	https://hex.pm/packages/cachetastic	y	claude	
+019	https://hex.pm/packages/haphazard	y	claude	a Plug, so usable in Phoenix
+021	https://news.ycombinator.com/item?id=18768662	n	claude	
+021	https://github.com/haskell/lsp	n	claude	
+021	https://github.com/jgm/texmath	n	claude	
+021	https://github.com/kowainik/stan	n	claude	
+021	https://github.com/DataHaskell/sabela	n	claude	
+021	https://news.ycombinator.com/item?id=12314526	n	claude	
+021	https://github.com/ocramz/aeson-schema	p	claude	JSON schema validator built on aeson
+021	https://news.ycombinator.com/item?id=7826526	n	claude	
+021	https://github.com/haskell/criterion	n	claude	
+021	https://github.com/krispo/awesome-haskell	n	claude	
+021	https://github.com/ajg/yocto	y	claude	
+021	https://github.com/kowainik/awesome-cabal	n	claude	
+021	https://hackage.haskell.org/package/aihc-cabal-syntax	n	claude	
+021	http://www.haskell.org/cabal/	n	claude	
+021	https://github.com/uhub/awesome-haskell	n	claude	
+021	https://github.com/alpacaaa/zero-bs-haskell	n	claude	
+021	https://github.com/haskell/ghcide	n	claude	
+022	https://github.com/pdtpartners/nix-snapshotter	p	claude	containerd snapshotter for Nix packages, not an image builder
+022	https://hackage.haskell.org/package/containers	n	claude	
+022	https://github.com/containers/crun	n	claude	
+022	https://hackage.haskell.org/package/a-piece-of-flake	n	claude	
+022	https://github.com/DeterminateSystems/nix-installer	n	claude	
+022	https://github.com/divnix/digga	n	claude	
+022	https://github.com/colemickens/nixos-flake-example	n	claude	
+022	https://github.com/DeterminateSystems/flake-checker	n	claude	
+022	https://news.ycombinator.com/item?id=48881604	p	claude	runs flakes as pods without building images
+022	https://github.com/manic-systems/tack	n	claude	
+022	https://github.com/vpsfreecz/vpsadminos	n	claude	
+022	https://github.com/utensils/comfyui-nix	n	claude	
+022	https://github.com/fort-nix/nix-bitcoin	n	claude	
+022	https://github.com/serokell/deploy-rs	n	claude	
+022	https://github.com/erikarvstedt/extra-container	p	claude	NixOS containers (nspawn), not OCI images
+022	https://github.com/xtruder/nix-devcontainer	n	claude	
+023	https://pypi.org/project/gugaclaw/	n	claude	
+023	https://github.com/ascoders/weekly	n	claude	
+023	https://www.npmjs.com/package/@playcraft/cli	n	claude	
+023	https://pypi.org/project/abyss-cli/	n	claude	
+023	https://www.npmjs.com/package/efront	n	claude	
+023	https://www.npmjs.com/package/deskbuddy	n	claude	
+023	https://www.npmjs.com/package/@ghenya/clinn	n	claude	
+023	https://github.com/mrsanshui/vworkApi	n	claude	
+023	https://github.com/TideSec/TscanPlus	n	claude	
+023	https://github.com/fengjixuchui/RedTeamer	n	claude	
+023	https://github.com/ReAbout/web-sec	n	claude	
+023	https://pypi.org/project/ridex/	n	claude	
+023	https://github.com/qianguyihao/Mac-list	n	claude	
+023	https://github.com/1c7/chinese-independent-developer	n	claude	
+023	https://github.com/Renhuai123/ziwei-doushu	n	claude	
+024	https://crates.io/crates/iris-reader	p	claude	terminal viewer for many formats
+024	https://www.npmjs.com/package/jsonpath-plus	n	claude	
+024	https://crates.io/crates/mq-tui	n	claude	
+024	https://crates.io/crates/vy-cli	y	claude	TUI with jq filters (jaq); regex search, not fuzzy
+024	https://crates.io/crates/flerp	n	claude	
+024	https://www.npmjs.com/package/fuzzysort	n	claude	
+024	https://github.com/unixsuperhero/o-json	y	claude	TUI with jq queries (gojq); no fuzzy search
+024	https://www.npmjs.com/package/clientside-search	n	claude	
+024	https://www.npmjs.com/package/@tinacms/search	n	claude	
+024	https://pypi.org/project/tjex/	y	claude	TUI that builds a jq filter interactively; no search yet
+024	https://pypi.org/project/json-tui/	p	claude	JSON viewer, no query
+024	https://www.npmjs.com/package/@stll/fuzzy-search	n	claude	
+024	https://pypi.org/project/jqstash/	p	claude	manages jq filters, not a document explorer
+024	https://pypi.org/project/fuzzygrep/	p	claude	fuzzy search over JSON, no explorer
+024	https://www.npmjs.com/package/fuse.js	n	claude	
+024	https://www.npmjs.com/package/minisearch	n	claude	
+024	https://pypi.org/project/twg/	y	claude	TUI to explore and search large JSON; jq filters not confirmed (PyPI page blocked)
+027	https://github.com/CyberShadow/aconfmgr	n	claude	
+027	https://github.com/kiviktnm/decman	p	claude	declarative package manager, AUR support among other things
+027	https://github.com/Antiz96/arch-update	n	claude	
+027	https://aur.archlinux.org/packages/aurup	y	claude	
+027	https://github.com/archlinux/archinstall	n	claude	
+027	https://news.ycombinator.com/item?id=23653202	n	claude	
+027	https://github.com/korvahannu/arch-nvidia-drivers-installation-guide	n	claude	
+027	https://github.com/aarnt/octopi	p	claude	pacman GUI; AUR through a helper
+027	https://github.com/JaKooLit/Arch-Hyprland	n	claude	
+027	https://github.com/vn971/rua	y	claude	
+027	https://github.com/silentz/arch-linux-install-guide	n	claude	
+027	https://github.com/rickellis/ArchMatic	n	claude	
+027	https://github.com/fosskers/aura	y	claude	
+027	https://github.com/picodotdev/alis	n	claude	
+027	https://github.com/Seafoam-Labs/Shelly-ALPM	p	claude	pacman alternative; AUR not clear from the description
+027	https://github.com/gavinlyonsrepo/cylon	p	claude	Arch maintenance TUI, AUR updates among other things
+027	https://github.com/vinifmor/bauh	p	claude	GUI for several package formats, AUR included
+029	https://pypi.org/project/django-admin-tailwind/	y	claude	Tailwind admin theme with dark mode
+029	https://pypi.org/project/django-non-dark-admin/	n	claude	turns dark mode off
+029	https://news.ycombinator.com/item?id=42006591	y	claude	
+029	https://pypi.org/project/django-admin-nmb/	p	claude	admin skin; dark mode not stated
+029	https://pypi.org/project/django-daisy-theme/	p	claude	admin theme; dark mode not stated
+029	https://pypi.org/project/django-admin-glass/	p	claude	admin themes; dark mode not stated
+029	https://pypi.org/project/django-bootstrap5-dark-mode-switch/	p	claude	dark mode switch for Bootstrap 5 sites, not the admin
+029	https://github.com/django-cms/djangocms-admin-style	y	claude	admin theme with dark mode support
+029	https://github.com/Aleksi44/django-admin-tailwind	y	claude	admin theme with dark mode
+029	https://github.com/fsbraun/djangocms-simple-admin-style	y	claude	admin theme with light/dark/auto
+029	https://pypi.org/project/django-richmin/	p	claude	admin theme; dark mode not stated
+029	https://github.com/SaeedRz96/django-unfold-admin	y	claude	RTL fork of Unfold, which has dark mode
+029	https://github.com/PikoCanFly/django-daisy-seed	n	claude	
+029	https://pypi.org/project/django-suit5/	p	claude	admin theme; dark mode not stated
+029	https://pypi.org/project/django-onyx-admin/	y	claude	
+029	https://pypi.org/project/adminita/	p	claude	admin theme; dark mode not stated
+030	https://www.nuget.org/packages/CdIts.Caffoa.GeoJson	p	claude	GeoJSON for one framework
+030	https://www.nuget.org/packages/VAR.Json	y	claude	
+030	https://www.nuget.org/packages/Corvus.Text.Json	y	claude	
+030	https://news.ycombinator.com/item?id=20448753	n	claude	
+030	https://www.nuget.org/packages/JonasFX.NetJson	y	claude	
+030	https://www.nuget.org/packages/JsonPath	p	claude	JSONPath queries over parsed JSON
+030	https://www.nuget.org/packages/KGySoft.Json	y	claude	
+030	https://www.nuget.org/packages/Liersch.Json	y	claude	
+030	https://github.com/sprache/Sprache	n	claude	
+030	https://github.com/RicoSuter/NJsonSchema	n	claude	
+030	https://github.com/Astn/JSON-RPC.NET	n	claude	
+030	https://www.nuget.org/packages/Oakrey.Json	p	claude	navigating and validating JSON
+030	https://www.nuget.org/packages/JsonResumeDotNet	n	claude	
+030	https://www.nuget.org/packages/Proctorio.JSON	p	claude	arrays only
+030	https://www.nuget.org/packages/G9JSONHandler	y	claude	
+030	https://www.nuget.org/packages/AzureBlueSolutions.Json.NET	y	claude	
+031	https://hub.docker.com/r/k8ssandra/k8ssandra-operator	n	claude	
+031	https://github.com/xunholy/k8s-gitops	n	claude	
+031	https://github.com/kubenetworks/kubevpn	n	claude	
+031	https://news.ycombinator.com/item?id=36213951	n	claude	
+031	https://hub.docker.com/r/k8ssandra/cass-operator	n	claude	
+031	https://github.com/garutilorenzo/k8s-aws-terraform-cluster	n	claude	
+031	https://hub.docker.com/r/k8ssandra/system-logger	n	claude	
+031	https://github.com/OtowoOrg/Stellar-K8s	n	claude	
+031	https://github.com/cloudtty/cloudtty	n	claude	
+031	https://github.com/NotHarshhaa/kubernetes-dashboard	n	claude	
+031	https://hub.docker.com/r/hashicorp/vault-secrets-operator	y	claude	syncs Vault secrets into Kubernetes
+031	https://hub.docker.com/r/linode/linode-cloud-controller-manager	n	claude	
+031	https://github.com/ExamProCo/Kubernetes-Architecture-Icons	n	claude	
+031	https://github.com/Bes0n/CKA	n	claude	
+031	https://github.com/vmware-archive/secrets-manager	y	claude	Kubernetes-native secrets store (VSecM), archived
+031	https://artifacthub.io/packages/olm/community-operators/pcc-operator	n	claude	
+032	https://pypi.org/project/mfpy/	n	claude	
+032	https://github.com/kytk/abis-web	n	claude	
+032	https://pypi.org/project/tsbuild/	n	claude	
+032	https://pypi.org/project/kintai/	n	claude	
+032	https://github.com/kai-matsudate/comment-overlay	n	claude	
+032	https://github.com/Wizapply/OpenGeekLLMChat	n	claude	
+032	https://github.com/kytk/abis-web-202201	n	claude	
+032	https://github.com/ketaiorg/MotherYukkuri	n	claude	
+032	https://github.com/satoken-SP/tts-pyttsx3	n	claude	
+032	https://pypi.org/project/makigumo-cli/	n	claude	
+032	https://github.com/mamagotolab/gototerm	n	claude	
+032	https://github.com/mfuku/nips-tc-fmri	n	claude	
+032	https://github.com/kytk/abis-web-202112	n	claude	
+032	https://www.npmjs.com/package/textlint-rule-ja-no-abusage	n	claude	
+032	https://pypi.org/project/pairvoice/	n	claude	
+033	https://github.com/gtktsc/simple-ascii-chart	n	claude	
+033	https://news.ycombinator.com/item?id=33694698	p	claude	AutoHotkey, not Node
+033	https://github.com/speed-highlight/core	n	claude	
+033	https://www.npmjs.com/package/chalk	y	claude	
+033	https://github.com/alexeyraspopov/picocolors	y	claude	
+033	https://github.com/pterm/pterm	p	claude	Go
+033	https://www.npmjs.com/package/@rushstack/terminal	p	claude	console UI primitives, colours among them
+033	https://www.npmjs.com/package/ansi-colors	y	claude	
+033	https://www.npmjs.com/package/@earendil-works/pi-tui	n	claude	
+033	https://www.npmjs.com/package/tinyrainbow	y	claude	
+033	https://www.npmjs.com/package/@pm2/blessed	n	claude	
+033	https://www.npmjs.com/package/node-pty	n	claude	
+033	https://github.com/sindresorhus/yoctocolors	y	claude	
+033	https://github.com/davidsusu/tree-printer	n	claude	
+033	https://news.ycombinator.com/item?id=40414890	n	claude	
+034	https://github.com/mockturtl/dotenv	p	claude	Dart
+034	https://github.com/cdimascio/dotenv-java	p	claude	Java
+034	https://github.com/cdimascio/dotenv-kotlin	p	claude	Kotlin
+034	https://www.npmjs.com/package/@dotenv-run/core	y	claude	
+034	https://github.com/dotenvx/react-native-dotenv	p	claude	React Native (Babel plugin)
+034	https://www.npmjs.com/package/@expo/env	y	claude	
+034	https://www.npmjs.com/package/dotenv-safe	y	claude	
+034	https://github.com/kerimdzhanov/dotenv-flow	y	claude	
+034	https://www.npmjs.com/package/dotenv	y	claude	
+034	https://github.com/andrewmclagan/react-env	p	claude	runtime env for React apps in the browser
+034	https://github.com/indexzero/nconf	p	claude	config from files and env, not .env
+034	https://www.npmjs.com/package/dotenv-cli	y	claude	
+034	https://www.npmjs.com/package/dotenv-flow	y	claude	
+034	https://github.com/joho/godotenv	p	claude	Go
+034	https://github.com/rolodato/dotenv-safe	y	claude	
+034	https://www.npmjs.com/package/cross-env	n	claude	sets variables inline, no .env
+034	https://github.com/motdotla/dotenv	y	claude	
+035	https://github.com/shadawck/awesome-cli-frameworks	n	claude	
+035	https://github.com/vadimdemedes/ink	y	claude	
+035	https://www.npmjs.com/package/inquirer	n	claude	interactive prompts, not React
+035	https://www.npmjs.com/package/react	n	claude	
+035	https://github.com/aidenybai/million	n	claude	
+035	https://www.npmjs.com/package/ink	y	claude	
+035	https://pypi.org/project/django-react-components/	n	claude	
+035	https://www.npmjs.com/package/md-to-react-email	n	claude	
+035	https://github.com/mzabriskie/rackt-cli	n	claude	
+035	https://news.ycombinator.com/item?id=49751702	n	claude	
+035	https://www.npmjs.com/package/react-with-styles	n	claude	
+035	https://www.npmjs.com/package/react-markdown	n	claude	
+035	https://github.com/enaqx/awesome-react	n	claude	
+035	https://github.com/microsoft/TypeScript-React-Starter	n	claude	
+035	https://github.com/coryhouse/pluralsight-redux-starter	n	claude	
+035	https://pypi.org/project/dash-react-components/	n	claude	
+035	https://www.npmjs.com/package/styled-components	n	claude	
+036	https://www.npmjs.com/package/@formkit/tempo	y	claude	
+036	https://www.npmjs.com/package/jalaali-js	n	claude	
+036	https://www.npmjs.com/package/@js-joda/core	y	claude	class-based rather than small functions, same job
+036	https://news.ycombinator.com/item?id=2149915	n	claude	
+036	https://news.ycombinator.com/item?id=45053973	n	claude	
+036	https://github.com/bennadel/JavaScript-Demos	n	claude	
+036	https://github.com/wanasit/chrono	p	claude	parses natural-language dates only
+036	https://www.npmjs.com/package/moment-duration-format	p	claude	formats durations, a moment plugin
+036	https://www.npmjs.com/package/date-fns	y	claude	
+036	https://www.npmjs.com/package/@internationalized/date	y	claude	
+036	https://www.npmjs.com/package/date-fns-jalali	y	claude	date-fns for the Jalali calendar
+036	https://news.ycombinator.com/item?id=10264408	n	claude	
+036	https://www.npmjs.com/package/voca	n	claude	
+036	https://github.com/globalizejs/globalize	p	claude	i18n library with date formatting
+036	https://www.npmjs.com/package/json.date-extensions	n	claude	
+036	https://www.npmjs.com/package/d3-time-format	p	claude	formatting and parsing only
+036	https://www.npmjs.com/package/date-format	p	claude	formatting only
+037	https://pypi.org/project/terminal-colorize/	y	claude	
+037	https://github.com/ferreiraad/AsciiArt	n	claude	
+037	https://pypi.org/project/hedgehogs/	n	claude	
+037	https://pypi.org/project/splashscreen-engine/	n	claude	
+037	https://github.com/development-toolbox/rich-examples	n	claude	examples for rich, not a library
+037	https://pypi.org/project/bars/	n	claude	
+037	https://pypi.org/project/python-tables/	n	claude	
+037	https://pypi.org/project/everbar/	p	claude	progress bars only
+037	https://pypi.org/project/scopos/	n	claude	
+037	https://pypi.org/project/pretty-progress/	p	claude	progress bars only
+037	https://pypi.org/project/rs-rich/	y	claude	a Rust port of rich
+037	https://pypi.org/project/fake-progress-bars/	n	claude	
+037	https://pypi.org/project/progress-text/	p	claude	progress only
+037	https://pypi.org/project/termicod/	p	claude	colours and progress bars, no tables
+037	https://pypi.org/project/pyloaders/	n	claude	
+037	https://pypi.org/project/streno/	p	claude	styling only
+037	https://github.com/krishghosh21/Spectra	n	claude	
+038	https://pypi.org/project/almost-make/	n	claude	
+038	https://github.com/plasma-umass/slipcover	n	claude	
+038	https://pypi.org/project/code-formatter-cli/	n	claude	
+038	https://pypi.org/project/python-options/	n	claude	
+038	https://github.com/benfred/py-spy	n	claude	
+038	https://pypi.org/project/42formatter/	n	claude	
+038	https://pypi.org/project/formatter2/	y	claude	Python source formatter; how configurable not stated
+038	https://pypi.org/project/formatter/	y	claude	Python source formatter; how configurable not stated
+038	https://pypi.org/project/locobuzz-python-configuration/	n	claude	
+038	https://pypi.org/project/python-configuration-management/	n	claude	
+038	https://pypi.org/project/python-configuration-wrapper/	n	claude	
+038	https://pypi.org/project/python-configuration/	n	claude	
+038	https://pypi.org/project/code-formatter-advisor/	n	claude	
+038	https://pypi.org/project/jupyterlab-code-formatter/	n	claude	runs other formatters in JupyterLab
+038	https://github.com/vinta/awesome-python	n	claude	
+038	https://pypi.org/project/nb-code-formatter/	p	claude	notebooks
+038	https://github.com/chriskiehl/Gooey	n	claude	
+039	https://crates.io/crates/mcpacker	n	claude	
+039	https://github.com/apache/apisix	n	claude	
+039	https://github.com/auth0/auth0-cli	n	claude	
+039	https://crates.io/crates/rattery	n	claude	
+039	https://github.com/danirod/cartero	p	claude	GUI client
+039	https://github.com/cardano-foundation/cardano-wallet	n	claude	
+039	https://pypi.org/project/testy-command-line/	n	claude	
+039	https://crates.io/crates/rusty-cat	n	claude	
+039	https://github.com/fullstorydev/grpcurl	p	claude	gRPC, not HTTP
+039	https://httpie.io/	y	claude	
+039	https://www.npmjs.com/package/googleapis	n	claude	
+039	https://github.com/sahat/hackathon-starter	n	claude	
+039	https://crates.io/crates/treq	y	claude	
+039	https://pkg.go.dev/github.com/adamijak/http	y	claude	CLI that sends requests from .http files
+039	https://github.com/eBay/restcommander	n	claude	
+039	https://github.com/acl-dev/acl	n	claude	
+039	https://www.npmjs.com/package/@actions/http-client	n	claude	
+039	https://pkg.go.dev/github.com/k64z/steamstacks/examples/cmclient	n	claude	
+040	https://pypi.org/project/rstwatch/	p	claude	watches RST files to build HTML
+040	https://pypi.org/project/dirwatcher/	y	claude	
+040	https://pypi.org/project/probe-rdirwatcher/	p	claude	remote directories
+040	https://pypi.org/project/squire/	p	claude	CLI that runs a command on change
+040	https://pypi.org/project/grigori/	y	claude	
+040	https://pypi.org/project/watchit/	y	claude	
+040	https://pypi.org/project/directory-file-mapping/	n	claude	
+040	https://pypi.org/project/python-active-directory/	n	claude	
+040	https://github.com/e-dant/watcher	p	claude	C++ watcher with Python bindings
+040	https://pypi.org/project/changes/	n	claude	
+040	https://pypi.org/project/wotw/	y	claude	
+040	https://github.com/watchexec/watchexec	p	claude	CLI in Rust
+040	https://github.com/dsoprea/PyInotify	y	claude	
+040	https://pypi.org/project/python-directory-compiler/	n	claude	
+040	https://github.com/borntyping/spotter	p	claude	CLI that runs a command on change
+041	https://pypi.org/project/vexy-glob/	p	claude	finds files, doesn't search contents
+041	https://pypi.org/project/grin/	p	claude	recursive grep; skips VCS dirs, not .gitignore
+041	https://github.com/rhysd/hgrep	y	claude	
+041	https://crates.io/crates/jegrep	p	claude	semantic search, not grep
+041	https://pypi.org/project/yapyrg/	y	claude	
+041	https://github.com/microsoft/tgrep	p	claude	indexed search; .gitignore not stated
+041	https://www.npmjs.com/package/ignore	n	claude	
+041	https://www.npmjs.com/package/cspell-gitignore	n	claude	
+041	https://www.npmjs.com/package/fast-ignore	n	claude	
+041	https://pypi.org/project/ripgrep/	y	claude	
+041	https://news.ycombinator.com/item?id=8393049	n	claude	
+041	https://github.com/BurntSushi/ripgrep	y	claude	
+041	https://www.npmjs.com/package/ignore-walk	n	claude	
+041	https://github.com/can1357/jegrep	p	claude	semantic search, not grep
+041	https://pypi.org/project/gitignore/	n	claude	
+041	https://github.com/dmtrKovalenko/zlob	p	claude	file walking with gitignore support, no search
+041	https://github.com/Genivia/ugrep	y	claude	can honour .gitignore
+042	https://www.npmjs.com/package/@lexical/code	n	claude	
+042	https://pypi.org/project/colordiffs/	p	claude	highlights git diffs, not a cat
+042	https://pypi.org/project/git-cat/	n	claude	
+042	https://www.npmjs.com/package/hicat	p	claude	highlighting cat, no git
+042	https://github.com/casualjim/umber	y	claude	tree-sitter highlighting and a git change gutter
+042	https://www.npmjs.com/package/@expressive-code/plugin-shiki	n	claude	
+042	https://pypi.org/project/git-delta/	p	claude	git diff pager
+042	https://www.npmjs.com/package/refractor	n	claude	
+042	https://www.npmjs.com/package/cli-highlight	p	claude	highlighting, no git
+042	https://pypi.org/project/pyparsing-highlighting/	n	claude	
+042	https://pypi.org/project/curses-syntax-highlighting/	n	claude	
+042	https://pypi.org/project/better-highlighting/	n	claude	
+042	https://pypi.org/project/jupyterlab-git-syntax-extension/	n	claude	
+042	https://pypi.org/project/syncat/	p	claude	highlighting cat, no git
+042	https://pypi.org/project/syntax/	n	claude	
+042	https://pypi.org/project/pyccat/	p	claude	highlighting cat, no git
+043	https://github.com/TeXitoi/structopt	y	claude	
+043	https://crates.io/crates/argparse	y	claude	
+043	https://crates.io/crates/strykelang	n	claude	
+043	https://news.ycombinator.com/item?id=13124330	p	claude	Java
+043	https://news.ycombinator.com/item?id=13490115	p	claude	several languages
+043	https://crates.io/crates/clap-v3	y	claude	
+043	https://crates.io/crates/commandlines	y	claude	
+043	https://pypi.org/project/dont-argue/	p	claude	Python
+043	https://pypi.org/project/arguments-parser/	p	claude	Python
+043	https://crates.io/crates/pareg	y	claude	
+043	https://news.ycombinator.com/item?id=3361460	p	claude	Python
+043	https://github.com/rekka/meval-rs	n	claude	
+043	https://github.com/tailhook/rust-argparse	y	claude	
+043	https://github.com/kyclark/command-line-rust	n	claude	
+043	https://pkg.go.dev/gopkg.in/tchap/gocli.v2	p	claude	Go
+043	https://crates.io/crates/nameless-clap	y	claude	
+044	https://github.com/aixcoder-plugin/aiXcoder-7B	n	claude	
+044	https://pypi.org/project/locstats/	y	claude	
+044	https://github.com/boyter/scc	y	claude	
+044	https://crates.io/crates/kimun	p	claude	code metrics; LOC per language not stated
+044	https://pypi.org/project/programming-language-final-project/	n	claude	
+044	https://pypi.org/project/pycode-info/	n	claude	
+044	https://pypi.org/project/count-lines/	p	claude	no description
+044	https://github.com/Dryxio/reagent	n	claude	
+044	https://pypi.org/project/codelinescounter/	p	claude	Python code only
+044	https://github.com/AlDanial/cloc	y	claude	
+044	https://github.com/imDarshanGK/AI-dev-assistant	n	claude	
+044	https://github.com/analysis-tools-dev/static-analysis	n	claude	
+044	https://pypi.org/project/python-count-lines/	p	claude	Python code only
+044	https://crates.io/crates/knot-lite	n	claude	
+044	https://pypi.org/project/html-as-programming-language/	n	claude	
+044	https://pypi.org/project/programming-languages/	n	claude	
+044	https://pypi.org/project/light-programming-language/	n	claude	
+045	https://pkg.go.dev/github.colasdn.workers.dev/devfacet/gocmd	y	claude	gocmd via a proxy mirror
+045	https://pypi.org/project/subcommand/	p	claude	Python
+045	https://github.com/hedzr/cmdr	y	claude	
+045	https://www.npmjs.com/package/cli	p	claude	Node
+045	https://pkg.go.dev/gopkg.in/devfacet/gocmd.v2	y	claude	
+045	https://github.com/shadawck/awesome-cli-frameworks	n	claude	
+045	https://pkg.go.dev/github.laiyagushi.com/devfacet/gocmd	y	claude	gocmd via a proxy mirror
+045	https://github.com/devfacet/gocmd	y	claude	
+045	https://pkg.go.dev/github.1485827954.workers.dev/devfacet/gocmd	y	claude	gocmd via a proxy mirror
+045	https://github.com/cacjs/cac	p	claude	Node
+045	https://github.com/avelino/awesome-go	n	claude	
+045	https://www.npmjs.com/package/cac	p	claude	Node
+045	https://crates.io/crates/cornerlibstone	p	claude	Rust
+045	https://github.com/jawher/mow.cli	y	claude	
+045	https://www.npmjs.com/package/commander	p	claude	Node
+045	https://pypi.org/project/command-line-menu/	n	claude	
+045	https://github.com/remkop/picocli	p	claude	Java
+046	https://pkg.go.dev/charm.land/bubbletea/v2	y	claude	
+046	https://pkg.go.dev/git.preston-baxter.com/Preston_PLB/bubbletea	y	claude	
+046	https://pkg.go.dev/github.com/charmbracelet/bubbletea	y	claude	
+046	https://pkg.go.dev/github.com/arnevg/bubbletea	y	claude	
+046	https://pkg.go.dev/git.core.id/coreid/bubbletea/v2	y	claude	
+046	https://pkg.go.dev/github.com/LeperGnome/bubbletea	y	claude	
+046	https://pkg.go.dev/github.com/tapiaw38/bubbletea	y	claude	
+046	https://pkg.go.dev/github.com/pandorasNox/bubbletea/v2	y	claude	
+046	https://pkg.go.dev/github.com/carmel/go-tui	y	claude	renamed copy of Bubble Tea, by its description
+046	https://pkg.go.dev/github.com/ehlkristofhenrik/bubbletea	y	claude	
+046	https://pkg.go.dev/github.com/keakon/bubbletea/v2	y	claude	
+046	https://pkg.go.dev/gitlab.com/hypolas/tools/bubbletea	y	claude	
+046	https://pkg.go.dev/github.com/dcostap/bubbletea/v2	y	claude	
+046	https://pkg.go.dev/github.com/labyla/bubbletea	y	claude	
+046	https://pkg.go.dev/github.com/dece2183/bubbletea	y	claude	
+047	https://crates.io/crates/glab-tui-crate	p	claude	TUI for GitLab/GitHub, not git
+047	https://crates.io/crates/gitu	y	claude	
+047	https://news.ycombinator.com/item?id=26759602	y	claude	
+047	https://pypi.org/project/terminal-velocity-git/	n	claude	
+047	https://pypi.org/project/git-user23/	n	claude	
+047	https://crates.io/crates/lazier	y	claude	
+047	https://pypi.org/project/vgit/	y	claude	
+047	https://news.ycombinator.com/item?id=45473432	n	claude	
+047	https://pypi.org/project/git-user-manager/	n	claude	
+047	https://pypi.org/project/git-user-switch/	n	claude	
+047	https://pypi.org/project/git-interface/	n	claude	
+047	https://github.com/donnemartin/gitsome	p	claude	CLI, not a TUI
+047	https://pypi.org/project/terminal/	n	claude	
+047	https://crates.io/crates/delta-gitu	p	claude	gitu fork as a library
+047	https://github.com/git-up/GitUp	p	claude	GUI, not terminal
+047	https://pypi.org/project/pitwi/	n	claude	
+048	https://www.npmjs.com/package/fast-fuzzy	n	claude	
+048	https://github.com/junegunn/fzf	y	claude	
+048	https://github.com/kelleyma49/PSFzf	p	claude	PowerShell wrapper around fzf
+048	https://www.npmjs.com/package/@ff-labs/fff-bun	p	claude	fuzzy file finder library for agents
+048	https://crates.io/crates/fuzc	p	claude	code comments only
+048	https://github.com/darrenldl/docfd	p	claude	documents only
+048	https://www.npmjs.com/package/fuzzy	n	claude	
+048	https://github.com/ktr0731/go-fuzzyfinder	p	claude	library for building one
+048	https://github.com/hugows/hf	y	claude	
+048	https://www.npmjs.com/package/@nozbe/microfuzz	n	claude	
+048	https://crates.io/crates/matchmaker-lib	y	claude	
+048	https://github.com/fbeline/luneta	y	claude	
+048	https://crates.io/crates/skim	y	claude	
+048	https://crates.io/crates/maki-cli	p	claude	Makefile tasks only
+048	https://pypi.org/project/fuzeepass/	p	claude	KeePassX only
+048	https://github.com/d-kuro/kubectl-fuzzy	p	claude	Kubernetes resources only
+049	https://github.com/basecamp/google_sign_in	p	claude	Google sign-in only
+049	https://github.com/excid3/revise_auth	y	claude	
+049	https://github.com/heartcombo/devise	y	claude	
+049	https://github.com/rubycas/rubycas-client	p	claude	CAS single sign-on client
+049	https://github.com/cedarcode/webauthn-ruby	p	claude	WebAuthn only
+049	https://github.com/mikker/passwordless	y	claude	
+049	https://github.com/igorkasyanchuk/any_login	n	claude	
+049	https://github.com/starterkits/rails4-starterkit	p	claude	starter app with auth built in
+049	https://github.com/RailsApps/rails-omniauth	p	claude	starter app with OmniAuth
+049	https://github.com/spree/spree_auth_devise	p	claude	for Spree
+049	https://rubygems.org/gems/idi_captcha_generator	n	claude	
+049	https://github.com/lazaronixon/authentication-zero	y	claude	
+049	https://github.com/RailsApps/rails-devise	p	claude	starter app with Devise
+049	https://rubygems.org/gems/myspaceid-sdk	n	claude	
+049	https://github.com/thoughtbot/clearance	y	claude	
+049	https://github.com/janko/rodauth-rails	y	claude	
+049	https://github.com/RailsApps/rails-devise-pundit	p	claude	starter app with Devise
+050	https://rubygems.org/gems/tr_resque	y	claude	Resque fork
+050	https://rubygems.org/gems/resqueue	y	claude	Resque fork
+050	https://rubygems.org/gems/resque-cedar	y	claude	Resque fork
+050	https://github.com/bkeepers/qu	y	claude	
+050	https://rubygems.org/gems/fiber_job	y	claude	
+050	https://github.com/resque/resque	y	claude	
+050	https://rubygems.org/gems/resque_sqs	p	claude	Resque fork; SQS not Redis, by its name
+050	https://rubygems.org/gems/steini-resque	y	claude	Resque fork
+050	https://rubygems.org/gems/resque	y	claude	
+050	https://rubygems.org/gems/resque-mongo	p	claude	MongoDB, not Redis
+050	https://github.com/keypup-io/cloudtasker	p	claude	Google Cloud Tasks, not Redis
+050	https://rubygems.org/gems/opengotham_resque	y	claude	Resque fork
+050	https://rubygems.org/gems/resque_admin	y	claude	Resque fork
+050	https://github.com/michelsalib/BCCResqueBundle	p	claude	PHP
+050	https://rubygems.org/gems/resque-igo	p	claude	Resque fork; backend not clear
+050	https://rubygems.org/gems/resque_signal_from_child	y	claude	Resque fork
+050	https://github.com/actionhero/node-resque	p	claude	Node
+051	https://hex.pm/packages/oban	y	claude	
+051	https://hex.pm/packages/ant	p	claude	Elixir jobs; storage not Postgres, by the description
+051	https://hex.pm/packages/howdy_jobs	p	claude	database-backed jobs for one framework (Howdy)
+051	https://hex.pm/packages/roger	p	claude	RabbitMQ
+051	https://hex.pm/packages/super_worker	p	claude	supervisors and jobs, no Postgres
+051	https://github.com/oban-bg/oban	y	claude	
+051	https://hex.pm/packages/stagehand	p	claude	in memory
+051	https://hex.pm/packages/ex_job	p	claude	storage not stated
+051	https://hex.pm/packages/pgflow	y	claude	
+051	https://hex.pm/packages/fleet	y	claude	
+051	https://hex.pm/packages/m25	p	claude	Gleam, not Elixir
+051	https://hex.pm/packages/ecto_gen	n	claude	
+051	https://hex.pm/packages/ergon	y	claude	
+051	https://hex.pm/packages/toniq	p	claude	Redis
+051	https://hex.pm/packages/backy	y	claude	
+051	https://github.com/oban-bg/oban-py	p	claude	Python port of Oban
+051	https://hex.pm/packages/bg_jobs	p	claude	Gleam, not Elixir
+052	https://news.ycombinator.com/item?id=42410803	p	claude	office files to Markdown, Python, one way
+052	https://news.ycombinator.com/item?id=48622123	n	claude	
+052	https://news.ycombinator.com/item?id=45934930	n	claude	
+052	https://news.ycombinator.com/item?id=48489166	p	claude	office files to Markdown, Python, one way
+052	https://hackage.haskell.org/package/pandoc-md-slides	n	claude	
+052	https://news.ycombinator.com/item?id=48585955	n	claude	
+052	https://codeberg.org/daniel-casanueva/HaTeX	n	claude	
+052	https://news.ycombinator.com/item?id=29856010	p	claude	Markdown into TeX, one way
+052	https://news.ycombinator.com/item?id=42154410	n	claude	
+052	https://github.com/yeewantung/tex_math_to_word	p	claude	LaTeX/Markdown to Word, one way
+052	https://news.ycombinator.com/item?id=45020456	p	claude	documents to Markdown, one way
+052	https://news.ycombinator.com/item?id=41702962	p	claude	Markdown to many formats, macOS app
+052	http://github.com/pbrisbin/yesod-markdown	n	claude	
+052	http://scholdoc.scholarlymarkdown.com	p	claude	Haskell, a pandoc fork, but ScholarlyMarkdown to HTML/LaTeX/Docx only
+052	https://github.com/kosmikus/lhs2tex	n	claude	
+053	https://github.com/square/moshi	y	claude	
+053	https://news.ycombinator.com/item?id=11536250	n	claude	
+053	https://github.com/plokhotnyuk/jsoniter-scala	p	claude	Scala
+053	https://github.com/fangyidong/json-simple	p	claude	JSON to maps and lists, no object mapping
+053	https://news.ycombinator.com/item?id=16538106	n	claude	
+053	https://github.com/everit-org/json-schema	n	claude	
+053	https://github.com/Instagram/ig-json-parser	y	claude	
+053	https://news.ycombinator.com/item?id=47502635	y	claude	
+053	https://github.com/cweiske/jsonmapper	p	claude	PHP
+053	https://news.ycombinator.com/item?id=47560038	n	claude	
+053	https://news.ycombinator.com/item?id=4627962	y	claude	
+053	https://github.com/burningtree/awesome-json	n	claude	
+053	https://github.com/json4s/json4s	p	claude	Scala
+053	https://github.com/wnameless/json-flattener	n	claude	
+053	https://github.com/jdereg/json-io	y	claude	
+053	https://news.ycombinator.com/item?id=13387785	n	claude	
+054	https://www.nuget.org/packages/Dennis198.DotSerial	p	claude	.NET serializer; JSON not stated
+054	https://www.nuget.org/packages/Sealkeen.CSCourse2016.JSONParser.Core	p	claude	course project
+054	https://github.com/alibaba/HandyJSON	p	claude	Swift
+054	https://github.com/google/gson	p	claude	Java
+054	https://github.com/bytedance/sonic	p	claude	Go
+054	https://www.nuget.org/packages/jsonpathconvert	p	claude	an add-on to Json.NET
+054	https://github.com/kevin-montrose/Jil	y	claude	
+054	https://www.nuget.org/packages/StudioLE.Verify.Json	n	claude	
+054	https://github.com/lidatong/dataclasses-json	p	claude	Python
+054	https://github.com/json4s/json4s	p	claude	Scala
+054	https://github.com/SeyZ/jsonapi-serializer	p	claude	Node, JSON:API
+054	https://github.com/mailru/easyjson	p	claude	Go
+054	https://github.com/paolo-rossi/delphi-neon	p	claude	Delphi
+054	https://www.nuget.org/packages/CdIts.Caffoa.GeoJson	p	claude	GeoJSON for one framework
+054	https://www.nuget.org/packages/PgDoc.Serialization	p	claude	JSON for one document store
+054	https://github.com/msgpack/msgpack	n	claude	MessagePack, not JSON
+055	https://packagist.org/packages/ptcong/php-http-class	y	claude	
+055	https://github.com/pusher/pusher-http-php	n	claude	
+055	https://github.com/WordPress/Requests	y	claude	
+055	https://github.com/simplepie/simplepie	n	claude	
+055	https://github.com/dg/twitter-php	n	claude	
+055	https://packagist.org/packages/george/php-http-client	y	claude	
+055	https://github.com/twilio/twilio-php	n	claude	
+055	https://github.com/nategood/httpful	y	claude	
+055	https://github.com/sabre-io/http	p	claude	request/response utilities
+055	https://packagist.org/packages/clintonnzedimma/sausage-http	y	claude	
+055	https://github.com/Kong/unirest-php	y	claude	
+055	https://github.com/stil/curl-easy	y	claude	
+055	https://packagist.org/packages/marlemiesz/wp-sdk	n	claude	
+055	https://github.com/PHPMailer/PHPMailer	n	claude	
+055	https://github.com/guzzle/guzzle	y	claude	
+055	https://packagist.org/packages/launchdarkly/api-client-php	n	claude	
+055	https://github.com/web-push-libs/web-push-php	n	claude	
+056	https://pypi.org/project/terminal/	n	claude	
+056	https://pypi.org/project/interactive-terminal-mcp/	n	claude	
+056	https://pypi.org/project/interactive/	n	claude	
+056	https://github.com/allinurl/goaccess	n	claude	
+056	https://pypi.org/project/interactive-terminal/	n	claude	
+056	https://pypi.org/project/vitjas-interactive-terminal/	n	claude	
+056	https://crates.io/crates/htoprs	y	claude	
+056	https://github.com/youyve/nputop	p	claude	Ascend NPU processes only
+056	https://pypi.org/project/interactive-process/	n	claude	
+056	https://pypi.org/project/process-viewer/	y	claude	
+056	https://github.com/XuehaiPan/nvitop	p	claude	NVIDIA GPU processes only
+056	https://pypi.org/project/psinfo/	y	claude	
+056	https://github.com/rothgar/awesome-tuis	n	claude	
+056	https://github.com/ericfreese/rat	n	claude	
+056	https://github.com/htop-dev/htop	y	claude	
+056	https://crates.io/crates/gander-bin	y	claude	
+056	https://www.npmjs.com/package/@visulima/interactive-manager	n	claude	
+057	https://news.ycombinator.com/item?id=3826999	n	claude	
+057	https://pypi.org/project/noman-cli/	y	claude	common options and real-world examples per command
+057	https://pypi.org/project/pypi-command-line/	n	claude	
+057	https://news.ycombinator.com/item?id=45903891	n	claude	
+057	https://pypi.org/project/command-line-assistant/	n	claude	
+057	https://pypi.org/project/command-line-menu/	n	claude	
+057	https://news.ycombinator.com/item?id=6404938	n	claude	
+057	https://news.ycombinator.com/item?id=45849467	n	claude	
+057	https://pypi.org/project/kfp-command-line-tools/	n	claude	
+057	https://www.npmjs.com/package/opts	n	claude	
+057	https://pypi.org/project/command-line/	n	claude	
+057	https://news.ycombinator.com/item?id=44667314	n	claude	
+057	https://www.npmjs.com/package/command-line-usage	n	claude	
+057	https://news.ycombinator.com/item?id=44126612	n	claude	
+057	https://www.npmjs.com/package/inquirer	n	claude	
+057	https://pypi.org/project/click-man/	n	claude	
+057	https://news.ycombinator.com/item?id=624173	n	claude	
+058	https://www.npmjs.com/package/jest-changed-files	n	claude	
+058	https://github.com/phil294/GitLG	n	claude	
+058	https://marketplace.visualstudio.com/items?itemName=pz.vscode	n	claude	
+058	https://marketplace.visualstudio.com/items?itemName=1YiB.vscode-bundle	n	claude	
+058	https://github.com/hashicorp/vscode-terraform	n	claude	
+058	https://github.com/nicklockwood/SwiftFormat	n	claude	
+058	https://github.com/microsoft/vscode-tips-and-tricks	n	claude	
+058	https://github.com/microsoft/codetour	n	claude	
+058	https://news.ycombinator.com/item?id=45348298	n	claude	
+058	https://marketplace.visualstudio.com/items?itemName=zhang-renyang.vscode-git	n	claude	
+058	https://github.com/stefanbuck/awesome-browser-extensions-for-github	n	claude	
+058	https://marketplace.visualstudio.com/items?itemName=donjayamanne.git-extension-pack	p	claude	extension pack that bundles blame extensions
+058	https://marketplace.visualstudio.com/items?itemName=mcu-debug.debug-tracker-vscode	n	claude	
+058	https://marketplace.visualstudio.com/items?itemName=donjayamanne.githistory	p	claude	file and line history, no inline blame
+058	https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens	y	claude	
+058	https://github.com/vscode-shellcheck/vscode-shellcheck	n	claude	
+058	https://marketplace.visualstudio.com/items?itemName=waderyan.gitblame	y	claude	
+058	https://www.npmjs.com/package/@vscode/test-cli	n	claude	
+058	https://github.com/jackiotyu/git-worktree-manager	n	claude	
+059	https://marketplace.visualstudio.com/items?itemName=arzg.intellij-theme	n	claude	
+059	https://marketplace.visualstudio.com/items?itemName=AlexTi.intellij-idea-light-theme	n	claude	
+059	https://www.npmjs.com/package/@rolldown/plugin-babel	n	claude	
+059	https://marketplace.visualstudio.com/items?itemName=ms-vscode.brackets-pack	n	claude	
+059	https://marketplace.visualstudio.com/items?itemName=niccolomineo.default-dark-plus-intellij	n	claude	
+059	https://marketplace.visualstudio.com/items?itemName=2gua.rainbow-brackets	p	claude	VS Code, not IntelliJ
+059	https://marketplace.visualstudio.com/items?itemName=fehey.brackets-light-pro	n	claude	
+059	https://marketplace.visualstudio.com/items?itemName=rafamel.subtle-brackets	n	claude	
+059	https://github.com/Nagatatz/rescript-intellij-plugin	n	claude	
+059	https://news.ycombinator.com/item?id=17297552	n	claude	
+059	https://www.npmjs.com/package/@bufbuild/protoplugin	n	claude	
+059	https://marketplace.visualstudio.com/items?itemName=ms-vscode.brackets-keybindings	n	claude	
+059	https://marketplace.visualstudio.com/items?itemName=CoenraadS.bracket-pair-colorizer-2	p	claude	VS Code, not IntelliJ
+059	https://marketplace.visualstudio.com/items?itemName=tejasvi.rainbow-brackets-2	p	claude	VS Code, not IntelliJ
+059	https://marketplace.visualstudio.com/items?itemName=ullissescastro.theme-bracketsdark	n	claude	
+059	https://www.npmjs.com/package/@sanity-labs/oclif-plugin-skills-flag	n	claude	
+059	https://marketplace.visualstudio.com/items?itemName=ullissescastro.theme-bracketslight	n	claude	
+059	https://www.npmjs.com/package/@shikijs/colorized-brackets	p	claude	Shiki transformer for the web
+059	https://marketplace.visualstudio.com/items?itemName=CoenraadS.bracket-pair-colorizer	p	claude	VS Code, not IntelliJ
+059	https://marketplace.visualstudio.com/items?itemName=tal7aouy.rainbow-bracket	p	claude	VS Code, not IntelliJ
+060	https://github.com/Haxxnet/Compose-Examples	n	claude	
+060	https://news.ycombinator.com/item?id=38872090	n	claude	
+060	https://hub.docker.com/r/ltbproject/self-service-password	n	claude	
+060	https://github.com/richardneililagan/vaultwarden-ecs-fargate	p	claude	deploys Vaultwarden on AWS, not the server itself
+060	https://github.com/SoulNaturalist/zero_password_manager	p	claude	self-hosted, not Bitwarden-compatible
+060	https://hub.docker.com/r/docker/ucp-auth	n	claude	
+060	https://github.com/nilsteampassnet/TeamPass	p	claude	self-hosted, not Bitwarden-compatible
+060	https://github.com/Rabbit-Company/Passky-Server	p	claude	self-hosted, not Bitwarden-compatible
+060	https://news.ycombinator.com/item?id=46434702	p	claude	self-hosted, not Bitwarden-compatible
+060	https://github.com/mvfc/backvault	n	claude	
+060	https://github.com/tborychowski/self-hosted-cookbook	n	claude	
+060	https://hub.docker.com/r/docker/welcome-to-docker	n	claude	
+060	https://github.com/tailscale-dev/ScaleTail	n	claude	
+060	https://github.com/Turbootzz/vaultwarden-secrets-api	n	claude	
+060	https://github.com/EnigmaCurry/d.rymcg.tech	n	claude	
+060	https://hub.docker.com/r/docker/whalesay	n	claude	
+061	https://github.com/iameli/kubernetes-letsencrypt	y	claude	
+061	https://github.com/tnozicka/openshift-acme	y	claude	
+061	https://artifacthub.io/packages/helm/smallstep/autocert	p	claude	certificates from its own CA, not Let's Encrypt
+061	https://github.com/gardener/cert-management	y	claude	
+061	https://github.com/CloudWithVarJosh/TLS-In-Kubernetes-Masterclass	n	claude	
+061	https://news.ycombinator.com/item?id=19224481	p	claude	article about cert-manager
+061	https://github.com/jetstack/kube-lego	y	claude	
+061	https://news.ycombinator.com/item?id=12146433	y	claude	
+061	https://github.com/smallstep/autocert	p	claude	certificates from its own CA, not Let's Encrypt
+061	https://news.ycombinator.com/item?id=18626821	y	claude	cert-manager
+061	https://github.com/ccojocar/sso-operator	n	claude	
+061	https://pkg.go.dev/github.com/jimyag/auto-cert-webhook	n	claude	
+061	https://pkg.go.dev/github.com/estafette/estafette-letsencrypt-certificate	y	claude	
+061	https://github.com/math-nao/certs	y	claude	
+061	https://github.com/HoussemDellai/kubernetes-ingress-tls-ssl-https	n	claude	
+062	https://github.com/wentasah/ros2nix	n	claude	
+062	https://github.com/water-sucks/optnix	n	claude	
+062	https://github.com/madjar/nox	n	claude	
+062	https://github.com/Piebald-AI/tweakcc	n	claude	
+062	https://github.com/DieracDelta/nix-btm	n	claude	
+062	https://github.com/mikeroyal/Apple-Silicon-Guide	n	claude	
+062	https://hackage.haskell.org/package/nix-diff	p	claude	diffs two derivations, not package versions
+062	https://hackage.haskell.org/package/nix	n	claude	
+062	https://nixos.org/nix	p	claude	nix store diff-closures does this, one command of many
+062	https://github.com/mikeroyal/NixOS-Guide	n	claude	
+062	https://github.com/FRidh/niff	p	claude	diffs attributes of two expressions
+062	https://github.com/q60/tuatara	n	claude	
+062	https://github.com/nix-community/nh	p	claude	shows a package diff after a rebuild, one feature of many
+062	https://nixos.org/hydra	n	claude	
+062	https://github.com/lf-/nix-doc	n	claude	
+062	https://github.com/manic-systems/dix	y	claude	
+062	https://gitlab.com/hmajid2301/optinix	n	claude	
+063	https://news.ycombinator.com/item?id=46745351	n	claude	
+063	https://news.ycombinator.com/item?id=46947598	n	claude	
+063	https://github.com/Dicklesworthstone/repo_updater	n	claude	
+063	https://crates.io/crates/cargo-lbin	n	claude	
+063	https://news.ycombinator.com/item?id=40535009	n	claude	
+063	https://github.com/sdsrss/code-graph-mcp	n	claude	
+063	https://news.ycombinator.com/item?id=45528936	n	claude	
+063	https://crates.io/crates/web_modules	n	claude	
+063	https://github.com/Dicklesworthstone/remote_compilation_helper	n	claude	
+063	https://crates.io/crates/snare	n	claude	
+063	https://crates.io/crates/lm-provision-cli	n	claude	
+063	https://github.com/rust-unofficial/awesome-rust	n	claude	
+063	https://github.com/mudler/nib	n	claude	
+063	https://github.com/ShippedLabs/soroban-upgrade-safeguard	n	claude	
+063	https://github.com/KiefStudioMA/ks-aur-scanner	p	claude	scans AUR build scripts for suspicious behaviour; the same idea for another ecosystem
+063	https://crates.io/crates/cargo-fresh	n	claude	
+063	https://github.com/intent-hq/intentd	n	claude	
+064	https://pypi.org/project/nbstripout/	y	claude	
+064	https://crates.io/crates/nbstrip	y	claude	
+064	https://www.npmjs.com/package/jira-prepare-commit-msg	n	claude	
+064	https://pypi.org/project/juplit/	n	claude	
+064	https://pypi.org/project/nb-prep/	p	claude	prepares stripped notebooks for git; hook not stated
+064	https://pypi.org/project/clean-notebook/	p	claude	cleans notebooks; outputs and hook not stated
+064	https://www.npmjs.com/package/@jupyterlab/cells	n	claude	
+064	https://github.com/kynan/nbstripout	y	claude	
+064	https://www.npmjs.com/package/@jupyterlab/notebook	n	claude	
+064	https://pypi.org/project/nbmetaclean/	p	claude	strips metadata and execution counts
+064	https://pypi.org/project/strip-notebook-metadata/	p	claude	strips metadata, keeps outputs
+064	https://pypi.org/project/nb-order-validator/	n	claude	
+064	https://github.com/jkitchin/ox-ipynb	n	claude	
+064	https://www.npmjs.com/package/@jupyterlab/attachments	n	claude	
+064	https://pypi.org/project/nbstripout-fast/	y	claude	
+064	https://news.ycombinator.com/item?id=30458465	n	claude	
+065	https://news.ycombinator.com/item?id=47138743	n	claude	
+065	https://pypi.org/project/doi2bibtex/	n	claude	
+065	https://www.npmjs.com/package/@citestyle/bibtex	p	claude	BibTeX/CSL-JSON library, no dedupe
+065	https://www.npmjs.com/package/@citation-js/plugin-bibtex	p	claude	BibTeX plugin for Citation.js, no dedupe
+065	https://www.npmjs.com/package/@citation-js/cli	p	claude	converts BibTeX to CSL-JSON, no dedupe
+065	https://www.npmjs.com/package/bibtex-reference-manager-mcp	p	claude	cleans .bib files through an AI app
+065	https://pypi.org/project/plagx-cite/	p	claude	BibTeX import/export and duplicate checks, no CSL-JSON
+065	https://pypi.org/project/django-literature/	n	claude	
+065	https://pypi.org/project/orcid2bib/	n	claude	
+065	https://pypi.org/project/bxc/	n	claude	
+065	https://www.npmjs.com/package/astrocite-bibtex	p	claude	BibTeX to CSL-JSON parser, no dedupe
+065	https://www.npmjs.com/package/postcss-discard-duplicates	n	claude	
+065	https://www.npmjs.com/package/citeme-engine-wasm	p	claude	converts between bibliography formats in the browser
+065	https://pypi.org/project/betterbib/	p	claude	BibTeX tool that can dedupe by DOI, no CSL-JSON
+065	https://www.npmjs.com/package/scholar-sidekick-mcp	n	claude	
+065	https://www.npmjs.com/package/rehype-citation	n	claude	
+065	https://pypi.org/project/crossref-cite-mcp/	n	claude	
+066	https://marketplace.visualstudio.com/items?itemName=genuitecllc.codetogether	n	claude	
+066	https://marketplace.visualstudio.com/items?itemName=Tencent-Cloud.coding-copilot	n	claude	
+066	https://www.npmjs.com/package/@vscode/vsce-sign	n	claude	
+066	https://www.npmjs.com/package/@vscode/vsce	n	claude	
+066	https://marketplace.visualstudio.com/items?itemName=waka.footprint	n	claude	
+066	https://marketplace.visualstudio.com/items?itemName=tonybaloney.vscode-pets	n	claude	
+066	https://www.npmjs.com/package/@cloud-carbon-footprint/common	p	claude	part of Cloud Carbon Footprint, not a VS Code extension
+066	https://marketplace.visualstudio.com/items?itemName=sdras.vue-vscode-snippets	n	claude	
+066	https://marketplace.visualstudio.com/items?itemName=1YiB.vscode-bundle	n	claude	
+066	https://marketplace.visualstudio.com/items?itemName=GoogleCloudTools.cloudcode	n	claude	
+066	https://www.npmjs.com/package/@cloud-carbon-footprint/core	p	claude	Cloud Carbon Footprint's estimator, not a VS Code extension
+066	https://www.npmjs.com/package/@opentelemetry/resource-detector-alibaba-cloud	n	claude	
+066	https://www.npmjs.com/package/@vscode/test-cli	n	claude	
+066	https://marketplace.visualstudio.com/items?itemName=zxh404.vscode-proto3	n	claude	
+066	https://www.npmjs.com/package/@cloud-carbon-footprint/aws	p	claude	Cloud Carbon Footprint's AWS estimator, not a VS Code extension
+066	https://marketplace.visualstudio.com/items?itemName=emmanuelbeziat.vscode-great-icons	n	claude	
+066	https://www.npmjs.com/package/@vscode-logging/logger	n	claude	
+067	https://github.com/wsdjeg/git.nvim	n	claude	
+067	https://marketplace.visualstudio.com/items?itemName=solomonkinard.git-blame	p	claude	VS Code
+067	https://marketplace.visualstudio.com/items?itemName=carlthome.git-line-blame	p	claude	VS Code
+067	https://marketplace.visualstudio.com/items?itemName=waderyan.gitblame	p	claude	VS Code
+067	https://github.com/Damet24/gitb.nvim	y	claude	
+067	https://github.com/asgerviggo/nvim-blame-line	y	claude	
+067	https://marketplace.visualstudio.com/items?itemName=mk12.better-git-line-blame	p	claude	VS Code
+067	https://github.com/otavioschwanck/github-pr-reviewer.nvim	n	claude	
+067	https://github.com/lewis6991/gitsigns.nvim	y	claude	current-line blame as virtual text is one of its features
+067	https://github.com/braxtons12/blame_line.nvim	y	claude	
+067	https://github.com/FabijanZulj/blame.nvim	p	claude	blame for the whole buffer, in a window or as virtual text
+067	https://marketplace.visualstudio.com/items?itemName=GitGlacier.gitglacier-current-line-blame	p	claude	VS Code
+067	https://marketplace.visualstudio.com/items?itemName=zhengbangbo.current-line-blame	p	claude	VS Code
+067	https://www.npmjs.com/package/blamejs	n	claude	
+067	https://www.npmjs.com/package/git-blame-line	n	claude	
+068	https://pypi.org/project/fastgpx/	p	claude	parsing only
+068	https://github.com/dodo-saba/fit2gpx	p	claude	converts FIT to GPX
+068	https://pypi.org/project/gpx/	y	claude	
+068	https://pypi.org/project/write-read-file/	n	claude	
+068	https://pypi.org/project/gpx-openmap/	n	claude	
+068	https://news.ycombinator.com/item?id=28574298	n	claude	
+068	https://pypi.org/project/gpx-player/	n	claude	
+068	https://pypi.org/project/gpx-poi-enricher/	n	claude	
+068	https://pypi.org/project/fitcxgp/	p	claude	GPX/TCX/FIT toolkit; reading and writing not stated
+068	https://pypi.org/project/gpx2exif/	n	claude	
+068	https://pypi.org/project/gpx-reader/	n	claude	
+068	https://pypi.org/project/gpxpy/	y	claude	
+068	https://pypi.org/project/gpxslicer/	p	claude	slices tracks, a tool
+068	https://pypi.org/project/gpxity/	p	claude	GPX web services
+068	https://news.ycombinator.com/item?id=33646951	n	claude	
+068	https://pypi.org/project/pyosmogps/	n	claude	
+068	https://github.com/tkrajina/gpxgo	p	claude	Go
+069	https://pypi.org/project/specshift/	y	claude	
+069	https://crates.io/crates/brake	y	claude	
+069	https://pypi.org/project/api-governor/	y	claude	
+069	https://pypi.org/project/contractradius/	p	claude	filters changes by their effect on a frontend
+069	https://pypi.org/project/kryptorious-apiguard/	y	claude	
+069	https://github.com/pb33f/openapi-changes	y	claude	
+069	https://github.com/oasdiff/oasdiff	y	claude	
+069	https://www.npmjs.com/package/@pb33f/openapi-changes	y	claude	
+069	https://pypi.org/project/api-diff-sentinel/	y	claude	
+069	https://www.npmjs.com/package/openapi-diff	y	claude	
+069	https://github.com/oasdiff/oasdiff-action	p	claude	GitHub Action around oasdiff
+069	https://github.com/Backbase/backbase-openapi-tools	p	claude	OpenAPI project tooling; breaking changes not stated
+069	https://pypi.org/project/contractor-cli/	y	claude	
+069	https://pypi.org/project/oneport-apidiff/	p	claude	breaking changes from Python code, no spec
+069	https://pypi.org/project/hybridforgelab-specwise-mcp/	y	claude	MCP server with OpenAPI breaking-change diffs
+070	https://hex.pm/packages/ex_limiter	y	claude	
+070	https://hex.pm/packages/limitex	p	claude	algorithm not stated
+070	https://hex.pm/packages/ex_limit	y	claude	
+070	https://news.ycombinator.com/item?id=29538645	p	claude	Java (Bucket4j)
+070	https://hex.pm/packages/simple_rate_limiter	p	claude	algorithm not stated
+070	https://hex.pm/packages/crabbucket_pgo	p	claude	Gleam, not Elixir
+070	https://news.ycombinator.com/item?id=29557398	p	claude	Java (Bucket4j)
+070	https://hex.pm/packages/rate_limiter_man	p	claude	leaky bucket only
+070	https://hex.pm/packages/ralitobu_plug	y	claude	Plug around ralitobu
+070	https://github.com/servusdei2018/kotyle	y	claude	
+070	https://hex.pm/packages/ralitobu	y	claude	
+070	https://hex.pm/packages/philiprehberger_rate_limiter	y	claude	
+070	https://hex.pm/packages/bucket_hydra	y	claude	
+070	https://news.ycombinator.com/item?id=29615718	p	claude	Java (Bucket4j)
+070	https://hex.pm/packages/atomic_bucket	y	claude	
+070	https://news.ycombinator.com/item?id=29533948	p	claude	Java (Bucket4j)
+071	https://crates.io/crates/marc-rs	y	claude	
+071	https://news.ycombinator.com/item?id=43752176	n	claude	
+071	https://github.com/jcollonville/marc-rs	y	claude	
+071	https://news.ycombinator.com/item?id=48643790	n	claude	
+072	https://github.com/basonjui/h3-py-samples	n	claude	
+072	https://github.com/pablete-im/postgres-ai-sql-training	n	claude	
+072	https://www.npmjs.com/package/@prisma/orm-extension-paradedb	n	claude	
+072	https://news.ycombinator.com/item?id=15276357	n	claude	
+072	https://github.com/sacridini/Awesome-Geospatial	n	claude	
+072	https://github.com/mohitvats-dot/Tagging_-_Polygon_Polyfill	n	claude	
+072	https://github.com/crisbez/atlas4d-base	n	claude	a platform that uses H3 in Postgres, not the extension
+072	https://www.npmjs.com/package/postgres-interval	n	claude	
+072	https://github.com/jmlane8/nws-zcta-joins	n	claude	
+072	https://github.com/rogonion/postgres-setup	n	claude	
+072	https://www.npmjs.com/package/@math.gl/geospatial	n	claude	
+072	https://www.npmjs.com/package/@prisma/orm-extension-postgis	n	claude	
+072	https://www.npmjs.com/package/@takram/three-geospatial	n	claude	
+072	https://github.com/sshuair/awesome-gis	n	claude	
+072	https://marketplace.visualstudio.com/items?itemName=alexli8408.quarry	n	claude	
+072	https://github.com/pglayers/pglayers	n	claude	
+073	https://crates.io/crates/rs-rich-mermaid	p	claude	library for a Rust rich port
+073	https://github.com/fasouto/termaid	y	claude	
+073	https://www.npmjs.com/package/@zombie-mermaid/ascii-renderer	p	claude	renderer library
+073	https://www.npmjs.com/package/beautiful-mermaid	p	claude	library, SVG or ASCII
+073	https://crates.io/crates/figurehead-cli	y	claude	
+073	https://crates.io/crates/mermd	y	claude	
+073	https://pypi.org/project/mermaid-term/	y	claude	
+073	https://pypi.org/project/mermaid-ascii-diagrams/	y	claude	
+073	https://pypi.org/project/mermaid-ascii-termrender/	y	claude	
+073	https://pypi.org/project/termaid/	y	claude	
+073	https://www.npmjs.com/package/grok-mermaid	y	claude	
+073	https://news.ycombinator.com/item?id=46734292	y	claude	
+073	https://news.ycombinator.com/item?id=46804828	y	claude	
+073	https://www.npmjs.com/package/lovely-mermaid	y	claude	
+073	https://crates.io/crates/figurehead	p	claude	library behind figurehead-cli
+073	https://www.npmjs.com/package/@vercel/beautiful-mermaid	p	claude	library, SVG or ASCII
+074	https://www.npmjs.com/package/@slorber/static-site-generator-webpack-plugin	n	claude	
+074	https://pypi.org/project/copy-static-website/	n	claude	
+074	https://pypi.org/project/tivelweb/	n	claude	
+074	https://crates.io/crates/maudit	n	claude	
+074	https://pypi.org/project/static-site-index/	n	claude	
+074	https://www.npmjs.com/package/static-site-generator-webpack-plugin	n	claude	
+074	https://crates.io/crates/hauchiwa	n	claude	
+074	https://www.npmjs.com/package/@antora/site-generator	n	claude	
+074	https://pypi.org/project/romaincornuconsulting-static-website/	n	claude	
+074	https://news.ycombinator.com/item?id=49504284	n	claude	
+074	https://crates.io/crates/blades	n	claude	
+074	https://pypi.org/project/zensols-zotsite/	y	claude	exports a Zotero library as a website
+074	https://pypi.org/project/stab/	n	claude	
+074	https://pypi.org/project/website-generator/	n	claude	
+074	https://pypi.org/project/ibots-static-site-generator/	n	claude	
+075	https://pkg.go.dev/github.com/Speikomania/gosqlite	p	claude	Go SQLite binding through cgo
+075	https://github.com/xeodou/go-sqlcipher	p	claude	cgo
+075	https://github.com/tursodatabase/libsql	n	claude	
+075	https://github.com/philippgille/chromem-go	n	claude	
+075	https://github.com/cvilsmeier/sqinn-go	y	claude	
+075	https://pkg.go.dev/github.com/cmrajan/gosqlite	p	claude	Go SQLite binding through cgo
+075	https://pkg.go.dev/github.com/gwenn/gosqlite	p	claude	cgo
+075	https://github.com/zombiezen/go-sqlite	y	claude	built on modernc.org/sqlite, no cgo
+075	https://pkg.go.dev/github.com/cvilsmeier/sqinn-go/v2	y	claude	
+075	https://github.com/cvilsmeier/go-sqlite-bench	n	claude	
+075	https://github.com/VinGarcia/ksql	n	claude	
+075	https://pkg.go.dev/github.com/speikomania/gosqlite	p	claude	Go SQLite binding through cgo
+075	https://pkg.go.dev/github.com/jkuri/sqinn-go/v2	y	claude	fork of sqinn-go
+075	https://github.com/iamacarpet/go-sqlite3-dynamic	y	claude	
+075	https://github.com/tursodatabase/go-libsql	p	claude	cgo
+076	https://artifacthub.io/packages/helm/cronschedules/cronjob-scale-down-operator	y	claude	
+076	https://hub.docker.com/r/grafana/rollout-operator	n	claude	
+076	https://artifacthub.io/packages/olm/community-operators/integration-operator	n	claude	
+076	https://artifacthub.io/packages/helm/traktor/traktor	n	claude	
+076	https://news.ycombinator.com/item?id=44240864	n	claude	
+076	https://news.ycombinator.com/item?id=47576293	n	claude	
+076	https://artifacthub.io/packages/helm/mc-operator/mc-operator	n	claude	
+076	https://artifacthub.io/packages/helm/mesosphere-stable/kafka-operator	n	claude	
+076	https://pkg.go.dev/github.com/vmware/antrea-operator-for-kubernetes	n	claude	
+076	https://artifacthub.io/packages/helm/mesosphere/kafka-operator	n	claude	
+076	https://news.ycombinator.com/item?id=38274936	n	claude	
+076	https://hub.docker.com/r/dynatrace/dynatrace-operator	n	claude	
+076	https://artifacthub.io/packages/helm/banzaicloud-stable/kafka-operator	n	claude	
+076	https://news.ycombinator.com/item?id=48772911	n	claude	
+076	https://artifacthub.io/packages/olm/community-operators/moodle-operator	n	claude	
+076	https://hub.docker.com/r/appdynamics/cluster-agent-operator	n	claude	
+077	https://github.com/qnikst/HaskellNet	n	claude	
+077	https://hackage.haskell.org/package/bytearray-parsing	n	claude	
+077	https://github.com/bramp/antlr4-grammars	n	claude	
+077	https://github.com/robertmassaioli/hICalendar	y	claude	from 2010
+077	https://github.com/chlablak/platinum-parsing	n	claude	
+077	https://github.com/mthom/scryer-prolog	n	claude	
+077	http://github.com/chrra/iCalendar	y	claude	
+077	https://scravy.de/hydrogen-parsing/	n	claude	
+077	https://gitlab.com/doshitan/hourglass-fuzzy-parsing	n	claude	
+077	https://hackage.haskell.org/package/ac-library-hs	n	claude	
+077	https://github.com/tuyucheng7/awesome-java	n	claude	
+077	https://github.com/fgaz/servant-iCalendar#readme	p	claude	Servant content type on top of iCalendar
+077	https://hackage.haskell.org/package/dataframe-parsing	n	claude	
+077	http://code.google.com/p/xhaskell-library/	n	claude	
+077	https://hackage.haskell.org/package/uu-parsinglib	n	claude	
+077	https://github.com/toolleeo/awesome-cli-apps-in-a-csv	n	claude	
+078	https://pypi.org/project/citeguard-cli/	y	claude	
+078	https://github.com/tekstrom11/DONTCITEME	y	claude	an application; CLI not stated
+078	https://github.com/maoji-y/refproof	y	claude	
+078	https://pypi.org/project/retraction-check/	y	claude	
+078	https://pypi.org/project/citegate/	y	claude	
+078	https://pypi.org/project/retractguard/	y	claude	
+078	https://pypi.org/project/refproof/	y	claude	
+078	https://github.com/Shannon-Whitlock/VeraCite	p	claude	checks BibTeX accuracy; retractions not stated
+078	https://pypi.org/project/openpapercheck/	y	claude	
+078	https://www.npmjs.com/package/command-line-tool	n	claude	
+078	https://pypi.org/project/starbuck/	y	claude	
+078	https://github.com/Sanika0212/Citeright	y	claude	
+078	https://www.npmjs.com/package/liftoff	n	claude	
+078	https://github.com/markrussinovich/refchecker	p	claude	validates references; retractions not stated
+078	https://www.npmjs.com/package/liftup	n	claude	
+078	https://github.com/Shivam2005Goel/Project-Geiger	n	claude	
+078	https://github.com/rktreddy/refscan	y	claude	
+078	https://github.com/isoglu/benthic	p	claude	macOS app, not a CLI
+078	https://github.com/vibhorxpandey/Aurelius-IDE	p	claude	language server for LaTeX
+078	https://github.com/arhancanli/citation-check-mcp	p	claude	MCP server, not a CLI
+079	https://crates.io/crates/rdfwalk	p	claude	TUI for SPARQL endpoints, not OAI-PMH
+079	https://github.com/aliildan/arxiv-toolkit	n	claude	
+079	https://pypi.org/project/dltn-checker/	p	claude	OAI harvesting utility, no TUI
+079	https://pypi.org/project/oaipmh-scythe/	p	claude	OAI-PMH harvester, no TUI
+079	https://pypi.org/project/oarepo-oai-pmh-harvester/	p	claude	OAI-PMH harvester for Invenio, no TUI
+079	https://crates.io/crates/ua-client	n	claude	
+079	https://www.npmjs.com/package/openapi-zod-client	n	claude	
+079	https://news.ycombinator.com/item?id=46316310	n	claude	
+079	https://news.ycombinator.com/item?id=47814655	n	claude	
+079	https://crates.io/crates/hooklistener-cli	n	claude	
+079	https://crates.io/crates/ignition-cli	n	claude	
+079	https://pypi.org/project/collective-oaiintercom/	n	claude	
+079	https://pypi.org/project/cubicweb-oaipmh/	n	claude	
+079	https://github.com/wendig-ou/oai-srg	n	claude	
+079	https://news.ycombinator.com/item?id=44572455	n	claude	
+079	https://crates.io/crates/apin	n	claude	
+079	https://pypi.org/project/sickle/	p	claude	OAI-PMH client library, no TUI
+079	https://pypi.org/project/django-oai-pmh/	n	claude	
+079	https://pypi.org/project/invenio-oaipmh-scythe/	p	claude	OAI-PMH harvester, no TUI
+080	https://www.npmjs.com/package/changesets-changelog-github-local	n	claude	
+080	https://pypi.org/project/pull-request-fixer/	n	claude	
+080	https://github.com/oasdiff/oasdiff-action	n	claude	
+080	https://pypi.org/project/pull-pull-request/	n	claude	
+080	https://github.com/amannn/action-semantic-pull-request	n	claude	
+080	https://news.ycombinator.com/item?id=39681326	n	claude	
+080	https://pypi.org/project/pull-request-view/	n	claude	
+080	https://pypi.org/project/github-changelog-md/	n	claude	
+080	https://news.ycombinator.com/item?id=30195379	n	claude	
+080	https://pypi.org/project/git-pull-request/	n	claude	
+080	https://pypi.org/project/gh-changelog-ci/	n	claude	
+080	https://pypi.org/project/github-pull-request/	n	claude	
+080	https://pypi.org/project/github-changelog/	n	claude	
+080	https://pypi.org/project/lazypr/	n	claude	
+080	https://github.com/mikepenz/action-junit-report	n	claude	
+080	https://pypi.org/project/sphinx-github-changelog/	n	claude	
+080	https://www.npmjs.com/package/changesets-gitlab	p	claude	GitLab bot that comments when a merge request has no changeset
+081	https://hub.docker.com/r/docker/dockerfile-upstream	n	claude	
+081	https://github.com/sameersbn/docker-gitlab	n	claude	
+081	https://news.ycombinator.com/item?id=44005893	p	claude	backs up databases found by Docker labels; S3 not stated
+081	https://github.com/RealOrangeOne/docker-db-auto-backup	p	claude	local backups of Docker databases, no S3
+081	https://github.com/eduardolat/pgbackweb	y	claude	scheduled backups to S3 with a web UI, ships as a Docker image
+081	https://hub.docker.com/r/docker/desktop-kubernetes-scheduler	n	claude	
+081	https://github.com/sameersbn/docker-redmine	n	claude	
+081	https://pkg.go.dev/github.com/michaelahli/postgre-scheduler	n	claude	
+081	https://github.com/docker-library/official-images	n	claude	
+081	https://github.com/eeshugerman/postgres-backup-s3	y	claude	
+081	https://github.com/kartoza/docker-pg-backup	y	claude	cron backups of Postgres; S3 is one of its storage options
+081	https://hub.docker.com/r/docker/whalesay	n	claude	
+081	https://hub.docker.com/r/docker/dockerfile	n	claude	
+081	https://github.com/Evil0ctal/Douyin_TikTok_Download_API	n	claude	
+081	https://hub.docker.com/r/docker/dockerfile-copy	n	claude	
+082	https://github.com/bowenliang123/markdown-exporter	n	claude	
+082	https://github.com/xwmx/nb	n	claude	
+082	https://packagist.org/packages/phpoole/library	n	claude	
+082	https://github.com/uhub/awesome-php	n	claude	
+082	https://packagist.org/packages/abgeo/gen-md	n	claude	
+082	https://github.com/ferranfg/mpl-publisher	p	claude	PHP, makes ePub from WordPress posts, not Markdown
+082	https://github.com/bobbyiliev/introduction-to-git-and-github-ebook	n	claude	an eBook's sources, not a tool
+082	https://news.ycombinator.com/item?id=41724550	n	claude	
+082	https://packagist.org/packages/narno/phpoole-library	n	claude	
+082	https://github.com/SansGuidon/bookmarks	n	claude	
+082	https://news.ycombinator.com/item?id=20114559	n	claude	
+082	https://packagist.org/packages/wundii/structron	n	claude	
+082	https://packagist.org/packages/klitsche/dog	n	claude	
+082	https://github.com/mmccaff/Starred	n	claude	
+082	https://news.ycombinator.com/item?id=45988652	n	claude	
+082	https://news.ycombinator.com/item?id=27800698	n	claude	
+082	https://packagist.org/packages/prinsfrank/markdown-dom	n	claude	
+005	https://news.ycombinator.com/item?id=46426086	y	human	
+005	https://pkg.go.dev/github.com/rimiti/kill-port	y	human	
+005	https://pypi.org/project/portutils/	y	human	
+005	https://www.npmjs.com/package/kill-port-process	y	human	
+005	https://www.npmjs.com/package/kill-port	y	human	
+005	https://crates.io/crates/port-conflict-resolver	y	human	
+005	https://pypi.org/project/pkiller/	y	human	
+005	https://crates.io/crates/timelimit-cli	p	human	
+005	https://pypi.org/project/portsmith/	y	human	
+005	https://pypi.org/project/portcheck-cli/	y	human	
+005	https://pypi.org/project/gruyere/	y	human	
+005	https://www.npmjs.com/package/snipe-port	p	human	
+005	https://crates.io/crates/portctl	y	human	
+005	https://pypi.org/project/porthog/	y	human	
+005	https://crates.io/crates/portzap	y	human	
+005	https://pypi.org/project/checkport/	n	human	
+005	https://github.com/foreversd/forever	n	human	
+016	https://marketplace.visualstudio.com/items?itemName=SaundersHwu.vscode-mdpreview-vue-renderer	p	human	
+016	https://marketplace.visualstudio.com/items?itemName=Bowlerr.offline-markdown-preview	y	human	
+016	https://marketplace.visualstudio.com/items?itemName=domdomegg.markdown-inline-preview-vscode	p	human	
+016	https://github.com/cweijan/vscode-office	y	human	
+016	https://marketplace.visualstudio.com/items?itemName=huachao.vsmd	y	human	
+016	https://github.com/mjbvz/vscode-github-markdown-preview-style	y	human	
+016	https://plugins.jetbrains.com/plugin/33866-markdown-browser-preview	y	human	
+016	https://github.com/raycon/vscode-markdown-style	p	human	
+016	https://github.com/yzane/vscode-markdown-pdf	p	human	
+016	https://marketplace.visualstudio.com/items?itemName=zmx0142857.vscode-markdown-asciimath	p	human	
+016	https://github.com/dbankier/vscode-instant-markdown	y	human	
+016	https://marketplace.visualstudio.com/items?itemName=saeris.markdown-preview-extended-syntax	y	human	
+016	https://marketplace.visualstudio.com/items?itemName=tomorrow56.markdown-preview-right-click	y	human	
+016	https://marketplace.visualstudio.com/items?itemName=ryokat3.vscode-qiita-markdown-preview	y	human	
+020	https://artifacthub.io/packages/helm/kcp-dev/kcp-operator	y	human	
+020	https://artifacthub.io/packages/helm/slamdev/altinity-clickhouse-operator	y	human	
+020	https://artifacthub.io/packages/helm/projectcapsule/capsule	y	human	
+020	https://artifacthub.io/packages/helm/influxdata/telegraf-operator	y	human	
+020	https://artifacthub.io/packages/helm/spark-kubernetes-operator/spark-kubernetes-operator	y	human	
+020	https://github.com/keel-hq/keel	y	human	
+020	https://github.com/arttor/helmify	p	human	
+020	https://artifacthub.io/packages/helm/supabse/supabase-operator	y	human	
+020	https://github.com/falcosecurity/charts	y	human	
+020	https://artifacthub.io/packages/helm/superset-kubernetes-operator/superset-operator	y	human	
+020	https://artifacthub.io/packages/helm/toolhive-operator/toolhive-operator	y	human	
+020	https://artifacthub.io/packages/helm/barravar/mongodb	p	human	
+020	https://artifacthub.io/packages/helm/ot-container-kit/mongodb-operator	y	human	
+020	https://github.com/mattermost/mattermost-helm	y	human	
+020	https://artifacthub.io/packages/helm/capsule/capsule	y	human	
+020	https://artifacthub.io/packages/helm/mysql-operator/mysql-operator	y	human	
+020	https://artifacthub.io/packages/helm/altinity-clickhouse-operator/altinity-clickhouse-operator	y	human	
+020	https://artifacthub.io/packages/helm/helm-dwpk/dwpk	y	human	
+025	https://github.com/stm32-rs/stm32f407g-disc	y	human	
+025	https://github.com/pop-os/firmware-manager	p	human	
+025	https://github.com/rust-embedded/not-yet-awesome-embedded-rust	p	human	
+025	https://github.com/rust-embedded-community/usb-device	y	human	
+025	https://github.com/CodeConstruct/mctp-rs	y	human	
+025	https://github.com/rustsbi/rustsbi	y	human	
+025	https://crates.io/crates/embedded-build-tools	p	human	
+025	https://crates.io/crates/embedded-nn	p	human	
+025	https://github.com/nrf-rs/microbit	y	human	
+025	https://github.com/ivmarkov/rust-esp32-std-demo	p	human	
+025	https://github.com/TeXitoi/keyberon	y	human	
+025	https://github.com/rust-embedded/book	p	human	
+025	https://crates.io/crates/jitpomi-ferrisup	y	human	
+025	https://github.com/Univa/rumcake	y	human	
+025	https://github.com/rust-unofficial/awesome-rust	p	human	
+025	https://github.com/rust-embedded/awesome-embedded-rust	p	human	
+034	https://github.com/mockturtl/dotenv	n	human	
+034	https://github.com/cdimascio/dotenv-java	n	human	
+034	https://github.com/cdimascio/dotenv-kotlin	n	human	
+034	https://www.npmjs.com/package/@dotenv-run/core	y	human	
+034	https://github.com/dotenvx/react-native-dotenv	y	human	
+034	https://www.npmjs.com/package/@expo/env	n	human	
+034	https://www.npmjs.com/package/dotenv-safe	y	human	
+034	https://github.com/kerimdzhanov/dotenv-flow	y	human	
+034	https://www.npmjs.com/package/dotenv	y	human	
+034	https://github.com/andrewmclagan/react-env	p	human	
+034	https://github.com/indexzero/nconf	y	human	
+034	https://www.npmjs.com/package/dotenv-cli	y	human	
+034	https://www.npmjs.com/package/dotenv-flow	y	human	
+034	https://github.com/joho/godotenv	n	human	
+034	https://github.com/rolodato/dotenv-safe	y	human	
+034	https://www.npmjs.com/package/cross-env	y	human	
+034	https://github.com/motdotla/dotenv	y	human	
+039	https://crates.io/crates/mcpacker	n	human	
+039	https://github.com/apache/apisix	n	human	
+039	https://github.com/auth0/auth0-cli	n	human	
+039	https://crates.io/crates/rattery	n	human	
+039	https://github.com/danirod/cartero	n	human	
+039	https://github.com/cardano-foundation/cardano-wallet	n	human	
+039	https://pypi.org/project/testy-command-line/	n	human	
+039	https://crates.io/crates/rusty-cat	n	human	
+039	https://github.com/fullstorydev/grpcurl	n	human	
+039	https://httpie.io/	y	human	
+039	https://www.npmjs.com/package/googleapis	n	human	
+039	https://github.com/sahat/hackathon-starter	n	human	
+039	https://crates.io/crates/treq	y	human	
+039	https://pkg.go.dev/github.com/adamijak/http	p	human	
+039	https://github.com/eBay/restcommander	n	human	
+039	https://github.com/acl-dev/acl	n	human	
+039	https://www.npmjs.com/package/@actions/http-client	n	human	
+039	https://pkg.go.dev/github.com/k64z/steamstacks/examples/cmclient	n	human	
+040	https://pypi.org/project/rstwatch/	p	human	
+040	https://pypi.org/project/dirwatcher/	y	human	
+040	https://pypi.org/project/probe-rdirwatcher/	p	human	
+040	https://pypi.org/project/squire/	p	human	
+040	https://pypi.org/project/grigori/	y	human	
+040	https://pypi.org/project/watchit/	p	human	
+040	https://pypi.org/project/directory-file-mapping/	n	human	
+040	https://pypi.org/project/python-active-directory/	n	human	
+040	https://github.com/e-dant/watcher	y	human	
+040	https://pypi.org/project/changes/	n	human	
+040	https://pypi.org/project/wotw/	n	human	
+040	https://github.com/watchexec/watchexec	p	human	
+040	https://github.com/dsoprea/PyInotify	y	human	
+040	https://pypi.org/project/python-directory-compiler/	n	human	
+040	https://github.com/borntyping/spotter	p	human	
+049	https://github.com/basecamp/google_sign_in	y	human	
+049	https://github.com/excid3/revise_auth	y	human	
+049	https://github.com/heartcombo/devise	y	human	
+049	https://github.com/cedarcode/webauthn-ruby	p	human	
+049	https://github.com/mikker/passwordless	p	human	
+049	https://github.com/igorkasyanchuk/any_login	p	human	
+049	https://github.com/starterkits/rails4-starterkit	p	human	
+049	https://github.com/RailsApps/rails-omniauth	p	human	
+049	https://github.com/spree/spree_auth_devise	p	human	
+049	https://rubygems.org/gems/idi_captcha_generator	n	human	
+049	https://github.com/lazaronixon/authentication-zero	y	human	
+049	https://github.com/RailsApps/rails-devise	y	human	
+049	https://rubygems.org/gems/myspaceid-sdk	n	human	
+049	https://github.com/thoughtbot/clearance	y	human	
+049	https://github.com/janko/rodauth-rails	y	human	
+049	https://github.com/RailsApps/rails-devise-pundit	p	human	
+066	https://marketplace.visualstudio.com/items?itemName=genuitecllc.codetogether	n	human	
+066	https://marketplace.visualstudio.com/items?itemName=Tencent-Cloud.coding-copilot	n	human	
+066	https://www.npmjs.com/package/@vscode/vsce-sign	n	human	
+066	https://www.npmjs.com/package/@vscode/vsce	n	human	
+066	https://marketplace.visualstudio.com/items?itemName=waka.footprint	n	human	
+066	https://marketplace.visualstudio.com/items?itemName=tonybaloney.vscode-pets	n	human	
+066	https://www.npmjs.com/package/@cloud-carbon-footprint/common	p	human	
+066	https://marketplace.visualstudio.com/items?itemName=sdras.vue-vscode-snippets	n	human	
+066	https://marketplace.visualstudio.com/items?itemName=1YiB.vscode-bundle	n	human	
+066	https://marketplace.visualstudio.com/items?itemName=GoogleCloudTools.cloudcode	n	human	
+066	https://www.npmjs.com/package/@cloud-carbon-footprint/core	p	human	
+066	https://www.npmjs.com/package/@opentelemetry/resource-detector-alibaba-cloud	n	human	
+066	https://www.npmjs.com/package/@vscode/test-cli	n	human	
+066	https://marketplace.visualstudio.com/items?itemName=zxh404.vscode-proto3	n	human	
+066	https://www.npmjs.com/package/@cloud-carbon-footprint/aws	p	human	
+066	https://marketplace.visualstudio.com/items?itemName=emmanuelbeziat.vscode-great-icons	n	human	
+066	https://www.npmjs.com/package/@vscode-logging/logger	n	human	
+068	https://pypi.org/project/fastgpx/	y	human	
+068	https://github.com/dodo-saba/fit2gpx	n	human	
+068	https://pypi.org/project/gpx/	y	human	
+068	https://pypi.org/project/write-read-file/	n	human	
+068	https://pypi.org/project/gpx-openmap/	p	human	
+068	https://news.ycombinator.com/item?id=28574298	n	human	
+068	https://pypi.org/project/gpx-player/	p	human	
+068	https://pypi.org/project/gpx-poi-enricher/	n	human	
+068	https://pypi.org/project/fitcxgp/	y	human	
+068	https://pypi.org/project/gpx2exif/	p	human	
+068	https://pypi.org/project/gpx-reader/	p	human	
+068	https://pypi.org/project/gpxpy/	y	human	
+068	https://pypi.org/project/gpxslicer/	p	human	
+068	https://pypi.org/project/gpxity/	p	human	
+068	https://news.ycombinator.com/item?id=33646951	n	human	
+068	https://pypi.org/project/pyosmogps/	p	human	
+068	https://github.com/tkrajina/gpxgo	n	human	
+070	https://hex.pm/packages/ex_limiter	y	human	
+070	https://hex.pm/packages/limitex	y	human	
+070	https://hex.pm/packages/ex_limit	y	human	
+070	https://news.ycombinator.com/item?id=29538645	n	human	
+070	https://hex.pm/packages/simple_rate_limiter	p	human	
+070	https://hex.pm/packages/crabbucket_pgo	y	human	
+070	https://news.ycombinator.com/item?id=29557398	n	human	
+070	https://hex.pm/packages/rate_limiter_man	p	human	
+070	https://hex.pm/packages/ralitobu_plug	p	human	
+070	https://github.com/servusdei2018/kotyle	y	human	
+070	https://hex.pm/packages/ralitobu	y	human	
+070	https://hex.pm/packages/philiprehberger_rate_limiter	y	human	
+070	https://hex.pm/packages/bucket_hydra	y	human	
+070	https://news.ycombinator.com/item?id=29615718	n	human	
+070	https://hex.pm/packages/atomic_bucket	y	human	
+070	https://news.ycombinator.com/item?id=29533948	n	human	
+078	https://pypi.org/project/citeguard-cli/	y	human	
+078	https://github.com/tekstrom11/DONTCITEME	p	human	
+078	https://github.com/maoji-y/refproof	y	human	
+078	https://pypi.org/project/retraction-check/	y	human	
+078	https://pypi.org/project/citegate/	y	human	
+078	https://pypi.org/project/retractguard/	y	human	
+078	https://pypi.org/project/refproof/	y	human	
+078	https://github.com/Shannon-Whitlock/VeraCite	y	human	
+078	https://pypi.org/project/openpapercheck/	y	human	
+078	https://www.npmjs.com/package/command-line-tool	n	human	
+078	https://pypi.org/project/starbuck/	y	human	
+078	https://github.com/Sanika0212/Citeright	y	human	
+078	https://www.npmjs.com/package/liftoff	n	human	
+078	https://github.com/markrussinovich/refchecker	y	human	
+078	https://www.npmjs.com/package/liftup	n	human	
+078	https://github.com/Shivam2005Goel/Project-Geiger	p	human	
+078	https://github.com/rktreddy/refscan	y	human	
+078	https://github.com/isoglu/benthic	p	human	
+078	https://github.com/vibhorxpandey/Aurelius-IDE	y	human	
+078	https://github.com/arhancanli/citation-check-mcp	y	human	

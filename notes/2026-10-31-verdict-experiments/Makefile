@@ -4,6 +4,8 @@
 #                 (once; resumes where it stopped, keeps what is recorded)
 #   make e1       summarise the recorded data into results/e1-*.tsv
 #   make sheets   write the labelling sheets (never overwrites one)
+#   make labels   read the filled-in sheets into data/pairs.tsv and
+#                 data/levels.tsv, check them, report the agreement
 
 PYTHON ?= python3 -I
 
@@ -28,3 +30,7 @@ labels/claude.txt:
 
 labels/human.txt:
 	$(PYTHON) scripts/labelsheet.py --sample 4 $@
+
+.PHONY: labels
+labels:
+	$(PYTHON) scripts/labels.py

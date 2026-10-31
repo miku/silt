@@ -162,7 +162,7 @@ n  [pypi] Python-Directory-Compiler: A wrapper for Nuitka that walks through a d
 p  [github] borntyping/spotter: A command line tool for watching files and running shell commands when they change (pop 27, updated 2018-03)  <https://github.com/borntyping/spotter>
 
 == 049  user sign up and login for a rails application
-level:
+level: crowded
 
 y  [github] basecamp/google_sign_in: Sign in (or up) with Google for Rails applications (pop 565, updated 2025-08)  <https://github.com/basecamp/google_sign_in>
 y  [github] excid3/revise_auth: A pure Rails authentication system like Devise. (pop 427, updated 2026-09)  <https://github.com/excid3/revise_auth>

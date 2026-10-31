@@ -33,11 +33,13 @@ HEADER = """\
 #   p  partial: covers part of the idea, or a close variant of it
 #   n  no: only related (same topic, ecosystem or category)
 #
-# Then fill in "level:" for each idea, judged from the matches listed:
+# Then fill in "level:" for each idea: how crowded the space is, judged from
+# the matches listed. The number of y is a guide, not the rule; the age, size
+# and quality of the matches may move it (say why in a note after "#"):
 #
-#   open       nothing listed implements the idea (y)
-#   crowded    1 to 4 matches implement it
-#   saturated  5 or more implement it
+#   open       nothing listed implements the idea (no y)
+#   crowded    a few implement it (guide: 1 to 4 y)
+#   saturated  many implement it (guide: 5 or more y)
 #   vague      the idea is too vague to judge
 #
 # Judge the match as a tool, not its description's wording; follow the link
