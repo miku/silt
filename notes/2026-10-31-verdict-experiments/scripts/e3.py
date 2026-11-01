@@ -4,8 +4,10 @@
 
 Reads the labelled matches (data/pairs.tsv) and every scores/<scorer>.tsv
 (scripts/score.py), and writes results/e3-scorers.tsv, one row per scorer,
-labeller and task:
+labeller, rounds and task:
 
+    rounds        the labelling rounds the row uses: each round alone, and
+                  "1+2" for all of a labeller's rounds together
     task          y|pn: y against p and n; yp|n: y and p against n
     pairs, pos    labelled matches, and how many count as positive
     auc           over all labelled matches of all ideas: can one threshold
@@ -17,15 +19,20 @@ labeller and task:
                   does it rank one idea's matches well?
     ndcg10        graded (y 2, p 1, n 0), over the labelled matches only
                   (a condensed list), averaged over ideas
+    prec5         the share of the scorer's top 5 among all of an idea's
+                  candidates that is labelled positive, averaged over
+                  ideas; an unlabelled candidate counts as negative
     unjudged10    unlabelled candidates in the scorer's top 10, averaged
-                  over ideas: how far round 1's labels cover its picks;
-                  blank for a scorer run on the labelled matches only
-                  (score.py --labelled)
+                  over ideas: how far the labels cover its picks
     ms50          median time for an idea with 50 matches
 
-and prints the rows of Claude's labels. A candidate without a score (the
-recorded cosine has none for the few that only the keyword run found)
-ranks last.
+prec5 and unjudged10 are blank for a scorer run on the labelled matches
+only (score.py --labelled), and for rows without round 1, whose labels
+the later rounds only add to.
+
+It prints the rows of Claude's labels, all rounds. A candidate without a
+score (the recorded cosine has none for the few that only the keyword run
+found) ranks last.
 
 It also writes results/e3-targets.tsv, which needs no labels: for each
 positive idea whose package was retrieved, the package's rank under each
@@ -145,9 +152,18 @@ def main():
     for sc in scorers.values():
         sc["partial"] = len(sc["score"]) < every
 
-    out = []
+    groups = []
     for who in ("claude", "human"):
-        mine = [p for p in pairs if p["labeller"] == who]
+        rounds = sorted({p["round"] for p in pairs if p["labeller"] == who}, key=int)
+        groups += [(who, [r]) for r in rounds]
+        if len(rounds) > 1:
+            groups.append((who, rounds))
+
+    out = []
+    for who, rounds in groups:
+        mine = [p for p in pairs if p["labeller"] == who and p["round"] in rounds]
+        label_of = {(p["idea"], p["url"]): p["label"] for p in mine}
+        whole = "1" in rounds  # prec5 and unjudged10 need round 1's labels
         by_idea = collections.defaultdict(list)
         for p in mine:
             by_idea[p["idea"]].append((p["url"], p["label"]))
@@ -168,14 +184,14 @@ def main():
             return cache[name, task]
 
         for name, sc in scorers.items():
-            # The scorer's top 10 among all of an idea's candidates.
+            # The scorer's order of all of an idea's candidates.
             cands = collections.defaultdict(list)
             for (idea, url), v in sc["score"].items():
                 if idea in by_idea:
                     cands[idea].append((v, url))
-            labelled = {(p["idea"], p["url"]) for p in mine}
-            unjudged = [sum((i, u) not in labelled for _, u in sorted(cands[i], reverse=True)[:10])
-                        for i in ideas]
+            top = {i: [u for _, u in sorted(cands[i], reverse=True)] for i in ideas}
+            covered = whole and not sc["partial"]
+            unjudged = [sum((i, u) not in label_of for u in top[i][:10]) for i in ideas]
             nd = [ndcg([l for _, l in sorted(scored(name, i), key=lambda x: -x[0])]) for i in ideas]
             nd = [x for x in nd if x is not None]
             ms = [50 * statistics.mean(v) for i, v in sc["ms"].items() if i in by_idea]
@@ -187,8 +203,12 @@ def main():
                 c = boot_aucs("cosine", task)
                 beats = statistics.mean(x > y for x, y in zip(boot_aucs(name, task), c)
                                         if x is not None and y is not None)
+                prec5 = statistics.mean(
+                    sum(label_of.get((i, u)) in positive for u in top[i][:5]) / len(top[i][:5])
+                    for i in ideas)
                 out.append({
-                    "scorer": name, "labeller": who, "task": task, "ideas": len(ideas),
+                    "scorer": name, "labeller": who, "rounds": "+".join(rounds),
+                    "task": task, "ideas": len(ideas),
                     "pairs": len(flat), "pos": sum(p for _, p in flat),
                     "auc": f"{auc(flat):.3f}",
                     "auc_lo": f"{b[int(0.025 * len(b))]:.3f}",
@@ -196,7 +216,8 @@ def main():
                     "beats_cosine": "" if name == "cosine" else f"{beats:.2f}",
                     "auc_idea": f"{statistics.mean(per_idea):.3f}",
                     "ndcg10": f"{statistics.mean(nd):.3f}",
-                    "unjudged10": "" if sc["partial"] else f"{statistics.mean(unjudged):.1f}",
+                    "prec5": f"{prec5:.3f}" if covered else "",
+                    "unjudged10": f"{statistics.mean(unjudged):.1f}" if covered else "",
                     "ms50": f"{statistics.median(ms):.1f}" if ms else "",
                 })
 
@@ -208,9 +229,11 @@ def main():
         w.writerows(out)
     w = csv.writer(sys.stdout, delimiter="\t", lineterminator="\n")
     show = ["scorer", "task", "auc", "auc_lo", "auc_hi", "beats_cosine", "auc_idea",
-            "ndcg10", "unjudged10", "ms50"]
+            "ndcg10", "prec5", "unjudged10", "ms50"]
+    every_round = "+".join(max((r for who, r in groups if who == "claude"), key=len))
+    print(f"# Claude's labels, rounds {every_round}")
     w.writerow(show)
-    for r in sorted((r for r in out if r["labeller"] == "claude"),
+    for r in sorted((r for r in out if r["labeller"] == "claude" and r["rounds"] == every_round),
                     key=lambda r: (r["task"], -float(r["auc"]))):
         w.writerow([r[c] for c in show])
 
