@@ -73,6 +73,10 @@ The problem has two parts:
 | `data/llm-<model>.jsonl` | one line per answer: the level, the raw answer, seconds, tokens |
 | `scripts/e2.py` | compares the floors and the LLMs with the level labels; `make e2` |
 | `results/e2-*.tsv` | per idea, per method (summary, confusion matrices), per LLM (time) |
+| `scripts/score.py` | scores every candidate with E3's per-match scorers; `make scores` (uv) |
+| `scores/<scorer>.tsv` | one line per candidate: idea, URL, score, ms; `scores/runs.tsv`: model, revision, time |
+| `scripts/e3.py` | compares the scorers with the match labels; `make e3` |
+| `results/e3-*.tsv` | per scorer, labeller and task (AUC, NDCG@10, time); the reworded packages' ranks |
 
 ## E1: the data set
 
@@ -381,6 +385,131 @@ On the person's 11 ideas, only the keyword floor gives false Opens (3 of
 - 072, 079 and 080, where the LLM said Open over the floor and was right,
   are the cases a good E3 scorer should get right.
 
+## E3: per-match scorers, round-1 labels
+
+Run 2026-11-01. Each scorer scores every candidate of every idea: 8,747,
+the matches of both recorded runs. The text of a candidate is what silt
+embeds, "name: description" (`rank/ranker.go`). An idea's candidates are
+scored in one batch, as silt would score them. `make scores` runs
+`scripts/score.py` (uv, dependencies pinned inline; CPU-only torch) and
+writes `scores/<scorer>.tsv`, with the model revisions in
+`scores/runs.tsv`. `make e3` runs `scripts/e3.py`, which writes
+`results/e3-scorers.tsv` and `results/e3-targets.tsv`.
+
+| scorer | what | runs on |
+|---|---|---|
+| cosine | the recorded all-MiniLM-L6-v2 cosine: silt today | (recorded) |
+| keyword | the recorded `--keyword-only` score, 0 where it has none | (recorded) |
+| minilm | the same MiniLM, recomputed: it checks the text and gives a Python time. It matches the recorded cosine within 1e-4 on all but 9 of 8,734 candidates, texts over ~1,200 characters that the two cut at different token limits | CPU |
+| idf | the share of the idea's IDF weight that the candidate's words cover; IDF over all candidates | CPU |
+| bge-small | BAAI/bge-small-en-v1.5, with its query instruction | CPU |
+| e5-small | intfloat/e5-small-v2, "query: " and "passage: " | CPU |
+| ms-marco | cross-encoder/ms-marco-MiniLM-L6-v2, the raw logit | CPU |
+| nli-minilm, nli-deberta | cross-encoder/nli-MiniLM2-L6-H768 and nli-deberta-v3-small: P(entailment) of "This software is {idea}." given the candidate | CPU |
+| qwen3-embed | Qwen3-Embedding-0.6B (Ollama, `qwen3-embedding:0.6b`), with an instruction on the query: "Given a description of a software tool, retrieve packages and repositories that implement it" | strix GPU |
+| qwen3-reranker | Qwen3-Reranker-0.6B (llama-swap, `/v1/rerank`), the idea as the query, llama.cpp's own instruction | strix GPU |
+
+### Results
+
+Against Claude's labels: 1,224 matches of 75 ideas, 334 y, 282 p, 608
+n. In brackets, the 95% interval from resampling ideas. "Beats cosine" is
+the share of resamples in which the scorer's AUC is above the cosine's.
+
+| scorer | AUC, y vs p+n | beats cosine | AUC, y+p vs n | beats cosine | AUC within an idea (y) | NDCG@10 | unlabelled in top 10 | ms per 50 matches |
+|---|---|---|---|---|---|---|---|---|
+| qwen3-embed | 0.842 (0.80–0.88) | 0.79 | 0.851 (0.81–0.89) | 0.98 | 0.847 | 0.855 | 1.9 | 1,130 (GPU) |
+| qwen3-reranker | 0.839 (0.80–0.87) | 0.80 | 0.850 (0.81–0.89) | 0.98 | 0.805 | 0.829 | 1.9 | 540 (GPU) |
+| cosine | 0.823 (0.79–0.86) | | 0.808 (0.76–0.85) | | 0.781 | 0.776 | 0.0 | 470 (minilm) |
+| e5-small | 0.808 | 0.14 | 0.790 | 0.13 | 0.731 | 0.739 | 1.5 | 940 |
+| nli-deberta | 0.784 | 0.02 | 0.765 | 0.03 | 0.717 | 0.721 | 4.2 | 2,220 |
+| bge-small | 0.777 | 0.00 | 0.768 | 0.01 | 0.739 | 0.741 | 1.4 | 900 |
+| ms-marco | 0.760 | 0.00 | 0.733 | 0.00 | 0.707 | 0.719 | 1.4 | 570 |
+| nli-minilm | 0.752 | 0.00 | 0.715 | 0.00 | 0.696 | 0.717 | 3.5 | 1,810 |
+| idf | 0.751 | 0.00 | 0.756 | 0.01 | 0.647 | 0.692 | 2.4 | 0.4 |
+| keyword | 0.714 | 0.00 | 0.707 | 0.00 | 0.614 | 0.642 | 2.6 | |
+
+AUC is over all labelled matches of all ideas: can one threshold separate
+them? A level built on the score needs that. "Within an idea" ranks one
+idea's matches. NDCG@10 is graded (y 2, p 1, n 0) and counts the labelled
+matches only. The cosine has an edge on both: round 1 labelled its top 15
+(and the keyword score's top 5), so its top 10 is fully labelled, while
+the other scorers have 1 to 4 unlabelled matches in theirs.
+
+Without labels: for the 18 positive ideas whose package was retrieved,
+the package's rank under each scorer (`results/e3-targets.tsv`).
+
+| scorer | first | top 5 | top 15 | median rank |
+|---|---|---|---|---|
+| qwen3-embed | 5 | 12 | 17 | 3 |
+| qwen3-reranker | 5 | 11 | 16 | 3 |
+| cosine | 3 | 10 | 14 | 3 |
+| bge-small | 3 | 9 | 14 | 5.5 |
+| ms-marco | 3 | 8 | 11 | 6.5 |
+| nli-minilm | 1 | 6 | 13 | 9.5 |
+| e5-small | 1 | 8 | 14 | 11 |
+| nli-deberta | 2 | 6 | 12 | 11.5 |
+| idf, keyword | 1 | 4, 2 | 9 | 18.5 |
+
+### What E3 shows
+
+- **Only the two Qwen3 models beat the cosine.** Their AUC is 0.84 to
+  0.85, against 0.81 to 0.82. For y+p against n they beat it in 98% of
+  the resamples; for y against p+n in 80%, which isn't settled. The
+  ranking within an idea gains more (0.85 and 0.81 against 0.78), and
+  both put the reworded package in the top 15 more often (17 and 16 of
+  18, against 14). They are also the largest models here: 0.6B
+  parameters against 22M to 140M.
+- **What they do differently.** 034 (load a .env file in a node app): the
+  reranker scores cross-env, which sets variables but reads no `.env`,
+  0.10, and react-env 0.15; every Node dotenv package scores 0.97 or
+  more. The cosine ranks cross-env 5th, above dotenv-flow and @expo/env.
+  Over the 67 ideas with both classes (y+p against n), Qwen3-Embedding
+  ranks better than the cosine for 36 and worse for 16. The largest
+  losses are on ideas with almost no n to rank (051: one n in 17).
+- **Everything else is worse than the cosine**: the small asymmetric
+  bi-encoders (bge-small, e5-small), both NLI models, lexical IDF and the
+  keyword score. The ms-marco cross-encoder, the "joint encoding" that
+  was remembered as not helping, is now written down: AUC 0.76 against
+  0.82. It is trained for web-search relevance, not "does the same job".
+- **The task depends on what p means.** On the 10 ideas both labellers
+  labelled, y against p+n gives the same picture with either sheet: the
+  cosine 0.78, Qwen3-Embedding 0.83 (Claude) and 0.81 (person), the
+  reranker 0.78 and 0.81. For y+p against n the sheets disagree: with
+  Claude's labels the Qwen3 models win (0.92 against 0.90), with the
+  person's the cosine does (0.86 against 0.83 and 0.84). That fits round
+  1: the person's p is "a nearby tool on the same data", which is what a
+  cosine measures; Claude's p is "the same job elsewhere". Until p has one
+  meaning, y against p+n is the task to judge scorers on. On all 12 of the
+  person's ideas Qwen3-Embedding falls below the cosine (0.74 against
+  0.78); the difference comes from 020 and 025, which Claude called vague
+  and didn't label.
+- **The reranker's score is not a probability of "implements".** Its
+  median is 0.999 for y, 0.988 for p and 0.131 for n, but 38% of the n
+  score above 0.5 and 25% above 0.9. Ranking doesn't care; summing it
+  into S (the verdict note's `S = Σ p_i …`) needs calibration first
+  (E4).
+- **Time.** On strix's GPU the reranker takes 0.5 s for an idea with 50
+  matches, and Qwen3-Embedding through Ollama 1.1 s. On this laptop's
+  CPU, in Python: MiniLM 0.5 s (silt's Go: about 0.15 s), the small
+  bi-encoders 0.9 s, ms-marco 0.6 s, the NLI models 1.8 to 2.2 s. The CPU
+  times were taken alongside other work and are indicative only. Neither
+  Qwen3 model fits silt's pure-Go path; both need a model server. silt
+  already talks to Ollama, which serves Qwen3-Embedding.
+
+**What this means:**
+
+- One family is worth taking further: Qwen3, embedding or reranker. All
+  the small models that could run in silt's Go code do worse than the
+  cosine it already has.
+- The win is small next to the noise: 2 to 4 AUC points, where the
+  labellers agree on 83 to 85% of matches. Round 2 has to label what the
+  Qwen3 models rank high before it counts.
+- Two cheap checks before round 2: whether Qwen3-Embedding's instruction
+  matters (run it without), and whether the reranker does better with an
+  instruction of our own ("does this software implement the idea?")
+  than with llama.cpp's web-search default. The reranker endpoint doesn't
+  take one, so that needs a raw prompt with the yes/no logprobs.
+
 ## Status and next steps
 
 As of 2026-11-01.
@@ -422,23 +551,23 @@ As of 2026-11-01.
   each LLM also floored as silt does it, against Claude's levels,
   `from_y` and the person's sample. `scripts/prompts` and `scripts/llm.py`
   ask the LLMs exactly what silt asks; `scripts/e2.py` scores them.
+- E3 on the round-1 labels (above): eleven scorers over all 8,747
+  candidates; only Qwen3-Embedding and Qwen3-Reranker beat the cosine.
 
 ### Next
 
-1. **E3, per-match scorers.** Rescore the recorded candidates with each
-   scorer: MiniLM cosine (recorded), lexical IDF, bge-small and e5-small,
-   the ms-marco cross-encoder (raw and Platt-calibrated), an NLI
-   cross-encoder, Qwen3-Reranker-0.6B (homelab). Output per scorer:
-   `scores/<scorer>.tsv` (idea id, URL, score, ms). Then **labels, round
-   2**: each scorer's top 5 per idea that round 1 didn't cover gets
-   labelled too, so that no scorer is judged only on the cosine's picks.
-   Report AUC, NDCG@10 and ms per idea, for y vs p+n and y+p vs n.
-   To decide before round 2: one meaning of p, written into the sheet
-   header. Round 1 suggests the person's: a variant that does the job in
-   another form is y, the same job in another language is n, a nearby tool
-   on the same data is p. Round-1 labels stay as they are, so the
-   agreement above keeps measuring blind labels.
-2. **E4, aggregators.** Features per idea from the best E3 scorer (see the
+1. **E3, the two checks** at the end of E3: Qwen3-Embedding without its
+   instruction, and the reranker with an instruction of our own (raw
+   prompt, yes/no logprobs).
+2. **Labels, round 2.** Each scorer's top 5 per idea that round 1 didn't
+   cover gets labelled too, so that no scorer is judged only on the
+   cosine's picks; then `make e3` again. To decide first: one meaning of
+   p, written into the sheet header. Round 1 and E3 both suggest the
+   person's: a variant that does the job in another form is y, the same
+   job in another language is n, a nearby tool on the same data is p.
+   Round-1 labels stay as they are, so the agreement above keeps
+   measuring blind labels.
+3. **E4, aggregators.** Features per idea from the best E3 scorer (see the
    verdict note, "(b) Aggregation into a level"); refit floor, ordinal
    logistic regression, depth-3 tree; leave-one-out cross-validation; the
    floor stays a lower bound. Report confusion matrices, QWK and false
@@ -452,7 +581,10 @@ As of 2026-11-01.
   its own cache in `work/` (ignored by git), with the model, catalogs and
   browser profile linked in from `~/.cache/silt`.
 - The keyword-only run excludes the sources that failed in the embedding
-  run, so both rank the same candidates. None failed in this recording.
+  run (none failed in this recording), but its matches are not the
+  embedding run's: `rank.ByKeywords` drops the candidates without a
+  keyword in common (a median of 39% of an idea's), and 13 of its
+  matches aren't in the embedding run. E3 scores both together.
 - A rejected idea has an `error` field and no `embeddings`.
 - The positives' targets are read from `ideas.tsv`, not from the
   recording, so they can be corrected without recording again.
@@ -481,3 +613,9 @@ As of 2026-11-01.
   stays in the file; `e2.py` uses the last line per idea.
 - The 9b's first run is not kept; it served only the run-to-run
   comparison above.
+- `scores/` is 5.9 MB. `scripts/score.py` downloads each model's whole
+  Hugging Face repository the first time (ONNX and OpenVINO copies
+  included), into `~/.cache/huggingface`. The Qwen3 scorers need strix:
+  `qwen3-reranker` on llama-swap and `qwen3-embedding:0.6b` on Ollama.
+- uv runs `scripts/score.py` under Python 3.12; the other scripts run
+  under the system's `python3 -I`.
