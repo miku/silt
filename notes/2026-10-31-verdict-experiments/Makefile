@@ -11,6 +11,9 @@
 #   make llm      ask an LLM for every verdict, appending to
 #                 data/llm-<model>.jsonl (resumes; LLM_API, LLM_URL, LLM_MODEL)
 #   make e2       compare the floors and the LLMs with the level labels
+#   make scores   score every candidate with every E3 scorer (uv; downloads
+#                 the models; SCORERS=... for some only)
+#   make e3       compare the scorers with the match labels
 
 PYTHON ?= python3 -I
 LLM_API ?= ollama
@@ -59,3 +62,13 @@ llm: data/prompts.jsonl
 .PHONY: e2
 e2:
 	$(PYTHON) scripts/e2.py
+
+SCORERS ?= all
+
+.PHONY: scores
+scores:
+	uv run scripts/score.py $(SCORERS)
+
+.PHONY: e3
+e3:
+	$(PYTHON) scripts/e3.py
