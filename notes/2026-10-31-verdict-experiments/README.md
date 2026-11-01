@@ -431,15 +431,17 @@ the share of resamples in which the scorer's AUC is above the cosine's.
 | bge-small | 0.777 | 0.00 | 0.768 | 0.01 | 0.739 | 0.741 | 1.4 | 900 |
 | ms-marco | 0.760 | 0.00 | 0.733 | 0.00 | 0.707 | 0.719 | 1.4 | 570 |
 | nli-minilm | 0.752 | 0.00 | 0.715 | 0.00 | 0.696 | 0.717 | 3.5 | 1,810 |
-| idf | 0.751 | 0.00 | 0.756 | 0.01 | 0.647 | 0.692 | 2.4 | 0.4 |
-| keyword | 0.714 | 0.00 | 0.707 | 0.00 | 0.614 | 0.642 | 2.6 | |
+| idf | 0.751 | 0.00 | 0.756 | 0.01 | 0.647 | 0.692 | 1.7 | 0.4 |
+| keyword | 0.714 | 0.00 | 0.707 | 0.00 | 0.614 | 0.642 | 0.9 | |
 
 AUC is over all labelled matches of all ideas: can one threshold separate
 them? A level built on the score needs that. "Within an idea" ranks one
 idea's matches. NDCG@10 is graded (y 2, p 1, n 0) and counts the labelled
 matches only. The cosine has an edge on both: round 1 labelled its top 15
 (and the keyword score's top 5), so its top 10 is fully labelled, while
-the other scorers have 1 to 4 unlabelled matches in theirs.
+the other scorers have 0.9 to 4.2 unlabelled matches in theirs. (Where a
+scorer ties, the cosine's order breaks the tie; that matters only for
+keyword and idf.)
 
 Without labels: for the 18 positive ideas whose package was retrieved,
 the package's rank under each scorer (`results/e3-targets.tsv`).
@@ -576,11 +578,11 @@ same data is p). 346 are labelled: 37 y, 37 p, 272 n. Two are not (057,
 080): their pages didn't load and their descriptions don't decide.
 
 `scripts/e3.py` now writes a row for each round and for both together
-(`rounds` in `results/e3-scorers.tsv`); its round-1 rows are the table
-above, unchanged. It also reports the share of positives in each scorer's
-top 5 among all of an idea's candidates, which round 2 makes meaningful:
-every scorer's top 5 is now labelled, except where keyword and idf tie at
-the fifth place (see Things to know).
+(`rounds` in `results/e3-scorers.tsv`); its round-1 rows give the table
+above. It also reports the share of positives in each scorer's top 5
+among all of an idea's candidates, which round 2 makes meaningful: every
+scorer's top 5 is now labelled, but for the two matches left open (both
+in nli-deberta's).
 
 Both rounds, against Claude's labels: 1,570 matches of 75 ideas, 371 y,
 319 p, 880 n.
@@ -595,10 +597,10 @@ Both rounds, against Claude's labels: 1,570 matches of 75 ideas, 371 y,
 | qwen3-embed-plain | 0.813 (0.76–0.86) | 0.31 | 0.826 (0.78–0.87) | 0.61 | 0.834 | 0.832 | 0.47 | 0.74 | 1.0 |
 | bge-small | 0.791 | 0.01 | 0.783 | 0.01 | 0.721 | 0.682 | 0.43 | 0.66 | 0.8 |
 | nli-deberta | 0.766 | 0.00 | 0.740 | 0.00 | 0.693 | 0.627 | 0.35 | 0.56 | 2.2 |
-| idf | 0.755 | 0.00 | 0.758 | 0.00 | 0.633 | 0.627 | 0.34 | 0.56 | 1.3 |
+| idf | 0.755 | 0.00 | 0.758 | 0.00 | 0.633 | 0.627 | 0.36 | 0.59 | 0.9 |
 | ms-marco | 0.752 | 0.00 | 0.729 | 0.00 | 0.691 | 0.658 | 0.41 | 0.63 | 0.5 |
 | nli-minilm | 0.732 | 0.00 | 0.687 | 0.00 | 0.661 | 0.613 | 0.35 | 0.52 | 1.7 |
-| keyword | 0.728 | 0.00 | 0.717 | 0.00 | 0.610 | 0.570 | 0.29 | 0.50 | 1.8 |
+| keyword | 0.728 | 0.00 | 0.717 | 0.00 | 0.610 | 0.570 | 0.40 | 0.63 | 0.4 |
 
 Round 2 alone: the 346 matches the cosine didn't put in its top 15,
 labelled blind.
@@ -777,10 +779,6 @@ As of 2026-11-01.
 - The session that labelled Claude's round-1 sheet has since seen the
   person's labels; round 2 was labelled in a new session, which has since
   seen the results. A further blind round needs a new session again.
-- In keyword and idf many candidates tie at the fifth place (81 and 55
-  ideas). `e3.py` breaks ties by URL, the round-2 sheet broke them
-  otherwise, so 66 of their top-5 picks are unlabelled and count as
-  negative: their share in the top 5 is a lower bound.
 - `data/runs.jsonl` is 4.2 MB; gzip it if that is too big for the
   repository (the scripts then need to read the .gz).
 - `data/prompts.jsonl` is built once and kept (`make prompts` never
