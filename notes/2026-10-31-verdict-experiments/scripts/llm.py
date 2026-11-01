@@ -6,10 +6,13 @@
 
 Reads data/prompts.jsonl (`make prompts`) and appends one line per idea to
 data/llm-<model>.jsonl: the raw answer, the level in it, seconds, and the
-server's token counts and timings where it reports them. Ideas already in
-that file are skipped, so a run that stops can be started again. Optional
-ids after the model limit the run to those ideas. Run from the experiment
-directory.
+server's token counts and timings where it reports them. Ideas already
+answered in that file are skipped, so a run that stops can be started
+again; an answer that doesn't parse counts as answered. A request that
+fails (the server is down or restarts) is tried again after 10, 20 and 30
+s; if it still fails, the error is written down and the next run tries the
+idea again. Optional ids after the model limit the run to those ideas. Run
+from the experiment directory.
 
 The request is the one silt sends:
 
@@ -34,6 +37,7 @@ import urllib.request
 
 TIMEOUT = 900
 SILT_TIMEOUT = 120
+RETRY_WAITS = (10, 20, 30)
 LEVELS = {"Open": "open", "Crowded": "crowded", "Saturated": "saturated"}
 
 
@@ -112,21 +116,27 @@ def main():
     done = set()
     if os.path.exists(out):
         with open(out) as f:
-            done = {json.loads(l)["id"] for l in f}
+            done = {r["id"] for r in map(json.loads, f) if not r["error"].startswith("request:")}
     with open("data/prompts.jsonl") as f:
         prompts = [json.loads(l) for l in f]
     todo = [p for p in prompts if p["id"] not in done and (not only or p["id"] in only)]
     print(f"{out}: {len(done)} done, {len(todo)} to go", file=sys.stderr)
     for i, p in enumerate(todo, 1):
-        t0 = time.monotonic()
-        row = {"id": p["id"], "api": api, "url": base, "model": model,
-               "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
-        try:
-            raw, stats = ask(base, model, p["prompt"])
-            level, err = parse_level(raw)
-            row |= {"level": level, "error": err, **stats, "raw": raw}
-        except (urllib.error.URLError, TimeoutError, OSError, KeyError) as e:
-            row |= {"level": "", "error": f"request: {e}", "raw": ""}
+        for attempt, wait in enumerate((*RETRY_WAITS, None), 1):
+            t0 = time.monotonic()
+            row = {"id": p["id"], "api": api, "url": base, "model": model,
+                   "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "attempt": attempt}
+            try:
+                raw, stats = ask(base, model, p["prompt"])
+                level, err = parse_level(raw)
+                row |= {"level": level, "error": err, **stats, "raw": raw}
+                break
+            except (urllib.error.URLError, TimeoutError, OSError, KeyError) as e:
+                row |= {"level": "", "error": f"request: {e}", "raw": ""}
+                if wait is None:
+                    break
+                print(f"{p['id']} {row['error']}; again in {wait}s", file=sys.stderr)
+                time.sleep(wait)
         row["seconds"] = round(time.monotonic() - t0, 2)
         row["over_120s"] = row["seconds"] > SILT_TIMEOUT
         with open(out, "a") as f:

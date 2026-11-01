@@ -67,6 +67,12 @@ The problem has two parts:
 | `data/pairs.tsv` | one line per labelled match: idea id, URL, label, labeller, note |
 | `data/levels.tsv` | one line per level: idea id, level, labeller, the y/p/n counts, the level the y count gives |
 | `results/labels-agreement.tsv` | agreement between labellers, per match and per level |
+| `scripts/prompts/` | writes silt's verdict prompt for every idea, from the recording; `make prompts` |
+| `data/prompts.jsonl` | one line per idea: the prompt, built once (2026-10-31 23:37 UTC) |
+| `scripts/llm.py` | asks an LLM for every verdict, as silt asks it; `make llm` |
+| `data/llm-<model>.jsonl` | one line per answer: the level, the raw answer, seconds, tokens |
+| `scripts/e2.py` | compares the floors and the LLMs with the level labels; `make e2` |
+| `results/e2-*.tsv` | per idea, per method (summary, confusion matrices), per LLM (time) |
 
 ## E1: the data set
 
@@ -257,9 +263,127 @@ labelled levels on 7.
   matches, scorers a few AUC points apart may not really differ.
 - Round 2 needs one meaning of p, written into the sheet header (see Next).
 
+## E2: baselines
+
+Run 2026-11-01. Each method judges the matches recorded in E1 (the
+embedding run). The targets are the levels from labels, round 1.
+
+| method | what |
+|---|---|
+| floor | `silt --fast`: the level from the similarity thresholds (`embeddings.verdict.level`) |
+| keyword floor | the same thresholds on the `--keyword-only` scores |
+| qwen3.5:9b | silt's default model (`qwen3.5:latest` has the same digest), Q4_K_M, Ollama 0.40.11 on strix, entirely on the GPU |
+| qwen3.5-122b | Q4_K_M, llama-swap's OpenAI API on strix, thinking off; the model warm |
+| …, floored | what silt shows with that LLM today: the higher of its level and the floor; Open if the answer doesn't parse, takes over 120 s, or the best match is below 0.35 (none of these happened) |
+
+The LLMs get the prompt that `verdict.BuildPrompt` builds over the recorded
+matches (`data/prompts.jsonl`) and silt's request options
+(`scripts/llm.py`). The level is the model's own, before silt floors it.
+All 87 ideas were answered; every answer parsed. `make e2` writes
+`results/e2-*.tsv`. Headlines and gaps aren't scored.
+
+### Against Claude's levels
+
+75 ideas: 14 open, 28 crowded, 33 saturated. The 12 Claude called vague
+are left out.
+
+| method | false Opens | Opens missed | QWK | exact | QWK, `from_y` | exact, `from_y` | predicted O/C/S |
+|---|---|---|---|---|---|---|---|
+| floor | 2/61 | 10/14 | 0.44 | 0.57 | 0.52 | 0.65 | 6/22/47 |
+| keyword floor | 22/61 | 3/14 | 0.43 | 0.49 | 0.50 | 0.53 | 33/18/24 |
+| qwen3.5:9b | 3/61 | 8/14 | 0.40 | 0.55 | 0.42 | 0.57 | 9/3/63 |
+| qwen3.5:9b, floored | 1/61 | 10/14 | 0.36 | 0.55 | 0.37 | 0.57 | 5/7/63 |
+| qwen3.5-122b | 3/61 | 7/14 | 0.44 | 0.59 | 0.45 | 0.61 | 10/4/61 |
+| qwen3.5-122b, floored | 1/61 | 10/14 | 0.33 | 0.56 | 0.35 | 0.59 | 5/7/63 |
+
+Claude's level down the side, the predicted open/crowded/saturated in
+each cell:
+
+| Claude | floor | keyword floor | 9b | 9b, floored | 122b | 122b, floored |
+|---|---|---|---|---|---|---|
+| open (14) | 4/6/4 | 11/3/0 | 6/1/7 | 4/3/7 | 7/0/7 | 4/2/8 |
+| crowded (28) | 2/11/15 | 14/8/6 | 3/2/23 | 1/4/23 | 3/4/21 | 1/5/22 |
+| saturated (33) | 0/5/28 | 8/7/18 | 0/0/33 | 0/0/33 | 0/0/33 | 0/0/33 |
+
+On the person's 11 ideas, only the keyword floor gives false Opens (3 of
+10). QWK there: floor 0.42, keyword floor 0.20, 9b 0.06. The 122b scores
+0.00 because it says Saturated for all 11.
+
+### What E2 shows
+
+- **The LLMs say Saturated.** The 9b says Saturated for 63 of 75 ideas, the
+  122b for 61; Claude's labels have 33. Both call 21 to 23 of the 28
+  crowded ideas saturated. The prompt asks for this: "lean toward Crowded
+  or Saturated when in doubt", and Saturated is "5+ strong matches (>=
+  0.60)", next to scores that a mere topic match reaches. 66 of the 9b's
+  87 headlines cite the 0.60 threshold, mostly as "multiple strong
+  matches (similarity >= 0.60)", whether the matches do the job or not:
+  Obelisk and TeamPass for a Bitwarden-compatible server (060),
+  carbon-footprint libraries, none of them a VS Code extension (066). The
+  122b names tools instead and cites the threshold in no headline, but
+  its levels are the 9b's for 78 of 87 ideas.
+- **Floored, as silt uses it, the LLM makes the level worse.** Compared
+  with the floor alone it fixes one false Open, 071 (marc21; the floor's
+  rule, see E1), and adds 8 over-calls (7 with the 122b); QWK drops from
+  0.44 to 0.36 (0.33). Of the 9b's 16 levels above the floor, 5 are
+  closer to Claude's, 10 further away, 1 as far. silt discards the levels
+  below the floor, and those are right at least as often as wrong (2 of 4
+  with the 9b, 4 of 6 with the 122b): 072 and 079 Open, correctly (the
+  122b also gets 080 Open and 076 Crowded); 031 and 057 Open, falsely.
+- **Unfloored, the 122b is about as good as the floor** (QWK 0.44, exact
+  0.59 against 0.57), with one false Open more and three missed Opens
+  fewer; the 9b is a little worse. Neither beats the floor on false
+  Opens, and both cost seconds per idea where the floor costs nothing.
+- **No method finds the open ideas.** Claude's 14 Opens are ideas where
+  nothing retrieved does the job: pandoc, Vaultwarden, Rainbow Brackets
+  and chezmoi didn't turn up, but near matches did. The floor calls 4 of
+  them Open (023 and 032, the Chinese and Japanese ideas, plus 063 and
+  082); the 9b adds 072 and 079, the 122b also 080. Telling a near match
+  from one that does the job is question (a), E3. The LLM does it a
+  little better than the thresholds, and silt's floor throws that away.
+  One of these Opens is debatable: for 060 the 122b reads a Vaultwarden
+  backup tool, a secrets API and an AWS deployment as proof that
+  Vaultwarden exists, which Claude's label didn't count.
+- **The false Open every method makes is a search problem.** 062 (nvd
+  wasn't retrieved; best match 0.53) is Open with every method.
+- **The keyword floor isn't a usable baseline as it is.** It gives 22
+  false Opens, 10 of them on positives; its thresholds were set for
+  cosines (E1).
+- **Vague ideas.** For the 12 Claude called vague, the floor says
+  Saturated 7 times, Crowded 3 and Open 2 ("anything at all with no
+  signal", "something to make coding easier"). The 9b says Open for 6 and
+  the 122b for 5, with headlines saying that nothing specific matches a
+  generic idea; the floor raises all but those two. The LLM notices
+  vagueness but has no level for it (the verdict note's open question on
+  "too generic to judge").
+- **Time.** On strix, the 9b takes a median of 5 s per idea (1.3 s to
+  read ~1,580 prompt tokens, 3.5 s to write ~135), never more than 8 s;
+  the 122b a median of 9 s, never more than 12 s. None comes near silt's
+  120 s. Loading the 122b took 129 s, so silt's first request after a
+  cold start would time out (silt retries once). The verdict note
+  measured the 9b on a CPU at 83 to 192 s.
+- **Run to run.** The 9b, asked twice at temperature 0, gave the same
+  level for 65 of 66 ideas (013, a vague one, flipped). Only 11 of the
+  answers were the same text.
+
+**What this means:**
+
+- For the level, the LLM doesn't earn its place. Floored, as silt uses
+  it, it does worse than the floor on every measure except one false
+  Open; unfloored, the larger model only matches the floor. This supports
+  the verdict note's plan: the data verdict by default, the LLM for gaps
+  only.
+- The bar for E4 is the floor: 2 false Opens in 61, QWK 0.44 (0.52
+  against `from_y`), 10 of 14 Opens missed. The room is in the Opens, and
+  in crowded against saturated (15 of 28 crowded ideas called saturated).
+  Both need a per-match judgement that tells a near match from one that
+  does the job (E3), not a different count.
+- 072, 079 and 080, where the LLM said Open over the floor and was right,
+  are the cases a good E3 scorer should get right.
+
 ## Status and next steps
 
-As of 2026-10-31.
+As of 2026-11-01.
 
 ### Decided
 
@@ -276,8 +400,8 @@ As of 2026-10-31.
   pinned inline in each script (sentence-transformers, scikit-learn).
   Timings from Python are indicative only. Only a scorer that wins gets
   ported to Go (the cross-encoder can reuse `internal/minilm`).
-- **LLM baseline (E2):** qwen3.5 on the homelab GPU if it serves the model;
-  otherwise locally on the CPU (~3 min per idea), parity ideas only.
+- **LLM baseline (E2):** qwen3.5:9b (silt's default) and qwen3.5-122b on
+  the homelab GPU (strix), all 87 ideas.
 - **Location:** this directory; generated tables in `results/`.
 
 ### Done
@@ -294,22 +418,14 @@ As of 2026-10-31.
   `data/pairs.tsv` and `data/levels.tsv`, flags unlabelled matches, missing
   levels and levels that don't fit the y count, and reports Cohen's kappa
   per match (y/p/n, y against the rest, y+p against n) and per level.
+- E2 (above): the floor, the keyword floor, qwen3.5:9b and qwen3.5-122b,
+  each LLM also floored as silt does it, against Claude's levels,
+  `from_y` and the person's sample. `scripts/prompts` and `scripts/llm.py`
+  ask the LLMs exactly what silt asks; `scripts/e2.py` scores them.
 
 ### Next
 
-1. **E2, baselines.** Compare the floor (`embeddings.verdict.level`), the
-   keyword floor (`keyword_only.verdict.level`) and qwen3.5 with the level
-   labels. The LLM gets the prompt from `verdict.BuildPrompt`
-   (`verdict/verdict.go`) over the recorded matches, not a new search.
-   - Targets: Claude's levels for the 75 ideas it didn't call vague (14
-     open, 28 crowded, 33 saturated), each also against `from_y`; on the 12
-     shared ideas, the person's levels as a check.
-   - The 12 ideas labelled vague stay out of the confusion matrices; list
-     what each method says for them. 7 of them are parity ideas, so a
-     CPU-only LLM run on the parity ideas has 25 with a target.
-   - Report false Opens and QWK first, exact agreement after them (see
-     "What this means for the experiments").
-2. **E3, per-match scorers.** Rescore the recorded candidates with each
+1. **E3, per-match scorers.** Rescore the recorded candidates with each
    scorer: MiniLM cosine (recorded), lexical IDF, bge-small and e5-small,
    the ms-marco cross-encoder (raw and Platt-calibrated), an NLI
    cross-encoder, Qwen3-Reranker-0.6B (homelab). Output per scorer:
@@ -322,11 +438,12 @@ As of 2026-10-31.
    another form is y, the same job in another language is n, a nearby tool
    on the same data is p. Round-1 labels stay as they are, so the
    agreement above keeps measuring blind labels.
-3. **E4, aggregators.** Features per idea from the best E3 scorer (see the
+2. **E4, aggregators.** Features per idea from the best E3 scorer (see the
    verdict note, "(b) Aggregation into a level"); refit floor, ordinal
    logistic regression, depth-3 tree; leave-one-out cross-validation; the
    floor stays a lower bound. Report confusion matrices, QWK and false
-   Opens against the floor.
+   Opens against the floor, which E2 sets as the bar: 2 false Opens in 61,
+   QWK 0.44, 10 of 14 Opens missed.
 
 ### Things to know
 
@@ -347,3 +464,20 @@ As of 2026-10-31.
   labels. If round 2 needs a blind Claude sheet, start a new session.
 - `data/runs.jsonl` is 4.2 MB; gzip it if that is too big for the
   repository (the scripts then need to read the .gz).
+- `data/prompts.jsonl` is built once and kept (`make prompts` never
+  rebuilds it): the prompt gives the age of a match relative to when it
+  was built. It differs from a default silt run in one line: the
+  recording ranks every candidate (median 89), so the list ends "… and N
+  more" with N counting all of them, where silt, ranking the top 50,
+  would say "… and 35 more" (84 of the 87 prompts).
+- The Ollama on strix restarted four times during the E2 runs: the
+  request in flight lost its connection, and then the server refused
+  connections, once for about 90 s. It also ran faster after the first
+  restart: the 9b took 15 s per idea before (7.5 s to read the prompt),
+  5 s after. The 9b was run again in full after that, so all the times
+  above come from the faster server. `scripts/llm.py` now waits and
+  tries again (10, 20, 30 s), and a request that still fails isn't
+  counted as answered, so the next run asks again. The failed request
+  stays in the file; `e2.py` uses the last line per idea.
+- The 9b's first run is not kept; it served only the run-to-run
+  comparison above.

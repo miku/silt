@@ -1,0 +1,88 @@
+id	stratum	idea	max_sim	claude	claude_from_y	human	human_from_y	floor	floor_kw	qwen3.5-122b	qwen3.5-122b+floor	qwen3.5-122b_s	qwen3.5-9b	qwen3.5-9b+floor	qwen3.5-9b_s
+001	parity	embedded vector database for mobile apps	0.73	crowded	crowded			crowded	saturated	saturated	saturated	8.92	saturated	saturated	5.51
+002	parity	react component for infinite scroll	0.91	saturated	saturated			saturated	saturated	saturated	saturated	9.09	saturated	saturated	7.35
+003	parity	kubernetes log viewer with live filtering	0.65	crowded	crowded			crowded	crowded	crowded	crowded	8.46	saturated	saturated	6.0
+004	parity	interactive cli to kill whatever's on a port	0.82	saturated	saturated			saturated	crowded	saturated	saturated	8.43	saturated	saturated	5.22
+005	parity	CLI tool that kills a process on a given port	0.80	saturated	saturated	saturated	saturated	saturated	open	saturated	saturated	6.12	saturated	saturated	4.89
+006	parity	kubernetes log viewer	0.88	saturated	saturated			saturated	saturated	saturated	saturated	9.13	saturated	saturated	5.24
+007	parity	a vector database for embeddings	0.87	saturated	saturated			saturated	saturated	saturated	saturated	10.61	saturated	saturated	5.59
+008	parity	a fast async runtime for rust	0.85	saturated	saturated			saturated	saturated	saturated	saturated	8.69	saturated	saturated	4.82
+009	parity	an ide plugin that highlights spelling mistakes in code comments	0.70	crowded	crowded			crowded	open	saturated	saturated	10.61	saturated	saturated	5.57
+010	parity	a python pandas data pipeline	0.73	vague				crowded	saturated	saturated	saturated	9.16	saturated	saturated	4.25
+011	parity	a typescript react frontend component	0.60	vague				crowded	saturated	open	crowded	9.76	open	crowded	5.01
+012	parity	a golang microservice framework	0.92	saturated	saturated			saturated	saturated	saturated	saturated	9.52	saturated	saturated	5.08
+013	parity	a java spring boot service	0.72	vague				saturated	saturated	saturated	saturated	9.8	saturated	saturated	4.95
+014	parity	a ruby on rails gem for pagination	0.85	saturated	saturated			saturated	saturated	saturated	saturated	9.11	saturated	saturated	5.3
+015	parity	a docker container for kubernetes logging	0.80	saturated	saturated			saturated	saturated	saturated	saturated	10.31	saturated	saturated	5.67
+016	parity	a vscode extension for markdown preview	0.90	saturated	saturated	saturated	saturated	saturated	saturated	saturated	saturated	9.57	saturated	saturated	4.79
+017	parity	a macos homebrew tool for managing dotfiles	0.77	open	open			saturated	crowded	saturated	saturated	9.93	saturated	saturated	4.89
+018	parity	a php composer package for laravel queues	0.70	saturated	saturated			saturated	saturated	saturated	saturated	10.48	saturated	saturated	5.3
+019	parity	an elixir phoenix library for caching	0.79	saturated	saturated			saturated	saturated	saturated	saturated	8.34	saturated	saturated	4.73
+020	parity	a helm chart to deploy a kubernetes operator	0.87	vague		vague		saturated	saturated	saturated	saturated	11.3	saturated	saturated	5.13
+021	parity	a haskell cabal library for parsing json	0.75	crowded	crowded			saturated	open	saturated	saturated	8.48	saturated	saturated	4.93
+022	parity	a nix flake for building containers	0.71	open	open			crowded	open	saturated	saturated	9.15	saturated	saturated	5.11
+023	parity	端口杀手命令行工具	0.50	open	open			open	open	open	open	10.09	open	open	4.45
+024	parity	a terminal ui for exploring large json documents with jq-style filters and fuzzy search	0.72	crowded	crowded			saturated	open	saturated	saturated	8.83	saturated	saturated	5.75
+025	parity	rust crate for embedded firmware	0.73	vague		crowded	saturated	saturated	crowded	saturated	saturated	11.04	saturated	saturated	5.77
+026	parity	a c# dotnet unity game	0.58	vague				crowded	saturated	open	crowded	9.98	open	crowded	4.83
+027	parity	a pacman helper for installing arch linux aur packages	0.68	crowded	crowded			crowded	crowded	saturated	saturated	8.99	saturated	saturated	4.6
+028	parity	anything at all with no signal	0.41	vague				open	open	open	open	8.65	open	open	4.6
+029	parity	django admin theme with dark mode	0.88	saturated	saturated			saturated	saturated	saturated	saturated	7.75	saturated	saturated	5.69
+030	parity	c# library for .net json parsing	0.90	saturated	saturated			saturated	saturated	saturated	saturated	9.83	saturated	saturated	5.48
+031	parity	cloud-native secret manager for k8s clusters	0.61	crowded	crowded			crowded	open	open	crowded	8.88	open	crowded	5.67
+032	parity	ターミナルでポートを使っているプロセスを終了するツール	0.55	open	open			open	open	open	open	8.56	open	open	4.75
+033	positive	a node library for coloring text in the terminal	0.69	saturated	saturated			crowded	crowded	saturated	saturated	9.26	saturated	saturated	5.76
+034	positive	load environment variables from a .env file in a node app	0.78	saturated	saturated	saturated	saturated	saturated	saturated	saturated	saturated	8.11	saturated	saturated	5.05
+035	positive	build command line interfaces with react components	0.70	crowded	crowded			crowded	crowded	saturated	saturated	10.59	crowded	crowded	5.22
+036	positive	a javascript library of small functions to format and manipulate dates	0.74	saturated	saturated			saturated	open	saturated	saturated	9.23	saturated	saturated	4.72
+037	positive	a python library for colourful text, tables and progress bars in the terminal	0.75	crowded	crowded			saturated	open	saturated	saturated	9.18	saturated	saturated	5.1
+038	positive	a python code formatter with almost no configuration options	0.74	crowded	crowded			saturated	open	saturated	saturated	9.08	saturated	saturated	4.34
+039	positive	a friendly command line http client for trying out apis	0.73	crowded	crowded	crowded	crowded	crowded	crowded	saturated	saturated	8.32	crowded	crowded	5.72
+040	positive	a python library that watches a directory for file changes	0.77	saturated	saturated	crowded	crowded	saturated	open	saturated	saturated	11.17	saturated	saturated	4.94
+041	positive	a fast recursive grep that skips files listed in .gitignore	0.76	saturated	saturated			crowded	open	saturated	saturated	7.85	saturated	saturated	5.3
+042	positive	a cat replacement with syntax highlighting and git integration	0.81	crowded	crowded			saturated	open	saturated	saturated	9.33	saturated	saturated	6.0
+043	positive	a rust library for parsing command line arguments	0.97	saturated	saturated			saturated	saturated	saturated	saturated	9.25	saturated	saturated	5.0
+044	positive	count lines of code per programming language in a project	0.74	saturated	crowded			crowded	crowded	saturated	saturated	8.48	saturated	saturated	4.45
+045	positive	a go library for building command line apps with subcommands	0.85	crowded	saturated			saturated	saturated	saturated	saturated	8.93	saturated	saturated	4.98
+046	positive	a go framework for terminal apps based on the elm architecture	0.71	crowded	saturated			saturated	saturated	saturated	saturated	9.06	saturated	saturated	4.86
+047	positive	a terminal user interface for git	0.92	crowded	crowded			saturated	saturated	saturated	saturated	9.82	saturated	saturated	5.44
+048	positive	an interactive fuzzy finder for the command line	0.82	saturated	saturated			saturated	saturated	saturated	saturated	8.2	saturated	saturated	4.61
+049	positive	user sign up and login for a rails application	0.67	saturated	saturated	crowded	saturated	crowded	crowded	saturated	saturated	9.25	saturated	saturated	4.88
+050	positive	background job processing for ruby with redis	0.82	crowded	saturated			saturated	saturated	saturated	saturated	11.41	saturated	saturated	6.18
+051	positive	elixir background jobs stored in postgresql	0.75	saturated	saturated			saturated	crowded	saturated	saturated	8.86	saturated	saturated	5.33
+052	positive	a haskell tool to convert documents between markdown, latex and word	0.71	open	open			saturated	crowded	saturated	saturated	9.75	saturated	saturated	6.33
+053	positive	a java library to map json to objects and back	0.67	saturated	saturated			saturated	crowded	saturated	saturated	9.7	saturated	saturated	4.28
+054	positive	a c# library for serializing objects to json	0.74	crowded	crowded			saturated	saturated	saturated	saturated	8.86	saturated	saturated	5.74
+055	positive	a php library for sending http requests	0.85	saturated	saturated			saturated	saturated	saturated	saturated	7.93	saturated	saturated	4.75
+056	positive	an interactive process viewer for the terminal	0.80	saturated	saturated			saturated	saturated	saturated	saturated	8.46	saturated	saturated	5.87
+057	positive	short practical examples for command line tools instead of man pages	0.63	crowded	crowded			crowded	open	open	crowded	10.39	open	crowded	4.49
+058	positive	a vscode extension that shows who last changed each line, from git	0.63	saturated	crowded			crowded	open	saturated	saturated	10.82	saturated	saturated	5.03
+059	positive	an intellij plugin that gives matching brackets their own colours	0.75	open	open			saturated	open	saturated	saturated	8.79	saturated	saturated	4.19
+060	positive	a docker image for a self-hosted password manager that works with bitwarden clients	0.73	open	open			crowded	open	saturated	saturated	10.76	saturated	saturated	5.54
+061	positive	a kubernetes controller that gets tls certificates from let's encrypt automatically	0.82	saturated	saturated			saturated	open	saturated	saturated	9.39	saturated	saturated	5.65
+062	positive	a nix tool that shows which packages changed between two system generations	0.53	crowded	crowded			open	open	open	open	9.79	open	open	4.21
+063	specific	a cargo subcommand that lists dependencies whose build scripts make network requests	0.56	open	open			open	open	open	open	9.35	open	open	4.68
+064	specific	a git hook that strips output cells from jupyter notebooks before commit	0.69	crowded	crowded			crowded	open	saturated	saturated	8.83	saturated	saturated	5.15
+065	specific	a cli that converts bibtex files to csl-json and removes duplicates by doi	0.60	open	open			crowded	open	saturated	saturated	10.56	crowded	crowded	5.0
+066	specific	a vscode extension that estimates the carbon footprint of a cloud deployment	0.73	open	open	open	open	crowded	open	saturated	saturated	11.09	saturated	saturated	4.88
+067	specific	a neovim plugin that shows git blame for the current line as virtual text	0.84	crowded	crowded			saturated	crowded	saturated	saturated	8.99	saturated	saturated	5.63
+068	specific	a python library to read and write gpx track files	0.81	crowded	crowded	crowded	crowded	saturated	crowded	saturated	saturated	7.65	saturated	saturated	6.17
+069	specific	a tool that diffs two openapi specs and reports breaking changes	0.81	saturated	saturated			saturated	open	saturated	saturated	11.29	saturated	saturated	6.38
+070	specific	an elixir library for rate limiting with a token bucket	0.84	saturated	saturated	crowded	saturated	saturated	saturated	saturated	saturated	9.33	saturated	saturated	5.26
+071	specific	a rust crate for parsing marc21 library catalog records	0.62	crowded	crowded			open	open	crowded	crowded	8.01	saturated	saturated	4.17
+072	specific	a postgres extension for h3 hexagonal geospatial indexes	0.69	open	open			crowded	open	open	crowded	9.7	open	crowded	4.77
+073	specific	a cli that renders mermaid diagrams as ascii art in the terminal	0.90	saturated	saturated			saturated	crowded	saturated	saturated	11.5	saturated	saturated	5.9
+074	specific	a static site generator that builds a website from a zotero library	0.74	crowded	crowded			saturated	crowded	saturated	saturated	10.0	saturated	saturated	6.0
+075	specific	a go library for sqlite without cgo	0.89	crowded	saturated			saturated	crowded	saturated	saturated	9.0	saturated	saturated	5.42
+076	specific	a kubernetes operator that scales deployments to zero outside office hours	0.77	crowded	crowded			saturated	open	crowded	saturated	7.95	saturated	saturated	4.72
+077	specific	a haskell library for parsing icalendar files	0.73	crowded	crowded			crowded	open	crowded	crowded	7.56	saturated	saturated	4.57
+078	specific	a command line tool that checks a bibliography for retracted papers	0.77	saturated	saturated	saturated	saturated	saturated	open	saturated	saturated	10.11	saturated	saturated	5.81
+079	specific	a terminal ui for browsing oai-pmh metadata endpoints	0.63	open	open			crowded	open	open	crowded	11.16	open	crowded	4.53
+080	specific	a github action that fails a pull request if the changelog was not updated	0.81	open	open			saturated	crowded	open	saturated	10.18	saturated	saturated	4.89
+081	specific	a docker image that backs up postgres to s3 on a schedule	0.83	crowded	crowded			crowded	open	saturated	saturated	10.34	saturated	saturated	5.98
+082	specific	a php library to generate epub ebooks from markdown	0.60	open	open			open	open	open	open	9.02	open	open	4.8
+085	vague	a tool for developers	0.72	vague				saturated	saturated	saturated	saturated	8.71	open	saturated	4.15
+086	vague	a rust crate for data	0.64	vague				saturated	saturated	open	saturated	11.82	open	saturated	4.32
+091	vague	a library for machine learning	0.74	vague				saturated	saturated	saturated	saturated	9.52	saturated	saturated	5.29
+095	vague	something to make coding easier	0.51	vague				open	open	open	open	9.14	open	open	4.83
+096	vague	a data processing library	0.92	vague				saturated	saturated	saturated	saturated	8.06	saturated	saturated	4.54
