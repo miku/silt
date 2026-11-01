@@ -14,6 +14,8 @@
 #   make scores   score every candidate with every E3 scorer (uv; downloads
 #                 the models; SCORERS=... for some only)
 #   make e3       compare the scorers with the match labels
+#   make round2   write the round-2 sheet: the scorers' top 5 that round 1
+#                 didn't list (never overwrites it)
 
 PYTHON ?= python3 -I
 LLM_API ?= ollama
@@ -72,3 +74,9 @@ scores:
 .PHONY: e3
 e3:
 	$(PYTHON) scripts/e3.py
+
+.PHONY: round2
+round2: labels/claude-round2.txt
+
+labels/claude-round2.txt:
+	$(PYTHON) scripts/labelsheet.py --round2 claude $@

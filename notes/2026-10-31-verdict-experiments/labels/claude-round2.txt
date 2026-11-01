@@ -1,0 +1,573 @@
+# Labelling sheet for the verdict experiments, round 2 (README.md, E3).
+#
+# The matches below are those the per-match scorers rank in their top 5
+# that round 1 didn't list. Label each one; there is no level this time.
+# Replace the "_" at the start of a line with
+#
+#   y  implements the idea: it is such a tool, or does the same job in
+#      another form (a CLI idea met by a library or an MCP server, a VS
+#      Code idea by a JetBrains plugin), even if its description doesn't
+#      mention every part of the idea
+#   p  near the idea and worth seeing: a nearby tool on the same data or
+#      problem, or one that does only part of the job
+#   n  no: only the same topic, ecosystem or category; or the same job for
+#      another language or platform (a .env loader for Java, for a Node
+#      idea)
+#
+# Judge the match as a tool, not its description's wording; follow the link
+# when unsure, or leave the "_" and move on. Notes after a "#" are welcome.
+
+== 001  embedded vector database for mobile apps
+
+_  [hacker-news] Show HN: SochDB – an embedded database for SQL, vectors, and AI context: Show HN: SochDB – an embedded database for SQL, vectors, and AI context (pop 1)  <https://news.ycombinator.com/item?id=46859696>
+_  [hacker-news] Show HN: EdgeVec v0.4.0 – Sub-millisecond vector search in WASM (Rust): EdgeVec is an embedded vector database I built in Rust that runs natively in browsers via WebAssembly. v0.4.0 focuses on… (pop 1)  <https://news.ycombinator.com/item?id=46284280>
+_  [npm] @ruvector/core: High-performance vector database with HNSW indexing - 50k+ inserts/sec, built in Rust for AI/ML similarity search and semantic search applications (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/@ruvector/core>
+_  [npm] ruvector: Self-learning vector database for Node.js — hybrid search, Graph RAG, FlashAttention-3, HNSW, 50+ attention mechanisms (pop 1000000, updated 2026-09)  <https://www.npmjs.com/package/ruvector>
+_  [github] objectbox/objectbox-dart: Flutter database for super-fast Dart object persistence (pop 1238, updated 2026-10)  <https://github.com/objectbox/objectbox-dart>
+_  [npm] vectra: A lightweight, file-backed vector database for Node.js and browsers with Pinecone-compatible filtering and hybrid BM25 search. (pop 1000000, updated 2026-05)  <https://www.npmjs.com/package/vectra>
+_  [hacker-news] Show HN: IssunDB – a new embedded graph database with vector and text search: Show HN: IssunDB – a new embedded graph database with vector and text search (pop 4)  <https://news.ycombinator.com/item?id=48517069>
+
+== 002  react component for infinite scroll
+
+_  [github] seatgeek/react-infinite: A browser-ready efficient scrolling container based on UITableView (pop 2682, updated 2019-10)  <https://github.com/seatgeek/react-infinite>
+
+== 003  kubernetes log viewer with live filtering
+
+_  [artifact-hub] mirrord-operator: The control plane for mirrord. Let every developer and AI agent on your team develop against a real Kubernetes cluster at once, with traffic filtering, queue... (updated 2026-10)  <https://artifacthub.io/packages/helm/metalbear/mirrord-operator>
+_  [go] kubectl-grep: kubectl-grep (updated 2026-10)  <https://pkg.go.dev/github.com/guessi/kubectl-grep>
+_  [docker-hub] smartonfhir/fhir-viewer: FHIR Viewer (pop 0)  <https://hub.docker.com/r/smartonfhir/fhir-viewer>
+
+== 005  CLI tool that kills a process on a given port
+
+_  [go] control: Package control is lazyshell's agent control API: a Unix socket, one per lazyshell process, over which an AI agent running inside a session can list the othe... (updated 2026-08)  <https://pkg.go.dev/github.com/thomas-gleizes/lazyshell/pkg/control>
+
+== 007  a vector database for embeddings
+
+_  [crates-io] ares-vector: Embedded vector database with HNSW indexing for ARES (pop 711, updated 2026-10)  <https://crates.io/crates/ares-vector>
+_  [npm] @ruvector/core: High-performance vector database with HNSW indexing - 50k+ inserts/sec, built in Rust for AI/ML similarity search and semantic search applications (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/@ruvector/core>
+_  [npm] vectra: A lightweight, file-backed vector database for Node.js and browsers with Pinecone-compatible filtering and hybrid BM25 search. (pop 1000000, updated 2026-05)  <https://www.npmjs.com/package/vectra>
+_  [crates-io] polarisdb-core: Core library for PolarisDB - an embedded vector database for local AI (pop 364, updated 2026-02)  <https://crates.io/crates/polarisdb-core>
+
+== 009  an ide plugin that highlights spelling mistakes in code comments
+
+_  [hacker-news] Show HN: Enunciate – Paste a speech script, find the words you'll mispronounce: Hey HN,I built Enunciate because I kept stumbling over words like "epitome" (ih-PIT-uh-mee) and "unequivocal" (un-ih-KWI… (pop 1)  <https://news.ycombinator.com/item?id=47000738>
+_  [npm] react-markdown: React component to render markdown (pop 1000000, updated 2025-03)  <https://www.npmjs.com/package/react-markdown>
+
+== 012  a golang microservice framework
+
+_  [github] mehdihadeli/go-food-delivery-microservices: 🍕 A practical food delivery microservices, built with Golang, Domain-Driven Design, CQRS, Event Sourcing, Vertical Slice Architecture, Event-Driven Architect... (pop 1140, updated 2025-07)  <https://github.com/mehdihadeli/go-food-delivery-microservices>
+_  [hacker-news] TarsGo: A fully-managed microservice framework 5 faster than gRPC: TarsGo: A fully-managed microservice framework 5 faster than gRPC (pop 1)  <https://news.ycombinator.com/item?id=18076440>
+
+== 014  a ruby on rails gem for pagination
+
+_  [rubygems] load_balanced_tire: Tire is a Ruby client for the ElasticSearch search engine/database. It provides Ruby-like API for fluent communication with the ElasticSearch server and blen... (pop 8210)  <https://rubygems.org/gems/load_balanced_tire>
+_  [github] drapergem/draper: Decorators/View-Models for Rails Applications (pop 5276, updated 2026-05)  <https://github.com/drapergem/draper>
+
+== 015  a docker container for kubernetes logging
+
+_  [artifact-hub] aws-cloudfront-controller: This YAML file defines a Kubernetes Deployment for the ack-cloudfront-controller, a component responsible for managing AWS CloudFront resources in a Kubernet... (updated 2024-09)  <https://artifacthub.io/packages/meshery/meshery-catalog/aws-cloudfront-controller>
+_  [docker-hub] docker/desktop-kubernetes-etcd: Mirrors some tags from k8s.gcr.io/etcd (pop 4)  <https://hub.docker.com/r/docker/desktop-kubernetes-etcd>
+_  [docker-hub] docker/desktop-kubernetes-scheduler: Mirror of selected tags of k8s.gcr.io/kube-scheduler (pop 0)  <https://hub.docker.com/r/docker/desktop-kubernetes-scheduler>
+_  [docker-hub] docker/desktop-kubernetes-pause: Mirror of selected tags from k8s.gcr.io/pause (pop 3)  <https://hub.docker.com/r/docker/desktop-kubernetes-pause>
+_  [github] fluent/fluentd-kubernetes-daemonset: Fluentd daemonset for Kubernetes and it Docker image (pop 1296, updated 2026-10)  <https://github.com/fluent/fluentd-kubernetes-daemonset>
+
+== 016  a vscode extension for markdown preview
+
+_  [vscode-marketplace] Markdown WeChat Preview: VS Code extension for previewing Markdown with WeChat official account styles (pop 131, updated 2025-08)  <https://marketplace.visualstudio.com/items?itemName=aizjj.md-wx-vscode>
+
+== 017  a macos homebrew tool for managing dotfiles
+
+_  [github] gokulkrishh/dotfiles: Setup your MacOS for web development in few minutes. (pop 102, updated 2026-04)  <https://github.com/gokulkrishh/dotfiles>
+_  [github] lissy93/Brewfile: 🍺 My list of packages to be installed on MacOS via Homebrew, for the ultimate dev setup (pop 185, updated 2023-12)  <https://github.com/lissy93/Brewfile>
+_  [homebrew] bbrew: TUI for managing Homebrew, Flatpak, and Mac App Store packages  <https://bold-brew.com>
+_  [github] mehd-io/dotfiles: My dotfiles - including aerospace/sketchybar setup (pop 188, updated 2026-09)  <https://github.com/mehd-io/dotfiles>
+
+== 018  a php composer package for laravel queues
+
+_  [github] pionl/laravel-chunk-upload: The basic implementation for chunk upload with multiple providers support like jQuery-file-upload, pupload, DropZone and resumable.js (pop 724, updated 2026-08)  <https://github.com/pionl/laravel-chunk-upload>
+_  [github] gecche/laravel-multidomain: A Laravel extension for using a laravel application on a multi domain setting (pop 1123, updated 2026-05)  <https://github.com/gecche/laravel-multidomain>
+_  [github] hhxsv5/laravel-s: LaravelS is an out-of-the-box adapter between Laravel/Lumen and Swoole. (pop 3877, updated 2026-07)  <https://github.com/hhxsv5/laravel-s>
+_  [github] orchestral/tenanti: [Package] Multi-tenant Database Schema Manager for Laravel (pop 588, updated 2023-06)  <https://github.com/orchestral/tenanti>
+
+== 019  an elixir phoenix library for caching
+
+_  [github] azmaveth/ex_llm: All-in-one LLM library for Elixir with unified provider interface and structured outputs (pop 51, updated 2025-11)  <https://github.com/azmaveth/ex_llm>
+_  [hex] comb: Comb is a caching library with versioning and negative caching (pop 903, updated 2025-09)  <https://hex.pm/packages/comb>
+_  [hex] cert_cache: A certificate cache for Elixir / Pheonix (pop 1569, updated 2017-06)  <https://hex.pm/packages/cert_cache>
+_  [hex] cache_decorator: Caching decorator macros for Elixir functions (pop 4236, updated 2025-10)  <https://hex.pm/packages/cache_decorator>
+_  [hex] breakglass: A standalone, production-ready Elixir library that provides an in-process emergency access subsystem (break-glass authentication) for any Elixir or Phoenix a... (pop 184, updated 2026-06)  <https://hex.pm/packages/breakglass>
+_  [hex] aquila: Batteries-included Elixir library for OpenAI-compatible Responses and Chat Completions APIs (pop 1745, updated 2025-10)  <https://hex.pm/packages/aquila>
+_  [hex] angelus: Elixir ephemeris library backed by NAIF CSPICE and JPL kernels. (pop 450, updated 2026-07)  <https://hex.pm/packages/angelus>
+_  [hex] ex_iconify: Iconify icons for Elixir and Phoenix applications. Access 200,000+ icons from 100+ icon sets including Lucide, Material Design Icons, Tabler, Phosphor, Heroi... (pop 265, updated 2025-12)  <https://hex.pm/packages/ex_iconify>
+_  [hex] cacha: A simple, naive, but understood cache. (pop 771, updated 2025-02)  <https://hex.pm/packages/cacha>
+_  [hex] ecto_cache: A library to cache Ecto query results. (pop 7230, updated 2024-01)  <https://hex.pm/packages/ecto_cache>
+_  [hex] apoc: Comprehensive Cryptography Library for Elixir (pop 53797, updated 2020-08)  <https://hex.pm/packages/apoc>
+_  [hex] bitstyles_phoenix: A collection of Elixir phoenix helpers for bitstyles (pop 61449, updated 2026-02)  <https://hex.pm/packages/bitstyles_phoenix>
+_  [hex] absinthe_phoenix: Subscription support via Phoenix for Absinthe, the GraphQL implementation for Elixir. (pop 11578978, updated 2026-10)  <https://hex.pm/packages/absinthe_phoenix>
+_  [hex] airbrakify: A simple Airbrake/Errbit library for Elixir/Phoenix projects. Currently only supports error/exception notifications via a Plug. (pop 44447, updated 2016-08)  <https://hex.pm/packages/airbrakify>
+_  [hacker-news] Payments library(like activemerchant of RoR) in Elixir/Phoenix framework: Payments library(like activemerchant of RoR) in Elixir/Phoenix framework (pop 2)  <https://news.ycombinator.com/item?id=16030908>
+
+== 021  a haskell cabal library for parsing json
+
+_  [github] jgm/citeproc: CSL citation processing library in Haskell (pop 186, updated 2026-10)  <https://github.com/jgm/citeproc>
+_  [hackage] cabal2json: Turn a .cabal file into a .json file  <https://github.com/NorfairKing/cabal2json#readme>
+_  [github] cies/htoml: TOML file format parser in Haskell (pop 39, updated 2022-01)  <https://github.com/cies/htoml>
+_  [github] hougesen/mdsf: Format markdown code blocks using your favorite tools (pop 112, updated 2026-09)  <https://github.com/hougesen/mdsf>
+_  [hackage] xhaskell-library: Replaces/Enhances Text.Regex  <http://code.google.com/p/xhaskell-library/>
+_  [github] guibou/PyF: Haskell QuasiQuoter for String Formatting (pop 71, updated 2025-12)  <https://github.com/guibou/PyF>
+
+== 022  a nix flake for building containers
+
+_  [github] FedericoPonzi/Horust: Horust is a supervisor / init system written in rust and designed to run inside containers. (pop 302, updated 2026-10)  <https://github.com/FedericoPonzi/Horust>
+
+== 023  端口杀手命令行工具
+
+_  [github] ffffffff0x/1earn: ffffffff0x 团队维护的安全知识框架,内容包括不仅限于 web安全、工控安全、取证、应急、蓝队设施部署、后渗透、Linux安全、各类靶机writup (pop 5729, updated 2024-06)  <https://github.com/ffffffff0x/1earn>
+_  [npm] @wendongfly/myhi: Web-based terminal sharing with chat UI — control your terminal from phone via LAN/Tailscale (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/@wendongfly/myhi>
+_  [github] CreditTone/hooker: 🔥🔥 hooker is a Frida-based reverse engineering toolkit for Android. It offers a user-friendly CLI, universal scripts, auto hook generation, memory roaming to... (pop 5335, updated 2026-09)  <https://github.com/CreditTone/hooker>
+_  [github] xiaoZ-hc/redtool: 日常积累的一些红队工具及自己写的脚本，更偏向于一些diy的好用的工具，并不是一些比较常用的msf/awvs/xray这种 (pop 1421, updated 2024-08)  <https://github.com/xiaoZ-hc/redtool>
+_  [pypi] spes-serial-mcp: 基于 MCP 协议的本地串口通信服务，内置实时 Web 监控面板  <https://pypi.org/project/spes-serial-mcp/>
+_  [github] luolangaga/tubatools: 这是图吧工具箱基于 WinUI 3 全新重构的版本，一款由社区驱动、深度契合 Windows 11 设计美学的现代化工具箱。它不仅确保你始终使用最新版本的工具，还集成了更加丰富的实用功能，更可满足高度自定义的个性化需求。 (pop 5951, updated 2026-10)  <https://github.com/luolangaga/tubatools>
+_  [github] guchangan1/All-Defense-Tool: 本项目集成了全网优秀的攻防武器工具项目，包含自动化利用，子域名、目录扫描、端口扫描等信息收集工具，各大中间件、cms、OA漏洞利用工具，爆破工具、内网横向、免杀、社工钓鱼以及应急响应、甲方安全资料等其他安全攻防资料。 (pop 8215, updated 2026-10)  <https://github.com/guchangan1/All-Defense-Tool>
+_  [github] shy3130/tick-stock-panel: TSP自托管、零运维的 A 股「自建策略 + 监控 + 回测」量化工作台 | LLM能力驱使策略定制+个股分析+复盘 | 自由接入第三方数据源与个性化扩展数据 | 个人开源 (pop 6585, updated 2026-10)  <https://github.com/shy3130/tick-stock-panel>
+_  [pypi] whichport: Inspect which processes are using ports  <https://pypi.org/project/whichport/>
+_  [github] shadow1ng/fscan: 一款内网综合扫描工具，方便一键自动化、全方位漏扫扫描。(An intranet comprehensive scanning tool, enabling one-click automated, all-round vulnerability scanning) (pop 14729, updated 2026-10)  <https://github.com/shadow1ng/fscan>
+_  [npm] @xiaoqiong0v0/opencode-ssh-tool: 长驻交互式 SSH 会话工具插件，远程命令受 opencode 权限管控 (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/@xiaoqiong0v0/opencode-ssh-tool>
+_  [github] k8gege/Ladon: Ladon大型内网渗透扫描器，PowerShell、Cobalt Strike插件、内存加载、无文件扫描。含端口扫描、服务识别、网络资产探测、密码审计、高危漏洞检测、漏洞利用、密码读取以及一键GetShell，支持批量A段/B段/C段以及跨网段扫描，支持URL、主机、域名列表扫描等。网络资产探测32种协议(ICM... (pop 5338, updated 2025-03)  <https://github.com/k8gege/Ladon>
+_  [npm] dsh-noname-kit: Noname (无名杀) extension workshop for DeepSeek Harness: AI writes skills/cards with official-reference search, validation-gated writes, task history, and a web... (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/dsh-noname-kit>
+_  [pypi] wimotek-ssh-tunnel: Python SSH Tunnel manager for Chromium CDP  <https://pypi.org/project/wimotek-ssh-tunnel/>
+_  [pypi] wg-manager: WireGuard 管理工具 - 服务端配置、客户端管理、密钥生成、配置导出、SSH远程管理  <https://pypi.org/project/wg-manager/>
+_  [github] inbug-team/InScan: 边界打点后的自动化渗透工具 (pop 1876, updated 2021-07)  <https://github.com/inbug-team/InScan>
+_  [github] huangxd-/danmu_api: 一个人人都能部署的基于 js 的弹幕 API 服务器，支持爱优腾芒哔咪人韩巴狐乐西埋帆红弹幕直接获取，兼容弹弹play的搜索、详情查询和弹幕获取接口规范，并提供日志记录，支持vercel/netlify/edgeone/cloudflare/docker/hf等部署方式，不用提前下载弹幕，没有nas或小鸡也能一键部署。 (pop 3423, updated 2026-10)  <https://github.com/huangxd-/danmu_api>
+_  [github] Dliv3/Venom: Venom - A Multi-hop Proxy for Penetration Testers (pop 2166, updated 2022-05)  <https://github.com/Dliv3/Venom>
+_  [github] makoto56/penetration-suite-toolkit: 本项目制作的初衷是帮助师傅们快速搭建工作环境，工欲善其事，必先利其器。 (pop 2983, updated 2025-06)  <https://github.com/makoto56/penetration-suite-toolkit>
+_  [github] lintstar/LSTAR: LSTAR - CobaltStrike 综合后渗透插件 (pop 1272, updated 2022-01)  <https://github.com/lintstar/LSTAR>
+
+== 024  a terminal ui for exploring large json documents with jq-style filters and fuzzy search
+
+_  [pypi] fuzzy-json: Python Binding for Fuzzy JSON Parser (fson)  <https://pypi.org/project/fuzzy-json/>
+_  [npm] mnemonist: Curated collection of data structures for the JavaScript/TypeScript. (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/mnemonist>
+_  [npm] @nexucis/fuzzy: small, standalone fuzzy search / fuzzy filter. browser or node (pop 1000000, updated 2024-07)  <https://www.npmjs.com/package/@nexucis/fuzzy>
+_  [npm] @harperfast/fulltext: Native Tantivy full-text indexing for Node.js (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/@harperfast/fulltext>
+_  [crates-io] pdfboss-jpx: Cleanroom JPEG 2000 (JPXDecode) decoder in pure Rust for pdfboss (ITU-T T.800) (pop 1448, updated 2026-10)  <https://crates.io/crates/pdfboss-jpx>
+_  [npm] fuzzy: small, standalone fuzzy search / fuzzy filter. browser or node (pop 1000000, updated 2016-10)  <https://www.npmjs.com/package/fuzzy>
+_  [github] aliesbelik/poldi: :owl: Personal Scoop bucket (pop 12, updated 2026-10)  <https://github.com/aliesbelik/poldi>
+_  [npm] @m31coding/fuzzy-search: A fast, accurate and multilingual fuzzy search library. (pop 1000000, updated 2025-10)  <https://www.npmjs.com/package/@m31coding/fuzzy-search>
+
+== 027  a pacman helper for installing arch linux aur packages
+
+_  [github] actionless/pikaur: AUR helper with minimal dependencies. Review PKGBUILDs all in once, next build them all without user interaction. (pop 958, updated 2026-10)  <https://github.com/actionless/pikaur>
+_  [github] pigmonkey/spark: Arch Linux Provisioning with Ansible (pop 396, updated 2026-09)  <https://github.com/pigmonkey/spark>
+
+== 029  django admin theme with dark mode
+
+_  [pypi] django3-dash: A modern Django dashboard built with DaisyUI  <https://pypi.org/project/django3-dash/>
+_  [github] tabler/tabler: Free and open source admin dashboard UI kit built on Bootstrap: 100+ pages, 6,000+ icons, dark mode, RTL. (pop 41981, updated 2026-10)  <https://github.com/tabler/tabler>
+_  [pypi] django-daisy: A modern Django dashboard built with DaisyUI  <https://pypi.org/project/django-daisy/>
+
+== 030  c# library for .net json parsing
+
+_  [nuget] NFX: NFX CORE Package NFX UNISTACK includes: Application Container + Dependency Injection facilities Configuration engine BigMemory: Local/Distributed piles/heaps... (pop 256207)  <https://www.nuget.org/packages/NFX>
+_  [github] Cinchoo/ChoETL: ETL framework for .NET (Parser / Writer for CSV, Flat, Xml, JSON, Key-Value, Parquet, Yaml, Avro formatted files) (pop 861, updated 2026-10)  <https://github.com/Cinchoo/ChoETL>
+_  [hacker-news] My new library for parsing JSON-encoded data: I needed a C library for parsing JSON-encoded data. I didn't want C++. I wanted C. And I wanted this library to be easy … (pop 2)  <https://news.ycombinator.com/item?id=4991685>
+_  [nuget] SwfActionsToJson: SwfActionsToJson is a .NET library which serializing ActionScript code from a SWF file into a formatted JSON object. (pop 7449)  <https://www.nuget.org/packages/SwfActionsToJson>
+
+== 031  cloud-native secret manager for k8s clusters
+
+_  [github] senthilrch/kube-fledged: A kubernetes operator for creating and managing a cache of container images directly on the cluster worker nodes, so application pods start almost instantly (pop 1379, updated 2026-09)  <https://github.com/senthilrch/kube-fledged>
+_  [github] NanaGyamfiPrempeh30/k8s-devsecops: A production-grade Kubernetes infrastructure demonstrating modern DevSecOps practices, GitOps workflows, and comprehensive observability. (pop 53, updated 2026-03)  <https://github.com/NanaGyamfiPrempeh30/k8s-devsecops>
+_  [docker-hub] agentcatalog/secrets-manager: Specialized in secure credential storage, rotation, and access control (pop 0)  <https://hub.docker.com/r/agentcatalog/secrets-manager>
+_  [docker-hub] bitnamicharts/sealed-secrets: Bitnami Helm chart for Sealed Secrets (pop 0)  <https://hub.docker.com/r/bitnamicharts/sealed-secrets>
+_  [artifact-hub] tidb-operator: TiDB Operator manages TiDB clusters on Kubernetes and automates tasks related to operating a TiDB cluster. It makes TiDB a truly cloud-native database. (pop 13, updated 2023-06)  <https://artifacthub.io/packages/olm/community-operators/tidb-operator>
+_  [artifact-hub] odoo: Odoo — An open-source ERP and CRM platform—on both local and cloud-based Kubernetes clusters. It offers flexible storage configurations, supporting both loca... (pop 3, updated 2025-02)  <https://artifacthub.io/packages/helm/odoo/odoo>
+_  [artifact-hub] postgres-operator: Postgres Operator creates and manages PostgreSQL clusters running in Kubernetes (pop 9, updated 2026-09)  <https://artifacthub.io/packages/helm/postgres-operator/postgres-operator>
+_  [artifact-hub] pod-resource-request: This design focuses on specifying the minimum CPU and memory requirements for Kubernetes Pods. By setting resource requests, this design ensures optimal reso... (updated 2024-01)  <https://artifacthub.io/packages/meshery/meshery-catalog/pod-resource-request>
+_  [github] Consensys-inc-archive/quorum-kubernetes: Helm charts for Hyperledger Besu and GoQuorum (pop 135, updated 2026-09)  <https://github.com/Consensys-inc-archive/quorum-kubernetes>
+
+== 032  ターミナルでポートを使っているプロセスを終了するツール
+
+_  [pypi] umamail: It's a tool that makes sending emails easy.  <https://pypi.org/project/umamail/>
+_  [github] devlights/blog-summary: ブログ「いろいろ備忘録日記」のまとめ (pop 2, updated 2026-10)  <https://github.com/devlights/blog-summary>
+_  [npm] textlint-rule-ja-no-redundant-expression: 冗長な表現を禁止するtextlintルール (pop 1000000, updated 2022-02)  <https://www.npmjs.com/package/textlint-rule-ja-no-redundant-expression>
+_  [npm] textlint-rule-preset-ja-technical-writing: 技術文書向けのtextlintルールプリセット (pop 1000000, updated 2025-01)  <https://www.npmjs.com/package/textlint-rule-preset-ja-technical-writing>
+_  [github] miyagaw61/mgtools: tools by miyagaw61 (pop 8, updated 2018-05)  <https://github.com/miyagaw61/mgtools>
+_  [pypi] local-llm-server: ローカルLLM（mlx / mlx-vlm / llama.cpp / vLLM / SGLang）を OpenAI 互換 API で束ねるマルチモデルゲートウェイ（サーバー）。gateway.toml のカタログを 1 ポートで配信し、model で振り分け・遅延起動・LRU 退避・MTP 高速化（Ollama...  <https://pypi.org/project/local-llm-server/>
+_  [pypi] local-llm-client: ローカル LLM ゲートウェイ（local-llm-server / OpenAI 互換）に繋ぐ高レベルクライアント。エージェント共通のクライアントで、openai のボイラープレートを再実装しない（chat・画像・動画・音声認識/STT）。  <https://pypi.org/project/local-llm-client/>
+_  [github] Tachi-Shin/KITOS: A small DOS-like educational operating system for Raspberry Pi 4B, written in C and AArch64 assembly. (pop 4, updated 2026-10)  <https://github.com/Tachi-Shin/KITOS>
+_  [github] okamyuji/devpulse: Unified developer environment TUI — monitor ports, Docker, processes, and logs in one terminal screen (pop 2, updated 2026-09)  <https://github.com/okamyuji/devpulse>
+_  [github] sayaka-aiart/StandRig: AI-editable 2D modeling and playback via MCP. Parts-separated PSD input, standalone local service, and embeddable runtime. (pop 179, updated 2026-10)  <https://github.com/sayaka-aiart/StandRig>
+_  [github] FURUYAN1234/ai-voice-comic-maker: AI Voice Comic Maker: Drop a 4-koma manga image, get a fully voiced short video automatically. Powered by Gemini Vision & VOICEVOX. / 4コマ漫画画像をドロップするだけ。AIが全自動... (pop 3, updated 2026-10)  <https://github.com/FURUYAN1234/ai-voice-comic-maker>
+_  [npm] vanilla-autokana: A JavaScript library to complete furigana automatically. (pop 1000000, updated 2021-05)  <https://www.npmjs.com/package/vanilla-autokana>
+_  [github] speee/training-web-app: AI時代にWebアプリケーションを低レイヤーから理解する、ジュニアエンジニア向け研修ガイダンス (pop 58, updated 2026-09)  <https://github.com/speee/training-web-app>
+_  [github] wesnishio/web-dev: I’m designing and developing a tool called “WorkStats” to measure engineer productivity. During the process, I’ve compiled a broad range of technologies from... (pop 6, updated 2024-11)  <https://github.com/wesnishio/web-dev>
+_  [github] kazu0914/agent-slides-studio: macOS向けのローカルスライド編集アプリ。直接編集・モーション・Codexによる提案比較。MIT / 無料ベータ。 (pop 3, updated 2026-09)  <https://github.com/kazu0914/agent-slides-studio>
+_  [github] allpaqa-org/twitch_text_to_speech_bot: Text to Speech bot using Twitch IRC for mac and (linux and windows (pop 6, updated 2026-10)  <https://github.com/allpaqa-org/twitch_text_to_speech_bot>
+_  [npm] @textlint-ja/textlint-rule-preset-ai-writing: textlintプリセット：AIっぽい記述パターンを検出し、より自然な日本語表現を促すルール集 (pop 1000000, updated 2026-05)  <https://www.npmjs.com/package/@textlint-ja/textlint-rule-preset-ai-writing>
+_  [npm] textlint-rule-no-doubled-joshi: textlint rule check doubled joshi (pop 1000000, updated 2025-09)  <https://www.npmjs.com/package/textlint-rule-no-doubled-joshi>
+_  [github] mouri-lab/process-aquarium: Visualize your running processes as a living aquarium of fish. (for MWS Cup.) (pop 1, updated 2026-10)  <https://github.com/mouri-lab/process-aquarium>
+
+== 033  a node library for coloring text in the terminal
+
+_  [github] tonyhffong/TermWin.jl: notcurses based julia data navigators (pop 27, updated 2026-07)  <https://github.com/tonyhffong/TermWin.jl>
+_  [npm] @azure/msal-node: Microsoft Authentication Library for Node (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/@azure/msal-node>
+_  [npm] @google-cloud/text-to-speech: Cloud Text-to-Speech API client for Node.js (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/@google-cloud/text-to-speech>
+_  [npm] is-unicode-supported: Detect whether the terminal supports Unicode (pop 1000000, updated 2024-09)  <https://www.npmjs.com/package/is-unicode-supported>
+_  [github] reekta92/graf: A TUI graph view for markdown files with wikilinks. Customizable. (pop 87, updated 2026-10)  <https://github.com/reekta92/graf>
+
+== 034  load environment variables from a .env file in a node app
+
+_  [github] entropitor/dotenv-cli: A cli to load dotenv files (pop 601, updated 2026-10)  <https://github.com/entropitor/dotenv-cli>
+_  [github] chihab/dotenv-run: Seamlessly load environment variables. Supports cli, esbuild, rollup, vite, webpack, angular, ESM and Monorepos. (pop 314, updated 2026-08)  <https://github.com/chihab/dotenv-run>
+_  [npm] @npmcli/config: Configuration management for the npm cli (pop 1000000, updated 2026-09)  <https://www.npmjs.com/package/@npmcli/config>
+
+== 035  build command line interfaces with react components
+
+_  [npm] @storybook/cli: Storybook CLI: Develop, document, and test UI components in isolation (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/@storybook/cli>
+_  [go] cli: Command ocm provides the command line interface for working with the Open Component Model.  <https://pkg.go.dev/ocm.software/open-component-model/bindings/go/cli>
+_  [go] cmd: Package cmd contains Inertia's command-line interface components and logic (updated 2020-10)  <https://pkg.go.dev/github.com/ubclaunchpad/inertia/cmd>
+_  [go] app: Package app provides application constants and metadata for the coconut command line interface and its components.  <https://pkg.go.dev/github.com/AliceO2Group/Control/coconut/app>
+_  [pypi] dpd-react-components: React components for Django-Plotly-Dash  <https://pypi.org/project/dpd-react-components/>
+_  [npm] server-cli-only: The server-cli-only package is designed to restrict the import of modules exclusively to React Server Components or scripts running on the CLI. (pop 1000000, updated 2024-04)  <https://www.npmjs.com/package/server-cli-only>
+
+== 036  a javascript library of small functions to format and manipulate dates
+
+_  [npm] date-fns-tz: Time zone support for date-fns v3 with the Intl API (pop 1000000, updated 2024-09)  <https://www.npmjs.com/package/date-fns-tz>
+_  [github] vkurko/calendar: Full-sized drag & drop JavaScript event calendar with resource & timeline views (pop 2296, updated 2026-10)  <https://github.com/vkurko/calendar>
+
+== 037  a python library for colourful text, tables and progress bars in the terminal
+
+_  [github] anjomozda/PortScanner: Dependency-free TCP port scanner in Python - threaded connect scan, service lookup, banner grabbing, and a colourful terminal report. No root needed. (pop 0, updated 2026-09)  <https://github.com/anjomozda/PortScanner>
+
+== 038  a python code formatter with almost no configuration options
+
+_  [github] apify/crawlee-python: Crawlee—A web scraping and browser automation library for Python to build reliable crawlers. Extract data for AI, LLMs, RAG, or GPTs. Download HTML, PDF, JPG... (pop 9636, updated 2026-10)  <https://github.com/apify/crawlee-python>
+_  [github] mckinsey/vizro: Vizro is a low-code toolkit for building high-quality data visualization apps. (pop 3817, updated 2026-10)  <https://github.com/mckinsey/vizro>
+_  [github] opencv/opencv-python: Automated CI toolchain to produce precompiled opencv-python, opencv-python-headless, opencv-contrib-python and opencv-contrib-python-headless packages. (pop 5439, updated 2026-09)  <https://github.com/opencv/opencv-python>
+
+== 039  a friendly command line http client for trying out apis
+
+_  [github] mailpile/Mailpile: A free & open modern, fast email client with user-friendly encryption and privacy features (pop 8807, updated 2023-11)  <https://github.com/mailpile/Mailpile>
+_  [go] wecli: wecli (updated 2024-02)  <https://pkg.go.dev/github.com/ibilalkayy/wecli>
+_  [crates-io] weread: LLM-friendly CLI and Rust library for WeRead (微信读书) Agent Gateway (pop 30, updated 2026-05)  <https://crates.io/crates/weread>
+_  [github] scalar/scalar: Scalar is an open-source API platform: 🌐 Modern REST API Client 📖 Beautiful API References ✨ 1st-Class OpenAPI/Swagger Support (pop 16353, updated 2026-10)  <https://github.com/scalar/scalar>
+_  [npm] @hapi/boom: HTTP-friendly error objects (pop 1000000, updated 2023-02)  <https://www.npmjs.com/package/@hapi/boom>
+_  [go] aispace-client: Command aispace is the CLI for aispace.sh, a bot-friendly file drop. (updated 2026-09)  <https://pkg.go.dev/github.com/aispace-sh/aispace-client>
+_  [github] nats-io/natscli: The NATS Command Line Interface (pop 834, updated 2026-10)  <https://github.com/nats-io/natscli>
+_  [crates-io] ip-discovery: A lightweight, high-performance library for detecting public IP addresses via DNS, HTTP, and STUN protocols (pop 531, updated 2026-09)  <https://crates.io/crates/ip-discovery>
+_  [pypi] pypi-command-line: A beautiful command line interface for the Python Package Index  <https://pypi.org/project/pypi-command-line/>
+
+== 040  a python library that watches a directory for file changes
+
+_  [github] DominicBreuker/pspy: Monitor linux processes without root permissions (pop 6229, updated 2026-03)  <https://github.com/DominicBreuker/pspy>
+
+== 041  a fast recursive grep that skips files listed in .gitignore
+
+_  [github] junegunn/fzf: :cherry_blossom: A command-line fuzzy finder (pop 83876, updated 2026-10)  <https://github.com/junegunn/fzf>
+_  [pypi] recursive:   <https://pypi.org/project/recursive/>
+_  [crates-io] ripsed-cli: A fast, modern stream editor — like ripgrep is to grep, ripsed is to sed (pop 296, updated 2026-06)  <https://crates.io/crates/ripsed-cli>
+_  [hacker-news] Show HN: Llmdog – lightweight TUI for prepping files for LLMs: llmdog – a lightweight TUI for prepping files for LLMs (recursive selection, .gitignore support, clipboard integration).… (pop 5)  <https://news.ycombinator.com/item?id=42928242>
+
+== 042  a cat replacement with syntax highlighting and git integration
+
+_  [github] pry/pry: A runtime developer console and IRB alternative with powerful introspection capabilities. (pop 6840, updated 2026-10)  <https://github.com/pry/pry>
+_  [pypi] replacement: A tool to execute yaml templates and output text  <https://pypi.org/project/replacement/>
+_  [github] google/ci_edit: A terminal text editor with mouse support and ctrl+Q to quit. (pop 225, updated 2023-04)  <https://github.com/google/ci_edit>
+_  [crates-io] batless: A fast, non-blocking code and text viewer inspired by bat (pop 2681, updated 2026-10)  <https://crates.io/crates/batless>
+_  [pypi] affinity-code-viewer: A modern replacement for cat and bat  <https://pypi.org/project/affinity-code-viewer/>
+_  [crates-io] oatmeal: Terminal UI to chat with large language models (LLM) using different model backends, and direct integrations with your favourite editors! (pop 44408, updated 2024-03)  <https://crates.io/crates/oatmeal>
+_  [github] catatsuy/purl: Streamlining Text Processing (pop 237, updated 2026-10)  <https://github.com/catatsuy/purl>
+
+== 043  a rust library for parsing command line arguments
+
+_  [npm] cac: Simple yet powerful framework for building command-line apps. (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/cac>
+_  [go] ox: Package ox is a minimal dependency Go (and TinyGo compatible) command-line flag and argument parsing library. (updated 2026-09)  <https://pkg.go.dev/github.com/xo/ox>
+_  [go] optionparser: Package optionparser is a library for defining and parsing command line options. (updated 2026-05)  <https://pkg.go.dev/github.com/speedata/optionparser>
+
+== 044  count lines of code per programming language in a project
+
+_  [github] kucherenko/jscpd: Copy/paste detector for source code. 220+ languages, Rust engine, SARIF/HTML/badge reporters, GitHub Action, MCP server for AI agents. (pop 6470, updated 2026-10)  <https://github.com/kucherenko/jscpd>
+_  [pypi] integer-programming: Integer programming in Python  <https://pypi.org/project/integer-programming/>
+_  [npm] fp-ts: Functional programming in TypeScript (pop 1000000, updated 2025-08)  <https://www.npmjs.com/package/fp-ts>
+_  [github] thomasahle/sunfish: Sunfish: a Python Chess Engine in 111 lines of code (pop 3308, updated 2026-08)  <https://github.com/thomasahle/sunfish>
+
+== 045  a go library for building command line apps with subcommands
+
+_  [npm] @oclif/core: base library for oclif CLIs (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/@oclif/core>
+_  [github] tc-hib/go-winres: Command line tool for adding Windows resources to executable files (pop 409, updated 2024-04)  <https://github.com/tc-hib/go-winres>
+
+== 046  a go framework for terminal apps based on the elm architecture
+
+_  [hacker-news] Show HN: Go-TUI – A framework for building declarative terminal UIs in Go: I've been building go-tui (https://go-tui.dev), a terminal UI framework for Go inspired by the templ framework for the w… (pop 7)  <https://news.ycombinator.com/item?id=47278869>
+_  [hacker-news] Show HN: Go-TUI – a framework for building declarative terminal UIs in Go: I've been building go-tui (https://go-tui.dev), a terminal UI framework for Go inspired by the templ framework for the w… (pop 2)  <https://news.ycombinator.com/item?id=47246604>
+_  [github] GoogleCloudPlatform/terminus: terminus is a Go framework for building terminal-style user interfaces that run in web browsers. (pop 19, updated 2026-05)  <https://github.com/GoogleCloudPlatform/terminus>
+_  [github] Dicklesworthstone/charmed_rust: Rust port of the Charm ecosystem (Bubble Tea, Lip Gloss, Bubbles, Wish): Elm-architecture TUIs, CSS-like terminal styling, and SSH app framework (pop 41, updated 2026-10)  <https://github.com/Dicklesworthstone/charmed_rust>
+
+== 047  a terminal user interface for git
+
+_  [crates-io] lazykeifu: A graph-first Git TUI with lazygit-inspired workflows (pop 82, updated 2026-10)  <https://crates.io/crates/lazykeifu>
+
+== 048  an interactive fuzzy finder for the command line
+
+_  [github] garybernhardt/selecta: A fuzzy text selector for files and anything else you need to select. Use it from vim, from the command line, or anywhere you can run a shell command. (pop 1359, updated 2026-03)  <https://github.com/garybernhardt/selecta>
+_  [homebrew] navi: Interactive cheatsheet tool for the command-line  <https://github.com/denisidoro/navi>
+_  [pypi] aws-fuzzy-finder: SSH into AWS instances using fuzzy search through tags.  <https://pypi.org/project/aws-fuzzy-finder/>
+_  [homebrew] ledit: Line editor for interactive commands  <https://pauillac.inria.fr/~ddr/ledit/>
+_  [github] pmazurek/aws-fuzzy-finder: :zap: SSH into instances using fuzzy search. (pop 128, updated 2023-12)  <https://github.com/pmazurek/aws-fuzzy-finder>
+
+== 049  user sign up and login for a rails application
+
+_  [github] omniauth/omniauth: OmniAuth is a flexible authentication system utilizing Rack middleware. (pop 8105, updated 2026-10)  <https://github.com/omniauth/omniauth>
+_  [github] RailsApps/rails-stripe-membership-saas: An example Rails 4.2 app with Stripe and the Payola gem for a membership or subscription site. (pop 1132, updated 2017-10)  <https://github.com/RailsApps/rails-stripe-membership-saas>
+
+== 050  background job processing for ruby with redis
+
+_  [github] nesquena/backburner: Simple and reliable beanstalkd job queue for ruby (pop 442, updated 2026-10)  <https://github.com/nesquena/backburner>
+_  [rubygems] mongo-resque: Resque is a Redis-backed Ruby library for creating background jobs, placing those jobs on multiple queues, and processing them later. Mongo-Resque is the sam... (pop 23841)  <https://rubygems.org/gems/mongo-resque>
+_  [github] que-rb/que: A Ruby job queue that uses PostgreSQL's advisory locks for speed and reliability. (pop 2326, updated 2026-09)  <https://github.com/que-rb/que>
+_  [github] bensheldon/good_job: Multithreaded, Postgres-based, Active Job backend for Ruby on Rails. (pop 2999, updated 2026-10)  <https://github.com/bensheldon/good_job>
+_  [github] sidekiq/sidekiq: Simple, efficient background processing for Ruby (pop 13563, updated 2026-10)  <https://github.com/sidekiq/sidekiq>
+
+== 051  elixir background jobs stored in postgresql
+
+_  [hex] event_streamex: Add event streaming in your Elixir application, using PostgreSQL WAL (pop 2145, updated 2025-10)  <https://hex.pm/packages/event_streamex>
+_  [hex] postgrex: PostgreSQL driver for Elixir (pop 143087572, updated 2026-08)  <https://hex.pm/packages/postgrex>
+_  [hex] postgrex_tc: PostgreSQL driver for Elixir (pop 456, updated 2022-02)  <https://hex.pm/packages/postgrex_tc>
+_  [hex] carbonite: Audit trails for Elixir/PostgreSQL based on triggers (pop 749838, updated 2026-09)  <https://hex.pm/packages/carbonite>
+_  [hex] grind: A strongly-typed Oban for Gleam: durable, typed background jobs on OTP + Postgres. (pop 250, updated 2026-10)  <https://hex.pm/packages/grind>
+_  [hex] elixir_server_core: A minimal, forkable Elixir server with HTTP routing, background job queueing, and pluggable persistence. (pop 163, updated 2026-06)  <https://hex.pm/packages/elixir_server_core>
+
+== 052  a haskell tool to convert documents between markdown, latex and word
+
+_  [github] xwmx/nb: CLI and local web plain text note‑taking, bookmarking, and archiving with linking, tagging, filtering, search, Git versioning & syncing, Pandoc conversion, +... (pop 8461, updated 2026-10)  <https://github.com/xwmx/nb>
+_  [github] jgm/pandoc: Universal markup converter (pop 46768, updated 2026-10)  <https://github.com/jgm/pandoc>
+_  [hacker-news] Show HN: Convert JSDoc, Javadoc and PHPDoc to Markdown Documents: Show HN: Convert JSDoc, Javadoc and PHPDoc to Markdown Documents (pop 4)  <https://news.ycombinator.com/item?id=10255862>
+_  [github] hougesen/mdsf: Format markdown code blocks using your favorite tools (pop 112, updated 2026-09)  <https://github.com/hougesen/mdsf>
+_  [hackage] LiterateMarkdown: Converter to convert from .lhs to .md and vice versa.  <https://hackage.haskell.org/package/LiterateMarkdown>
+_  [hackage] dice2tex: Convert a Diceware wordlist into a printer-ready LaTeX file.  <https://hackage.haskell.org/package/dice2tex>
+_  [github] dsanson/Pandoc.tmbundle: A TextMate bundle for use with Pandoc (pop 84, updated 2014-10)  <https://github.com/dsanson/Pandoc.tmbundle>
+
+== 053  a java library to map json to objects and back
+
+_  [github] jorgen/json_struct: json_struct is a single header only C++ library for parsing JSON directly to C++ structs and vice versa (pop 474, updated 2026-08)  <https://github.com/jorgen/json_struct>
+_  [github] jwtk/jjwt: Java JWT: JSON Web Token for Java and Android (pop 11139, updated 2026-10)  <https://github.com/jwtk/jjwt>
+_  [hacker-news] Show HN: ChaosTree – A zero-dependency Java tree library (AVL,RBT,B-Tree,B+Tree): What is ChaosTree?ChaosTree is a zero-dependency Java Sorted Set/Map library built around multiple tree implementations.… (pop 10)  <https://news.ycombinator.com/item?id=49694404>
+_  [github] FasterXML/jackson-databind: General data-binding package for Jackson: works on streaming API (core) implementation(s) (pop 3755, updated 2026-10)  <https://github.com/FasterXML/jackson-databind>
+
+== 054  a c# library for serializing objects to json
+
+_  [github] MessagePack-CSharp/MessagePack-CSharp: Extremely Fast MessagePack Serializer for C#(.NET, .NET Core, Unity, Xamarin). / msgpack.org[C#] (pop 6808, updated 2026-10)  <https://github.com/MessagePack-CSharp/MessagePack-CSharp>
+_  [hacker-news] Node.js Library For Serializing, Deserializing And Validating Objects: Node.js Library For Serializing, Deserializing And Validating Objects (pop 22)  <https://news.ycombinator.com/item?id=4046268>
+_  [github] typestack/class-transformer: Decorator-based transformation, serialization, and deserialization between objects and classes. (pop 7337, updated 2026-05)  <https://github.com/typestack/class-transformer>
+_  [github] jwt-dotnet/jwt: Jwt.Net, a JWT (JSON Web Token) implementation for .NET (pop 2186, updated 2026-10)  <https://github.com/jwt-dotnet/jwt>
+_  [github] ibireme/yyjson: The fastest JSON library in C (pop 3929, updated 2026-10)  <https://github.com/ibireme/yyjson>
+_  [github] NewLifeX/X: Core basic components: log (file / network), configuration (XML / JSON / HTTP), cache (memory / redis), network (TCP / UDP / HTTP), RPC framework, serializat... (pop 1860, updated 2026-10)  <https://github.com/NewLifeX/X>
+_  [github] kgabis/parson: Lightweight JSON library written in C. (pop 1476, updated 2026-09)  <https://github.com/kgabis/parson>
+
+== 055  a php library for sending http requests
+
+_  [github] reactphp/http: Event-driven, streaming HTTP client and server implementation for ReactPHP. (pop 780, updated 2026-09)  <https://github.com/reactphp/http>
+_  [packagist] segnivo/php-sdk: **API Version**: 1.7 **Date**: 9th July, 2024 ## 📄 Getting Started This API is based on the REST API architecture, allowing the user to easily manage their d...  <https://packagist.org/packages/segnivo/php-sdk>
+
+== 056  an interactive process viewer for the terminal
+
+_  [hacker-news] Show HN: mac-cleanup-go – an interactive macOS cleanup tool: Instead of a traditional command-style CLI, it runs as a TUI in the terminal, allowing users to inspect cleanup targets … (pop 4)  <https://news.ycombinator.com/item?id=46455217>
+_  [pypi] terminal-viewer: Package for printing images in terminal  <https://pypi.org/project/terminal-viewer/>
+_  [hacker-news] Show HN: Moulti: a CLI-driven TUI for a better, clearer display of script output: Moulti is a Terminal User Interface (TUI) that displays steps, i.e. collapsible colored boxes with titles, to which one … (pop 3)  <https://news.ycombinator.com/item?id=39765356>
+_  [hacker-news] Show HN: PortPilot – A TUI for managing ports and processes: Hi HN! I built PortPilot – a terminal UI that shows all listening ports on your machine, lets you kill processes with on… (pop 1)  <https://news.ycombinator.com/item?id=47088965>
+
+== 057  short practical examples for command line tools instead of man pages
+
+_  [pypi] cli-llm-man-sajid-karim: None  <https://pypi.org/project/cli-llm-man-sajid-karim/>
+_  [crates-io] yman-tracker: Git-native task tracker: tasks live in a ref outside refs/heads, travel through the project's own remote, never show up in git branch (pop 63, updated 2026-10)  <https://crates.io/crates/yman-tracker>
+_  [hacker-news] 8 Practical Linux Netcat NC Command Examples: 8 Practical Linux Netcat NC Command Examples (pop 4)  <https://news.ycombinator.com/item?id=3877656>
+_  [hacker-news] A practical example of the du and Awk commands: A practical example of the du and Awk commands (pop 5)  <https://news.ycombinator.com/item?id=22332069>
+_  [hacker-news] Someone built a fantastic learning resource for Google's Gemini CLI: If you've been curious about Gemini CLI but found the official docs overwhelming, check out https://starshipcli.onlineTh… (pop 3)  <https://news.ycombinator.com/item?id=44516557>
+_  [github] casey/just: 🤖 Just a command runner (pop 36493, updated 2026-10)  <https://github.com/casey/just>
+_  [go] profiling: Command profiling is a deliberately slow service for practicing the pprof workflow in 19-performance/01-measure-first.md. (updated 2026-10)  <https://pkg.go.dev/github.com/TharunKumarReddyPolu/Go-Handbook-for-Software-Engineers/19-performance/examples/profiling>
+_  [github] ShadowHackrs/Jailbreaks-GPT-Gemini-deepseek-: Jailbreaks GPT, Sora, Claude, Gemini ,deepseek this prompt unlocks rage mode (pop 1744, updated 2026-10)  <https://github.com/ShadowHackrs/Jailbreaks-GPT-Gemini-deepseek->
+_  [github] trimstray/the-book-of-secret-knowledge: A collection of inspiring lists, manuals, cheatsheets, blogs, hacks, one-liners, cli/web tools and more. (pop 254666, updated 2024-11)  <https://github.com/trimstray/the-book-of-secret-knowledge>
+_  [crates-io] acc: plaintext double-entry accounting command line tool (pop 5725, updated 2026-06)  <https://crates.io/crates/acc>
+_  [github] toolleeo/awesome-cli-apps-in-a-csv: The largest Awesome Curated list of command line programs (CLI/TUI) with source data organized into CSV files (pop 2657, updated 2026-09)  <https://github.com/toolleeo/awesome-cli-apps-in-a-csv>
+
+== 058  a vscode extension that shows who last changed each line, from git
+
+_  [hacker-news] Show HN: A VSCode Extension to Automate Putting Your Code Files in a GPT Prompt: You can find it in the VSCode extension marketplace by searching for "Prepare Project for LLM Prompt" or clicking here:h… (pop 4)  <https://news.ycombinator.com/item?id=37597057>
+_  [vscode-marketplace] Git Project Manager: Allows you to change easily between git projects. (pop 1513247, updated 2021-11)  <https://marketplace.visualstudio.com/items?itemName=felipecaputo.git-project-manager>
+_  [hacker-news] Show HN: VSCode Extension to Speed Up Using ChatGPT for Coding: I built this because I realized I was wasting a huge amount of time doing it manually. When I'm first starting on a codi… (pop 2)  <https://news.ycombinator.com/item?id=37879565>
+_  [github] regent-vcs/re_gent: Version control for AI agents — track what your agent did, blame any line to a prompt, inspect any step. (pop 804, updated 2026-07)  <https://github.com/regent-vcs/re_gent>
+_  [hacker-news] Show HN: Infracost (YC W21): Cloud Costs for Terraform in VSCode: Hey, Hugo from Infracost (https://www.infracost.io) here. Infracost shows engineers the cost of each Terraform change in… (pop 76)  <https://news.ycombinator.com/item?id=31921313>
+_  [github] akaihola/darker: Apply black reformatting to Python files only in regions changed since a given commit. For a practical usage example, see the blog post at https://dev.to/aka... (pop 685, updated 2025-10)  <https://github.com/akaihola/darker>
+_  [github] semgrep/semgrep-vscode: Semgrep extension for Visual Studio Code (pop 77, updated 2026-10)  <https://github.com/semgrep/semgrep-vscode>
+_  [jetbrains] Flutter Skill: &lt;p align="center"&gt; &lt;a href="https://github.com/ai-dashboad/flutter-skill"&gt; &lt;img src="assets/demo-teaser.g… (pop 1763, updated 2026-02)  <https://plugins.jetbrains.com/plugin/29991-flutter-skill>
+
+== 059  an intellij plugin that gives matching brackets their own colours
+
+_  [vscode-marketplace] Shellscape Brackets: A subtle bracket match decorator for VS Code based on Atom (pop 1508, updated 2023-02)  <https://marketplace.visualstudio.com/items?itemName=shellscape.shellscape-brackets>
+
+== 060  a docker image for a self-hosted password manager that works with bitwarden clients
+
+_  [go] bitwarden-terraform-provider: bitwarden-terraform-provider (updated 2023-08)  <https://pkg.go.dev/github.com/jitesoft/bitwarden-terraform-provider>
+_  [github] lj5645/FlexVault: Bitwarden 兼容密码管理服务器 - 支持 Cloudflare Workers 和 Node.js 自托管 (pop 16, updated 2026-10)  <https://github.com/lj5645/FlexVault>
+_  [github] Lerentis/bitwarden-crd-operator: Kubernetes Operator to create k8s secrets from bitwarden (pop 39, updated 2026-09)  <https://github.com/Lerentis/bitwarden-crd-operator>
+
+== 062  a nix tool that shows which packages changed between two system generations
+
+_  [hacker-news] Show HN: Torque – A declarative, typesafe DSL for LLM training datasets (MIT): We were frustrated with dataset generation DX: ad‑hoc scripts and JSON templates break as flows branch, tool‑calls drift… (pop 3)  <https://news.ycombinator.com/item?id=45791822>
+_  [github] oddlama/agenix-rekey: An agenix extension adding secret generation and automatic rekeying using a YubiKey or master-identity (pop 448, updated 2026-10)  <https://github.com/oddlama/agenix-rekey>
+_  [hacker-news] Show HN: Sufleur - npm-style prompt registry with typed code-generation: Hi HN, I've built Sufleur, a prompt registry and companion CLI tool. The motivation was essentially the frustration that… (pop 3)  <https://news.ycombinator.com/item?id=49232345>
+_  [hacker-news] Show HN: GraFlo - Universal ETL tool for property KG (Neo4j, TigerGraph, Arango): We built GraFlo after repeatedly writing the same boilerplate code to transform datasets into Neo4j, ArangoDB, and Tiger… (pop 5)  <https://news.ycombinator.com/item?id=45835629>
+
+== 063  a cargo subcommand that lists dependencies whose build scripts make network requests
+
+_  [github] casey/just: 🤖 Just a command runner (pop 36493, updated 2026-10)  <https://github.com/casey/just>
+_  [crates-io] s3util-rs: Tools for managing Amazon S3 objects and buckets (pop 2730, updated 2026-10)  <https://crates.io/crates/s3util-rs>
+_  [github] umacloud/umadev: UmaDev: A coding agent that works like a real dev team, commanding the Claude Code / Codex / OpenCode you already use. (pop 264, updated 2026-09)  <https://github.com/umacloud/umadev>
+_  [github] Dicklesworthstone/destructive_command_guard: A fast Rust safety hook that blocks destructive shell, git, and filesystem commands before AI coding agents run them. 50+ security packs (databases, Kubernet... (pop 6232, updated 2026-10)  <https://github.com/Dicklesworthstone/destructive_command_guard>
+_  [github] mprpic/cooldowns: 🛡️ Dependency cooldowns are cool! (pop 107, updated 2026-10)  <https://github.com/mprpic/cooldowns>
+_  [github] Dicklesworthstone/beads_viewer: Graph-aware TUI for the Beads issue tracker: PageRank, critical path, kanban, dependency DAG visualization, and robot-mode JSON API (pop 1723, updated 2026-10)  <https://github.com/Dicklesworthstone/beads_viewer>
+_  [crates-io] repartee: A modern terminal IRC client built with Ratatui and Tokio (pop 1244, updated 2026-10)  <https://crates.io/crates/repartee>
+_  [crates-io] oneharness: One CLI to drive many agentic coding harnesses non-interactively and return uniform JSON. (pop 9008, updated 2026-10)  <https://crates.io/crates/oneharness>
+
+== 064  a git hook that strips output cells from jupyter notebooks before commit
+
+_  [github] fastai/fastai-nbstripout: much faster nbstripout and autotrust notebooks local git configuration (pop 32, updated 2019-01)  <https://github.com/fastai/fastai-nbstripout>
+_  [hacker-news] Launch HN: Mito (YC S20) – Edit a spreadsheet, generate Python: Hiya HN, I'm Nate, cofounder of Mito (https://trymito.io) with my best friends Jake and Aaron. Mito is a spreadsheet UI … (pop 140)  <https://news.ycombinator.com/item?id=32723766>
+_  [pypi] nbwipers: A command line tool to wipe clean jupyter notebooks, written in Rust  <https://pypi.org/project/nbwipers/>
+_  [github] felixgwilliams/nbwipers: nbwipers is a command line tool to wipe clean jupyter notebooks, written in Rust. (pop 11, updated 2026-09)  <https://github.com/felixgwilliams/nbwipers>
+
+== 065  a cli that converts bibtex files to csl-json and removes duplicates by doi
+
+_  [go] wrapjscpd: Package wrapjscpd converts jscpd JSON duplication reports into SARIF 2.1.0. (updated 2026-05)  <https://pkg.go.dev/github.com/dkoosis/fo/pkg/wrapper/wrapjscpd>
+_  [hacker-news] Show HN - tool that converts image receipts to Excel: Hey I'm excited to share my first project, Receipts2CSV, a web application designed to simplify bookkeeping by convertin… (pop 3)  <https://news.ycombinator.com/item?id=39411761>
+_  [npm] eslint-json-compat-utils: A utility that converts rules made for checking the AST of `jsonc-eslint-parser` into rules compatible with `@eslint/json`. (pop 1000000, updated 2026-03)  <https://www.npmjs.com/package/eslint-json-compat-utils>
+_  [github] TheRatest/md2dstu: An app to convert .md files to ДСТУ-3008:2015-compliant documents (pop 0, updated 2026-10)  <https://github.com/TheRatest/md2dstu>
+
+== 066  a vscode extension that estimates the carbon footprint of a cloud deployment
+
+_  [hacker-news] Show HN: New Postgres Connection Pooling Extension Breaks 100k Barrier: If you’ve ever dealt with scaling PostgreSQL, you know the traditional process-per-connection model just doesn’t cut it … (pop 11)  <https://news.ycombinator.com/item?id=40346175>
+_  [hacker-news] ICANN seeks full deployment of tougher security extensions – TechSpot: ICANN seeks full deployment of tougher security extensions – TechSpot (pop 1)  <https://news.ycombinator.com/item?id=19242519>
+_  [jetbrains] Codeup: Surfaces anti-patterns in your codebase using the Anthropic Claude API. Findings are persisted as YAML files under .code… (pop 94, updated 2026-06)  <https://plugins.jetbrains.com/plugin/32381-codeup>
+_  [hacker-news] Show HN: Chrome extension that reveals hidden SaaS usage across your company: I made Hapstack - a Chrome extension that runs passively in the background and maps which SaaS tools are being used by w… (pop 1)  <https://news.ycombinator.com/item?id=44052509>
+_  [npm] vscode-extension-tester: ExTester is a package that is designed to help you run UI tests for your Visual Studio Code extensions using selenium-webdriver. (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/vscode-extension-tester>
+_  [hacker-news] Easy Deployment for Chrome Extensions: Easy Deployment for Chrome Extensions (pop 2)  <https://news.ycombinator.com/item?id=24047493>
+_  [hacker-news] Show HN: Lovable-like deployment preview extension for Claude Code Web: I use the Claude Code web interface a lot, it's great for picking up sessions on the go, continuing work from my phone, … (pop 2)  <https://news.ycombinator.com/item?id=47598664>
+_  [npm] @vscode/l10n: A helper library to assist in localizing subprocesses spun up by VS Code extensions (pop 1000000, updated 2023-12)  <https://www.npmjs.com/package/@vscode/l10n>
+_  [hacker-news] Show HN: Nostr Web – decentralized website hosting on Nostr: We built Nostr Web, a new way to publish and host websites that live entirely on the Nostr network instead of centralize… (pop 101)  <https://news.ycombinator.com/item?id=45682122>
+
+== 067  a neovim plugin that shows git blame for the current line as virtual text
+
+_  [github] harukikuri/todoage.nvim: shows how old your TODOs are. (pop 30, updated 2026-06)  <https://github.com/harukikuri/todoage.nvim>
+_  [github] abzcoding/lvim: 🧑‍🚀 Bloated LunarVim 🚀 (pop 471, updated 2025-05)  <https://github.com/abzcoding/lvim>
+
+== 068  a python library to read and write gpx track files
+
+_  [github] iwanders/gps_track_pod: A Python client to interface with SUUNTO's GPS Track Pod (pop 8, updated 2025-06)  <https://github.com/iwanders/gps_track_pod>
+_  [github] semuconsulting/pynmeagps: Python library for parsing and generating NMEA 0183 GNSS/GPS protocol messages. (pop 112, updated 2026-10)  <https://github.com/semuconsulting/pynmeagps>
+_  [hacker-news] Show HN: V8serialize – Read/write V8-serialized JavaScript values from Python: v8serialize is a Python library that reads and writes V8's value serialization format[1][2], which is how V8 moves JS va… (pop 3)  <https://news.ycombinator.com/item?id=41637623>
+
+== 070  an elixir library for rate limiting with a token bucket
+
+_  [hex] ratelix: Ratelix is a rate limiting library for Elixir applications. It provides a simple and flexible way to implement rate limiting strategies to control the flow o... (pop 730, updated 2025-09)  <https://hex.pm/packages/ratelix>
+_  [github] viable-systems/vsm-rate-limiter: Elixir rate limiter with VSM variety attenuation, adapters for ex_rated and hammer libraries, algedonic integration, and token bucket algorithms (pop 0, updated 2026-03)  <https://github.com/viable-systems/vsm-rate-limiter>
+_  [hex] leaky: Implements a token-based rate limiter using the leaky bucket algorithm, ideal for controlling access rates to resources in Elixir applications. This implemen... (pop 3715, updated 2024-05)  <https://hex.pm/packages/leaky>
+_  [hex] crabbucket_redis: Gleam + Redis token bucket rate limiting library (pop 303, updated 2024-07)  <https://hex.pm/packages/crabbucket_redis>
+
+== 072  a postgres extension for h3 hexagonal geospatial indexes
+
+_  [npm] postgres-array: Parse postgres array columns (pop 1000000, updated 2025-03)  <https://www.npmjs.com/package/postgres-array>
+_  [github] AdrienGahery/GIS-DataScience_Pipeline: Performing GeoSpatial Data Science on PostGIS-hosted data through Jupyter Notebooks (pop 0, updated 2025-01)  <https://github.com/AdrienGahery/GIS-DataScience_Pipeline>
+_  [github] Zkir/generalized_landcovers: An attempt to create generalized map from OSM data (pop 3, updated 2026-01)  <https://github.com/Zkir/generalized_landcovers>
+_  [vscode-marketplace] Postgres Hacker: Support for Postgres hackers and extension developers (pop 789, updated 2023-12)  <https://marketplace.visualstudio.com/items?itemName=tristan957.postgres-hacker>
+_  [github] kasiaklose-dev/sentinel-drought-monitor: An operational 2D remote sensing dashboard for ecosystem monitoring. Aggregates multi-spectral Sentinel-2 satellite data using interactive high-resolution he... (pop 0, updated 2026-05)  <https://github.com/kasiaklose-dev/sentinel-drought-monitor>
+_  [vscode-marketplace] Postgres Configuration: Postgres configuration file support (pop 1784, updated 2023-12)  <https://marketplace.visualstudio.com/items?itemName=tristan957.postgres-config>
+_  [vscode-marketplace] Postgres Function Tools: VSCode extension to enhance PostgreSQL function/procedure handling (pop 228, updated 2026-06)  <https://marketplace.visualstudio.com/items?itemName=MaciejWojs.pg-fn-tools>
+_  [vscode-marketplace] python-postgres: Python-Postgres — это расширение для разработчиков, работающих с Python и PostgreSQL, которое помогает легко интегрировать базу данных PostgreSQL в приложени... (pop 843, updated 2025-04)  <https://marketplace.visualstudio.com/items?itemName=WebHuntru.python-postgres>
+_  [npm] @opentelemetry/instrumentation-pg: OpenTelemetry instrumentation for `pg` and `pg-pool` database client for PostgreSQL (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/@opentelemetry/instrumentation-pg>
+
+== 073  a cli that renders mermaid diagrams as ascii art in the terminal
+
+_  [npm] panax-beautiful-mermaid: Render Mermaid diagrams as beautiful SVGs or ASCII art. Ultra-fast, fully themeable, zero DOM dependencies. (pop 1000000, updated 2026-05)  <https://www.npmjs.com/package/panax-beautiful-mermaid>
+_  [github] aleandros/mdx: Fancy CLI for displaying markdown files with support for mermaid diagrams (pop 12, updated 2026-10)  <https://github.com/aleandros/mdx>
+_  [github] iamrohithrnair/merman: A Claude Code mod that draws mermaid diagrams, tables and code in color, right in the terminal. (pop 40, updated 2026-10)  <https://github.com/iamrohithrnair/merman>
+_  [npm] mermaid-isomorphic: Transform mermaid diagrams in the browser or Node.js (pop 1000000, updated 2026-02)  <https://www.npmjs.com/package/mermaid-isomorphic>
+
+== 074  a static site generator that builds a website from a zotero library
+
+_  [npm] @pagefind/default-ui: Pagefind is a fully static search library that aims to perform well on large sites, while using as little of your users' bandwidth as possible. (pop 1000000, updated 2026-04)  <https://www.npmjs.com/package/@pagefind/default-ui>
+_  [github] Interlisp/Interlisp.github.io: https://Interlisp.org web site (built using hugo) (pop 3, updated 2026-10)  <https://github.com/Interlisp/Interlisp.github.io>
+_  [pypi] cdk-static-site: CDK construct for static websites for CDK v2  <https://pypi.org/project/cdk-static-site/>
+_  [pypi] static-site-containerizer: CLI tool for generating a Docker container to host your static site  <https://pypi.org/project/static-site-containerizer/>
+_  [pypi] cdk-static-website: A CDK Python construct to create static S3 websites. This is a port of the AWS static site example https://github.com/aws-samples/aws-cdk-examples/blob/maste...  <https://pypi.org/project/cdk-static-website/>
+_  [pypi] zotero: Single-user, agent-first CLI for Zotero (literature management, PDF upload, RSS query)  <https://pypi.org/project/zotero/>
+_  [hacker-news] Maren (simple theme based static site generator): Maren is a static site generator that converts Markdown files to HTML by using a theme. The main difference to other SSG… (pop 3)  <https://news.ycombinator.com/item?id=21427084>
+_  [crates-io] link-bridge: A lightweight Rust library for creating URL redirects with short names that generate web pages redirecting to longer links on your website. (pop 26883, updated 2026-10)  <https://crates.io/crates/link-bridge>
+_  [pypi] cli-anything-zotero: Zotero CLI and Python package for AI-assisted local library workflows.  <https://pypi.org/project/cli-anything-zotero/>
+_  [pypi] zotero-library-mcp: MCP server for searching, reading, annotating, and managing Zotero libraries  <https://pypi.org/project/zotero-library-mcp/>
+
+== 075  a go library for sqlite without cgo
+
+_  [github] mathomhaus/guild: Shared context, memory, and task coordination across AI coding agents. Single Go binary, local SQLite, hybrid keyword and semantic search. (pop 302, updated 2026-10)  <https://github.com/mathomhaus/guild>
+_  [hacker-news] Show HN: Drop-in SQS replacement based on SQLite: Hi! I wanted to share an open source API-compatible replacement for SQS. It's written in Go, distributes as a single bin… (pop 656)  <https://news.ycombinator.com/item?id=40837610>
+_  [github] xgo-dev/llgo: A Go compiler based on LLVM in order to better integrate Go with the C ecosystem including Python and JavaScript (pop 848, updated 2026-10)  <https://github.com/xgo-dev/llgo>
+_  [github] saltmd/salt.md: The open-source workspace for people and AI agents. Docs, databases and realtime collaboration with an MCP server in the same binary, so agents work in the s... (pop 175, updated 2026-10)  <https://github.com/saltmd/salt.md>
+
+== 076  a kubernetes operator that scales deployments to zero outside office hours
+
+_  [hacker-news] Keel Kubernetes Operator to Automate Helm, DaemonSet, StatefulSet and Deployment: Keel Kubernetes Operator to Automate Helm, DaemonSet, StatefulSet and Deployment (pop 1)  <https://news.ycombinator.com/item?id=25448656>
+_  [hacker-news] Show HN: NimbleTools – A K8s runtime for securely scaling MCP servers: We originally built this because we needed a way to run MCP servers inside private clouds and on-prem. Most of the teams… (pop 3)  <https://news.ycombinator.com/item?id=45066427>
+_  [artifact-hub] nfs-operator: This operator simplifies NFS Ganesha deployments in Kubernetes by leveraging the Ansible Operator SDK for automation (updated 2026-04)  <https://artifacthub.io/packages/olm/community-operators/nfs-operator>
+_  [go] zookeeper-operator: zookeeper-operator (updated 2024-02)  <https://pkg.go.dev/github.com/kubernetesbigdataeg/zookeeper-operator>
+_  [docker-hub] kasmweb/only-office: OnlyOffice for Kasm Workspaces (pop 29)  <https://hub.docker.com/r/kasmweb/only-office>
+_  [docker-hub] istio/operator: Istio in-cluster operator (pop 7)  <https://hub.docker.com/r/istio/operator>
+_  [go] travelbot-operator: travelbot-operator (updated 2023-05)  <https://pkg.go.dev/github.com/tcotav/travelbot-operator>
+_  [github] piouson/kubernetes-bootcamp: A modern All-In-One guide to become proficient with Kubernetes core concept and pass the Certified Kubernetes Application Developer (CKAD) exam (pop 189, updated 2023-06)  <https://github.com/piouson/kubernetes-bootcamp>
+_  [go] handlers: Package handlers : handle MQTT message and deploy object to kubernetes. (updated 2019-02)  <https://pkg.go.dev/github.com/RoboticBase/mqtt-kube-operator/handlers>
+_  [go] flink-on-k8s-operator: flink-on-k8s-operator (updated 2026-09)  <https://pkg.go.dev/github.com/spotify/flink-on-k8s-operator>
+_  [artifact-hub] postgres-operator-krestomatio: This operator simplifies Postgres deployments in Kubernetes by leveraging the Ansible Operator SDK for automation (updated 2026-04)  <https://artifacthub.io/packages/olm/community-operators/postgres-operator-krestomatio>
+_  [go] clickhouse-operator: clickhouse-operator (updated 2026-09)  <https://pkg.go.dev/gitlab.com/gitlab-org/opstrace/opstrace/clickhouse-operator>
+_  [artifact-hub] istio-operator: istio-operator manages Istio deployments on Kubernetes (pop 2, updated 2024-01)  <https://artifacthub.io/packages/helm/banzaicloud-stable/istio-operator>
+_  [artifact-hub] flagger: Flagger is a Kubernetes operator that automates the promotion of canary deployments using Istio, Linkerd, App Mesh, Gloo or NGINX routing for traffic shiftin... (updated 2021-09)  <https://artifacthub.io/packages/helm/mesosphere/flagger>
+
+== 077  a haskell library for parsing icalendar files
+
+_  [github] dakra/dmacs: Emacs Literate Configuration with borg (pop 124, updated 2026-10)  <https://github.com/dakra/dmacs>
+_  [hackage] haddock-library: Library exposing some functionality of Haddock.  <http://www.haskell.org/haddock/>
+_  [hackage] shunya-library: Initial project template from stack  <https://github.com/githubuser/shunya-library#readme>
+
+== 078  a command line tool that checks a bibliography for retracted papers
+
+_  [github] sunami-lab/citecheck: Claude Code plugin + standalone script that catches hallucinated references before submission: checks every cited .bib entry against Semantic Scholar, OpenAl... (pop 1, updated 2026-09)  <https://github.com/sunami-lab/citecheck>
+_  [npm] @sanity/workflow-cli: Command-line tool for deploying, inspecting, and administering Sanity workflow definitions and instances. (pop 1000000, updated 2026-10)  <https://www.npmjs.com/package/@sanity/workflow-cli>
+_  [pypi] ghostcite: Catch ghost citations — cross-check a bibliography's claimed author/year against CrossRef  <https://pypi.org/project/ghostcite/>
+
+== 079  a terminal ui for browsing oai-pmh metadata endpoints
+
+_  [crates-io] phig-cli: A fast, focused terminal Git history and diff browser (pop 56, updated 2026-09)  <https://crates.io/crates/phig-cli>
+_  [github] jinanshm/dspace-cli: REST API and CLI for DSpace 4-6 XMLUI repositories: search, item metadata and PDF links. (pop 0, updated 2026-10)  <https://github.com/jinanshm/dspace-cli>
+_  [pypi] oai-pmh-mcp: Uniwersalny serwer MCP dla protokołu OAI-PMH — odpytuj dowolne repozytorium (dLibra, DSpace, EPrints, PMC…) przez Model Context Protocol  <https://pypi.org/project/oai-pmh-mcp/>
+_  [github] asterixix/polish-academic-mcp: Polskie bazy wiedzy (od naukowych po dane statystyczne, prawne, meteorologiczne, normy oraz kulturowe) w postaci serwera MCP dla narzędzi AI oraz agentów. (pop 4, updated 2026-10)  <https://github.com/asterixix/polish-academic-mcp>
+_  [github] ikhwan-arief/ojs-oai-pmh-checker: Pemeriksa OAI-PMH untuk jurnal OJS dengan Streamlit, diagnosis harvestability, dan rekomendasi perbaikan. (pop 0, updated 2026-07)  <https://github.com/ikhwan-arief/ojs-oai-pmh-checker>
+_  [pypi] oaipmharvest: Highly configurable oai-harvester based on sickle.  <https://pypi.org/project/oaipmharvest/>
+
+== 080  a github action that fails a pull request if the changelog was not updated
+
+_  [pypi] mkdocs-github-changelog: mkdocs extension to autogenerate changelog from github  <https://pypi.org/project/mkdocs-github-changelog/>
+_  [hacker-news] Updated rate limits for unauthenticated requests: https://github.com/orgs/community/discussions/159123https://github.com/orgs/community/discussions/157887 (pop 108)  <https://news.ycombinator.com/item?id=43936992>
+_  [crates-io] verwalter: Changeset-based versioning for single packages and monorepos (pop 34, updated 2026-10)  <https://crates.io/crates/verwalter>
+_  [github] convco/convco: Conventional commits, changelog, versioning, validation (pop 330, updated 2026-10)  <https://github.com/convco/convco>
+_  [github] cycjimmy/semantic-release-action: GitHub Action for Semantic Release (pop 705, updated 2026-10)  <https://github.com/cycjimmy/semantic-release-action>
+_  [github] saadmk11/changelog-ci: Changelog CI is a GitHub Action that enables a project to automatically generate changelogs (pop 147, updated 2026-10)  <https://github.com/saadmk11/changelog-ci>
+_  [github] dependabot/dependabot-core: 🤖 Dependabot's core logic for creating update PRs. (pop 5830, updated 2026-10)  <https://github.com/dependabot/dependabot-core>
+
+== 081  a docker image that backs up postgres to s3 on a schedule
+
+_  [github] dokku/dokku-postgres: a postgres plugin for dokku (pop 525, updated 2026-10)  <https://github.com/dokku/dokku-postgres>
+_  [github] tbphp/gpt-load: Self-hosted AI gateway for multi-channel, multi-credential setups — API keys and subscription accounts, scheduling, failover, request logs and usage. 自托管 AI ... (pop 7187, updated 2026-10)  <https://github.com/tbphp/gpt-load>
+
+== 082  a php library to generate epub ebooks from markdown
+
+_  [github] maguowei/awesome-stars: My Awesome List (pop 656, updated 2026-10)  <https://github.com/maguowei/awesome-stars>
+_  [github] reHackable/awesome-reMarkable: A curated list of projects related to the reMarkable tablet (pop 7791, updated 2026-10)  <https://github.com/reHackable/awesome-reMarkable>
+_  [packagist] conde-nast-international/copilot-markdown-generator: Generator classes for Copilot-flavored Markdown tags. (pop 2525)  <https://packagist.org/packages/conde-nast-international/copilot-markdown-generator>
+_  [packagist] spaceonfire/simple-php-apidoc: Simple API documentation generator for your PHP library (pop 95)  <https://packagist.org/packages/spaceonfire/simple-php-apidoc>
+_  [github] JuanPabloDiaz/freeForGeeks: Stop searching, start building. Free resources for developers. 🚀 Backup demo: https://freeforgeeks.netlify.app (pop 72, updated 2026-10)  <https://github.com/JuanPabloDiaz/freeForGeeks>

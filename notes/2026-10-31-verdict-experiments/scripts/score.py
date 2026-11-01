@@ -232,7 +232,13 @@ RR_OURS = ("The Query is an idea for a software tool; the Document describes a p
 RR_DOC_CHARS = 2000
 
 
-def make_qwen3_rr(instruction):
+def make_qwen3_rr(instruction, reuse_prefix=True):
+    """The model card's recipe. With reuse_prefix, the part of the prompt
+    that all of an idea's candidates share (system, instruction, idea) is
+    run once per idea and its key-value cache reused; the candidates are
+    right-padded and read at their last token. Same scores, a third of the
+    time."""
+    import copy
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
     repo = "Qwen/Qwen3-Reranker-0.6B"
@@ -240,24 +246,52 @@ def make_qwen3_rr(instruction):
     tok = AutoTokenizer.from_pretrained(path, padding_side="left")
     model = AutoModelForCausalLM.from_pretrained(path, dtype=torch.float32).eval()
     yes, no = tok.convert_tokens_to_ids("yes"), tok.convert_tokens_to_ids("no")
-    pre, suf = tok.encode(RR_PREFIX, add_special_tokens=False), tok.encode(RR_SUFFIX, add_special_tokens=False)
+    enc = lambda s: tok.encode(s, add_special_tokens=False)
+    pre, suf = enc(RR_PREFIX), enc(RR_SUFFIX)
 
-    def score(idea, texts):
+    def score_plain(idea, texts):
         bodies = [f"<Instruct>: {instruction}\n<Query>: {idea}\n<Document>: {t[:RR_DOC_CHARS]}"
                   for t in texts]
-        ids = [pre + tok.encode(b, add_special_tokens=False) + suf for b in bodies]
+        ids = [pre + enc(b) + suf for b in bodies]
         out = [0.0] * len(ids)
         order = sorted(range(len(ids)), key=lambda i: len(ids[i]))
         for k in range(0, len(order), 16):
             batch = order[k:k + 16]
-            enc = tok.pad({"input_ids": [ids[i] for i in batch]}, padding=True, return_tensors="pt")
+            padded = tok.pad({"input_ids": [ids[i] for i in batch]}, padding=True, return_tensors="pt")
             with torch.inference_mode():
-                logits = model(**enc).logits[:, -1, :]
+                logits = model(**padded).logits[:, -1, :]
             for i, d in zip(batch, (logits[:, yes] - logits[:, no]).tolist()):
                 out[i] = d
         return out
+
+    def score_cached(idea, texts):
+        # The split is at "<Document>:" so that " " + the text tokenizes as
+        # it does in the whole prompt.
+        head = pre + enc(f"<Instruct>: {instruction}\n<Query>: {idea}\n<Document>:")
+        tails = [enc(" " + t[:RR_DOC_CHARS]) + suf for t in texts]
+        with torch.inference_mode():
+            cache = model(torch.tensor([head]), use_cache=True).past_key_values
+        out = [0.0] * len(tails)
+        order = sorted(range(len(tails)), key=lambda i: len(tails[i]))
+        for k in range(0, len(order), 16):
+            batch = order[k:k + 16]
+            lens = [len(tails[i]) for i in batch]
+            ids = torch.full((len(batch), max(lens)), tok.pad_token_id)
+            mask = torch.zeros((len(batch), len(head) + max(lens)), dtype=torch.long)
+            mask[:, :len(head)] = 1
+            for row, i in enumerate(batch):
+                ids[row, :lens[row]] = torch.tensor(tails[i])
+                mask[row, len(head):len(head) + lens[row]] = 1
+            c = copy.deepcopy(cache)
+            c.batch_repeat_interleave(len(batch))
+            with torch.inference_mode():
+                logits = model(input_ids=ids, attention_mask=mask, past_key_values=c).logits
+            last = logits[torch.arange(len(batch)), torch.tensor(lens) - 1]
+            for i, d in zip(batch, (last[:, yes] - last[:, no]).tolist()):
+                out[i] = d
+        return out
     which = "default" if instruction == RR_WEB else "our"
-    return score, f"{repo}, {which} instruction", rev
+    return (score_cached if reuse_prefix else score_plain), f"{repo}, {which} instruction", rev
 
 
 SCORERS = {

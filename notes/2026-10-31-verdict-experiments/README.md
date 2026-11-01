@@ -61,8 +61,9 @@ The problem has two parts:
 | `scripts/record.sh` | runs silt on every idea, once; `make record` |
 | `data/runs.jsonl` | one line per idea: silt's JSON output with every candidate, twice (embeddings, keyword-only) |
 | `scripts/e1.py` | summary of the data; `make e1` writes `results/e1-*.tsv` |
-| `scripts/labelsheet.py` | writes a labelling sheet; `make sheets` |
+| `scripts/labelsheet.py` | writes a labelling sheet; `make sheets`, and round 2: `make round2` |
 | `labels/human.txt`, `labels/claude.txt` | labelling sheets: a sample of 12 ideas for a person, every idea for Claude |
+| `labels/claude-round2.txt` | round 2: the scorers' top 5 that round 1 didn't list, matches only |
 | `scripts/labels.py` | reads the sheets, checks them, reports the agreement; `make labels` |
 | `data/pairs.tsv` | one line per labelled match: idea id, URL, label, labeller, note |
 | `data/levels.tsv` | one line per level: idea id, level, labeller, the y/p/n counts, the level the y count gives |
@@ -408,6 +409,8 @@ writes `scores/<scorer>.tsv`, with the model revisions in
 | nli-minilm, nli-deberta | cross-encoder/nli-MiniLM2-L6-H768 and nli-deberta-v3-small: P(entailment) of "This software is {idea}." given the candidate | CPU |
 | qwen3-embed | Qwen3-Embedding-0.6B (Ollama, `qwen3-embedding:0.6b`), with an instruction on the query: "Given a description of a software tool, retrieve packages and repositories that implement it" | strix GPU |
 | qwen3-reranker | Qwen3-Reranker-0.6B (llama-swap, `/v1/rerank`), the idea as the query, llama.cpp's own instruction | strix GPU |
+| qwen3-embed-plain | qwen3-embed without the instruction: the idea alone (check 1, below) | strix GPU |
+| qwen3-rr-ours | Qwen/Qwen3-Reranker-0.6B with transformers, by the model card's recipe (log P(yes) − log P(no)), with an instruction of our own (check 2, below) | CPU |
 
 ### Results
 
@@ -417,10 +420,12 @@ the share of resamples in which the scorer's AUC is above the cosine's.
 
 | scorer | AUC, y vs p+n | beats cosine | AUC, y+p vs n | beats cosine | AUC within an idea (y) | NDCG@10 | unlabelled in top 10 | ms per 50 matches |
 |---|---|---|---|---|---|---|---|---|
+| qwen3-rr-ours | 0.877 (0.85–0.90) | 1.00 | 0.886 (0.85–0.92) | 1.00 | 0.848 | 0.844 | 1.9 | 8,480 (CPU) |
 | qwen3-embed | 0.842 (0.80–0.88) | 0.79 | 0.851 (0.81–0.89) | 0.98 | 0.847 | 0.855 | 1.9 | 1,130 (GPU) |
 | qwen3-reranker | 0.839 (0.80–0.87) | 0.80 | 0.850 (0.81–0.89) | 0.98 | 0.805 | 0.829 | 1.9 | 540 (GPU) |
 | cosine | 0.823 (0.79–0.86) | | 0.808 (0.76–0.85) | | 0.781 | 0.776 | 0.0 | 470 (minilm) |
 | e5-small | 0.808 | 0.14 | 0.790 | 0.13 | 0.731 | 0.739 | 1.5 | 940 |
+| qwen3-embed-plain | 0.795 (0.74–0.85) | 0.15 | 0.812 (0.76–0.86) | 0.57 | 0.840 | 0.848 | 2.0 | 1,220 (GPU) |
 | nli-deberta | 0.784 | 0.02 | 0.765 | 0.03 | 0.717 | 0.721 | 4.2 | 2,220 |
 | bge-small | 0.777 | 0.00 | 0.768 | 0.01 | 0.739 | 0.741 | 1.4 | 900 |
 | ms-marco | 0.760 | 0.00 | 0.733 | 0.00 | 0.707 | 0.719 | 1.4 | 570 |
@@ -440,8 +445,10 @@ the package's rank under each scorer (`results/e3-targets.tsv`).
 
 | scorer | first | top 5 | top 15 | median rank |
 |---|---|---|---|---|
+| qwen3-rr-ours | 6 | 15 | 17 | 3 |
 | qwen3-embed | 5 | 12 | 17 | 3 |
 | qwen3-reranker | 5 | 11 | 16 | 3 |
+| qwen3-embed-plain | 4 | 11 | 16 | 3 |
 | cosine | 3 | 10 | 14 | 3 |
 | bge-small | 3 | 9 | 14 | 5.5 |
 | ms-marco | 3 | 8 | 11 | 6.5 |
@@ -452,13 +459,15 @@ the package's rank under each scorer (`results/e3-targets.tsv`).
 
 ### What E3 shows
 
-- **Only the two Qwen3 models beat the cosine.** Their AUC is 0.84 to
-  0.85, against 0.81 to 0.82. For y+p against n they beat it in 98% of
-  the resamples; for y against p+n in 80%, which isn't settled. The
-  ranking within an idea gains more (0.85 and 0.81 against 0.78), and
-  both put the reworded package in the top 15 more often (17 and 16 of
-  18, against 14). They are also the largest models here: 0.6B
-  parameters against 22M to 140M.
+- **Only the Qwen3 models beat the cosine.** As first run, with their
+  usual instructions, their AUC is 0.84 to 0.85, against 0.81 to 0.82.
+  For y+p against n they beat it in 98% of the resamples; for y against
+  p+n in 80%, which isn't settled. The ranking within an idea gains more
+  (0.85 and 0.81 against 0.78), and both put the reworded package in the
+  top 15 more often (17 and 16 of 18, against 14). They are also the
+  largest models here: 0.6B parameters against 22M to 140M. The reranker
+  with an instruction of our own does better still (the two checks,
+  below).
 - **What they do differently.** 034 (load a .env file in a node app): the
   reranker scores cross-env, which sets variables but reads no `.env`,
   0.10, and react-env 0.15; every Node dotenv package scores 0.97 or
@@ -496,19 +505,64 @@ the package's rank under each scorer (`results/e3-targets.tsv`).
   Qwen3 model fits silt's pure-Go path; both need a model server. silt
   already talks to Ollama, which serves Qwen3-Embedding.
 
+### The two checks
+
+**1. Qwen3-Embedding without its instruction** (qwen3-embed-plain). The
+idea alone as the query. Within an idea it ranks as well as with the
+instruction (0.840 against 0.847; NDCG@10 0.848 against 0.855), but over
+all ideas its AUC falls to the cosine's or below (0.795 against 0.842 for
+y against p+n). So the instruction doesn't change which of an idea's
+matches come first; it makes the scores of different ideas comparable,
+which is what a threshold, and so a level, needs. Scores normalised
+within an idea might do the same for any scorer (E4).
+
+**2. Qwen3-Reranker with our own instruction** (qwen3-rr-ours). The
+rerank endpoint on strix takes no instruction. The reranker was run here
+instead, with transformers and the model card's prompt:
+
+> The Query is an idea for a software tool; the Document describes a
+> piece of software. Judge whether the software implements the idea: it
+> is such a tool, or does the same job in another form. Software that is
+> only on the same topic, works with the same data, or does the job for
+> another language or platform does not.
+
+That is the round-2 meaning of y, written as an instruction. As a
+control, the same local code with the default instruction scored idea
+034 like strix (Spearman 0.998, the same probabilities to three
+decimals): llama.cpp applies the model card's template, and the Q8 GGUF
+on strix and the full-precision model here agree.
+
+The instruction is worth 4 AUC points on the same model: 0.877 against
+0.839 for y against p+n, 0.886 against 0.850 for y+p against n. It
+beats the cosine in every resample on both tasks. On the 10 ideas both
+labellers labelled, y against p+n gives 0.83 with Claude's labels and
+0.84 with the person's, against the cosine's 0.78 with either; only for
+y+p against n with the person's labels does the cosine stay ahead (0.86
+against 0.85). It also ranks the reworded package highest of all the
+scorers: first for 6 of 18, in the top 5 for 15. Its scores are
+somewhat closer to probabilities than the default's: 28% of the n score
+above 0.5 (default: 38%), 13% above 0.9 (25%).
+
+Two caveats. The instruction was written after round 1, from the labels'
+own definition of y, so part of its edge may be agreement with that
+definition rather than a better judge; round 2's labels, and the
+person's, are the check. And it ran on this laptop's CPU in fp32: 8.5 s
+per 50 matches, with the part of the prompt an idea's candidates share
+computed once per idea (4.7 times faster on 034, with the same scores to
+2e-5). On a GPU it would cost what the strix reranker does, but
+llama.cpp's rerank endpoint can't take the instruction; it would need a
+GGUF with our template, or a server that returns the yes/no logits.
+
 **What this means:**
 
-- One family is worth taking further: Qwen3, embedding or reranker. All
-  the small models that could run in silt's Go code do worse than the
-  cosine it already has.
-- The win is small next to the noise: 2 to 4 AUC points, where the
-  labellers agree on 83 to 85% of matches. Round 2 has to label what the
-  Qwen3 models rank high before it counts.
-- Two cheap checks before round 2: whether Qwen3-Embedding's instruction
-  matters (run it without), and whether the reranker does better with an
-  instruction of our own ("does this software implement the idea?")
-  than with llama.cpp's web-search default. The reranker endpoint doesn't
-  take one, so that needs a raw prompt with the yes/no logprobs.
+- One model is worth taking further: Qwen3-Reranker with an instruction
+  that says what "implements" means. Qwen3-Embedding with its instruction
+  is close behind and runs on the Ollama silt already talks to. All the
+  small models that could run in silt's Go code do worse than the cosine
+  it already has.
+- The win over the cosine is 5 to 8 AUC points with our instruction, 2
+  to 4 without, where the labellers agree on 83 to 85% of matches. Round
+  2 has to label what the Qwen3 models rank high before it counts.
 
 ## Status and next steps
 
@@ -531,6 +585,10 @@ As of 2026-11-01.
   ported to Go (the cross-encoder can reuse `internal/minilm`).
 - **LLM baseline (E2):** qwen3.5:9b (silt's default) and qwen3.5-122b on
   the homelab GPU (strix), all 87 ideas.
+- **p, from round 2 on** (2026-11-01): the person's meaning. A variant
+  that does the job in another form is y, the same job in another
+  language or platform is n, a nearby tool on the same data is p. Written
+  into the round-2 sheet's header; round-1 labels stay as they were.
 - **Location:** this directory; generated tables in `results/`.
 
 ### Done
@@ -554,20 +612,25 @@ As of 2026-11-01.
 - E3 on the round-1 labels (above): eleven scorers over all 8,747
   candidates; only Qwen3-Embedding and Qwen3-Reranker beat the cosine.
 
+- E3's two checks (above): Qwen3-Embedding without its instruction, and
+  Qwen3-Reranker with an instruction of our own, which is the best scorer
+  so far.
+- The round-2 sheet, `labels/claude-round2.txt` (`make round2`): 348
+  matches of 69 ideas, the top 5 of the 13 scorers that round 1 didn't
+  list. Its header gives p the meaning decided after round 1.
+  `scripts/labels.py` reads `<labeller>-round2.txt` sheets as round 2 of
+  that labeller (a `round` column in `data/pairs.tsv`, no levels) and
+  keeps the agreement on round 1.
+
 ### Next
 
-1. **E3, the two checks** at the end of E3: Qwen3-Embedding without its
-   instruction, and the reranker with an instruction of our own (raw
-   prompt, yes/no logprobs).
-2. **Labels, round 2.** Each scorer's top 5 per idea that round 1 didn't
-   cover gets labelled too, so that no scorer is judged only on the
-   cosine's picks; then `make e3` again. To decide first: one meaning of
-   p, written into the sheet header. Round 1 and E3 both suggest the
-   person's: a variant that does the job in another form is y, the same
-   job in another language is n, a nearby tool on the same data is p.
+1. **Labels, round 2.** Label `labels/claude-round2.txt` blind: in a new
+   session that hasn't seen the scorers' results (this one has, and wrote
+   the reranker's instruction). Then `make labels` and `make e3` again;
+   report E3 on both rounds, and on round 1 alone for comparison.
    Round-1 labels stay as they are, so the agreement above keeps
    measuring blind labels.
-3. **E4, aggregators.** Features per idea from the best E3 scorer (see the
+2. **E4, aggregators.** Features per idea from the best E3 scorer (see the
    verdict note, "(b) Aggregation into a level"); refit floor, ordinal
    logistic regression, depth-3 tree; leave-one-out cross-validation; the
    floor stays a lower bound. Report confusion matrices, QWK and false
@@ -619,3 +682,10 @@ As of 2026-11-01.
   `qwen3-reranker` on llama-swap and `qwen3-embedding:0.6b` on Ollama.
 - uv runs `scripts/score.py` under Python 3.12; the other scripts run
   under the system's `python3 -I`.
+- `uv run scripts/score.py --labelled SCORER` scores only the labelled
+  matches, for a quick AUC from a slow scorer; `e3.py` then leaves out
+  its top 10 and the packages' ranks. qwen3-rr-ours takes ~25 minutes for
+  all candidates on this laptop.
+- `scripts/labels.py` given a sheet writes `data/pairs.tsv` and
+  `data/levels.tsv` from that sheet alone. Run it without arguments
+  (`make labels`) to keep every sheet's labels in them.
