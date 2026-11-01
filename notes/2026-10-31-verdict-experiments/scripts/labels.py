@@ -13,8 +13,11 @@ Writes
 
 and prints the checks and the agreement. A match still marked "_" is left
 out of pairs.tsv; an idea without a level is left out of levels.tsv. The
-labeller is the sheet's name, "human" for labels/human.txt. Run from the
-experiment directory.
+labeller is the sheet's name, "human" for labels/human.txt. A sheet named
+<labeller>-round2.txt holds that labeller's matches of round 2: pairs.tsv
+gets them with round 2, and it has no levels. The agreement counts round 1
+only, so that it keeps measuring blind labels. Run from the experiment
+directory.
 """
 
 import collections
@@ -39,12 +42,18 @@ def from_y(y):
 
 def parse(path):
     """Returns (pairs, levels, problems) of one sheet."""
-    who = os.path.splitext(os.path.basename(path))[0]
+    who, _, rnd = os.path.splitext(os.path.basename(path))[0].partition("-round")
+    rnd = int(rnd or 1)
     pairs, levels, problems = [], [], []
     idea, level = None, None
 
     def close():
         if idea is None:
+            return
+        if rnd > 1:
+            got = sum(p["label"] == "_" for p in pairs if p["idea"] == idea)
+            if got:
+                problems.append(f"{who} round {rnd} {idea}: {got} match(es) not labelled")
             return
         got = collections.Counter(p["label"] for p in pairs if p["idea"] == idea)
         row = {"idea": idea, "level": level[0] if level else "", "labeller": who,
@@ -77,7 +86,7 @@ def parse(path):
                     problems.append(f"{path}:{n}: unknown label {label!r}")
                     continue
                 pairs.append({"idea": idea, "url": m.group(2), "label": label,
-                              "labeller": who, "note": m.group(3) or ""})
+                              "labeller": who, "note": m.group(3) or "", "round": rnd})
             else:
                 problems.append(f"{path}:{n}: not understood: {line[:60]}")
     close()
@@ -162,10 +171,10 @@ def main():
         print("  " + pr, file=sys.stderr)
 
     write("data/pairs.tsv", [p for p in pairs if p["label"] != "_"],
-          ["idea", "url", "label", "labeller", "note"])
+          ["idea", "url", "label", "labeller", "note", "round"])
     write("data/levels.tsv", levels,
           ["idea", "level", "labeller", "y", "p", "n", "unlabelled", "from_y", "note"])
-    rows, text = agreement(pairs, levels)
+    rows, text = agreement([p for p in pairs if p["round"] == 1], levels)
     os.makedirs("results", exist_ok=True)
     write("results/labels-agreement.tsv", rows, ["labellers", "measure", "n", "agree", "kappa"])
     if rows:
