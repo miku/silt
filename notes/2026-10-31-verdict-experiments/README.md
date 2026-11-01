@@ -65,7 +65,7 @@ The problem has two parts:
 | `labels/human.txt`, `labels/claude.txt` | labelling sheets: a sample of 12 ideas for a person, every idea for Claude |
 | `labels/claude-round2.txt` | round 2: the scorers' top 5 that round 1 didn't list, matches only |
 | `scripts/labels.py` | reads the sheets, checks them, reports the agreement; `make labels` |
-| `data/pairs.tsv` | one line per labelled match: idea id, URL, label, labeller, note |
+| `data/pairs.tsv` | one line per labelled match: idea id, URL, label, labeller, note, round |
 | `data/levels.tsv` | one line per level: idea id, level, labeller, the y/p/n counts, the level the y count gives |
 | `results/labels-agreement.tsv` | agreement between labellers, per match and per level |
 | `scripts/prompts/` | writes silt's verdict prompt for every idea, from the recording; `make prompts` |
@@ -77,7 +77,7 @@ The problem has two parts:
 | `scripts/score.py` | scores every candidate with E3's per-match scorers; `make scores` (uv) |
 | `scores/<scorer>.tsv` | one line per candidate: idea, URL, score, ms; `scores/runs.tsv`: model, revision, time |
 | `scripts/e3.py` | compares the scorers with the match labels; `make e3` |
-| `results/e3-*.tsv` | per scorer, labeller and task (AUC, NDCG@10, time); the reworded packages' ranks |
+| `results/e3-*.tsv` | per scorer, labeller, rounds and task (AUC, NDCG@10, precision in the top 5, time); the reworded packages' ranks |
 
 ## E1: the data set
 
@@ -386,9 +386,10 @@ On the person's 11 ideas, only the keyword floor gives false Opens (3 of
 - 072, 079 and 080, where the LLM said Open over the floor and was right,
   are the cases a good E3 scorer should get right.
 
-## E3: per-match scorers, round-1 labels
+## E3: per-match scorers
 
-Run 2026-11-01. Each scorer scores every candidate of every idea: 8,747,
+Run 2026-11-01, on round 1's labels and then on rounds 1 and 2
+([Round 2](#round-2), below). Each scorer scores every candidate of every idea: 8,747,
 the matches of both recorded runs. The text of a candidate is what silt
 embeds, "name: description" (`rank/ranker.go`). An idea's candidates are
 scored in one batch, as silt would score them. `make scores` runs
@@ -412,10 +413,10 @@ writes `scores/<scorer>.tsv`, with the model revisions in
 | qwen3-embed-plain | qwen3-embed without the instruction: the idea alone (check 1, below) | strix GPU |
 | qwen3-rr-ours | Qwen/Qwen3-Reranker-0.6B with transformers, by the model card's recipe (log P(yes) − log P(no)), with an instruction of our own (check 2, below) | CPU |
 
-### Results
+### Results, round 1
 
-Against Claude's labels: 1,224 matches of 75 ideas, 334 y, 282 p, 608
-n. In brackets, the 95% interval from resampling ideas. "Beats cosine" is
+Against Claude's round-1 labels: 1,224 matches of 75 ideas, 334 y, 282 p,
+608 n. In brackets, the 95% interval from resampling ideas. "Beats cosine" is
 the share of resamples in which the scorer's AUC is above the cosine's.
 
 | scorer | AUC, y vs p+n | beats cosine | AUC, y+p vs n | beats cosine | AUC within an idea (y) | NDCG@10 | unlabelled in top 10 | ms per 50 matches |
@@ -457,7 +458,7 @@ the package's rank under each scorer (`results/e3-targets.tsv`).
 | nli-deberta | 2 | 6 | 12 | 11.5 |
 | idf, keyword | 1 | 4, 2 | 9 | 18.5 |
 
-### What E3 shows
+### What round 1 shows
 
 - **Only the Qwen3 models beat the cosine.** As first run, with their
   usual instructions, their AUC is 0.84 to 0.85, against 0.81 to 0.82.
@@ -564,6 +565,114 @@ GGUF with our template, or a server that returns the yes/no logits.
   to 4 without, where the labellers agree on 83 to 85% of matches. Round
   2 has to label what the Qwen3 models rank high before it counts.
 
+### Round 2
+
+Labelled 2026-11-01, blind: in a new session that had seen no score, none
+of the results above and not the person's labels. `labels/claude-round2.txt`
+lists every scorer's top 5 that round 1 didn't list, 348 matches of 69
+ideas, and gives p its round-2 meaning (the same job in another form is y,
+the same job for another language or platform is n, a nearby tool on the
+same data is p). 346 are labelled: 37 y, 37 p, 272 n. Two are not (057,
+080): their pages didn't load and their descriptions don't decide.
+
+`scripts/e3.py` now writes a row for each round and for both together
+(`rounds` in `results/e3-scorers.tsv`); its round-1 rows are the table
+above, unchanged. It also reports the share of positives in each scorer's
+top 5 among all of an idea's candidates, which round 2 makes meaningful:
+every scorer's top 5 is now labelled, except where keyword and idf tie at
+the fifth place (see Things to know).
+
+Both rounds, against Claude's labels: 1,570 matches of 75 ideas, 371 y,
+319 p, 880 n.
+
+| scorer | AUC, y vs p+n | beats cosine | AUC, y+p vs n | beats cosine | AUC within an idea (y) | NDCG@10 | y in top 5 | y+p in top 5 | unlabelled in top 10 |
+|---|---|---|---|---|---|---|---|---|---|
+| qwen3-rr-ours | 0.883 (0.85–0.91) | 1.00 | 0.891 (0.86–0.92) | 1.00 | 0.853 | 0.813 | 0.51 | 0.75 | 0.8 |
+| qwen3-embed | 0.856 (0.82–0.89) | 0.92 | 0.862 (0.82–0.89) | 0.99 | 0.842 | 0.843 | 0.48 | 0.74 | 0.9 |
+| qwen3-reranker | 0.847 (0.81–0.88) | 0.84 | 0.856 (0.82–0.89) | 0.96 | 0.812 | 0.797 | 0.48 | 0.73 | 0.8 |
+| cosine | 0.826 (0.79–0.86) | | 0.821 (0.78–0.86) | | 0.749 | 0.729 | 0.45 | 0.69 | 0.0 |
+| e5-small | 0.813 | 0.18 | 0.798 | 0.07 | 0.724 | 0.681 | 0.42 | 0.65 | 0.8 |
+| qwen3-embed-plain | 0.813 (0.76–0.86) | 0.31 | 0.826 (0.78–0.87) | 0.61 | 0.834 | 0.832 | 0.47 | 0.74 | 1.0 |
+| bge-small | 0.791 | 0.01 | 0.783 | 0.01 | 0.721 | 0.682 | 0.43 | 0.66 | 0.8 |
+| nli-deberta | 0.766 | 0.00 | 0.740 | 0.00 | 0.693 | 0.627 | 0.35 | 0.56 | 2.2 |
+| idf | 0.755 | 0.00 | 0.758 | 0.00 | 0.633 | 0.627 | 0.34 | 0.56 | 1.3 |
+| ms-marco | 0.752 | 0.00 | 0.729 | 0.00 | 0.691 | 0.658 | 0.41 | 0.63 | 0.5 |
+| nli-minilm | 0.732 | 0.00 | 0.687 | 0.00 | 0.661 | 0.613 | 0.35 | 0.52 | 1.7 |
+| keyword | 0.728 | 0.00 | 0.717 | 0.00 | 0.610 | 0.570 | 0.29 | 0.50 | 1.8 |
+
+Round 2 alone: the 346 matches the cosine didn't put in its top 15,
+labelled blind.
+
+| scorer | AUC, y vs p+n | beats cosine | AUC, y+p vs n | beats cosine |
+|---|---|---|---|---|
+| qwen3-embed | 0.873 (0.81–0.93) | 0.99 | 0.850 (0.79–0.91) | 1.00 |
+| qwen3-rr-ours | 0.868 (0.79–0.93) | 0.99 | 0.867 (0.81–0.92) | 1.00 |
+| qwen3-embed-plain | 0.838 (0.77–0.90) | 0.98 | 0.816 (0.75–0.88) | 0.98 |
+| qwen3-reranker | 0.829 (0.73–0.92) | 0.90 | 0.827 (0.75–0.89) | 0.99 |
+| cosine | 0.762 (0.66–0.85) | | 0.748 (0.66–0.82) | |
+| the other seven | 0.58 to 0.75 | 0.00 to 0.34 | 0.56 to 0.73 | 0.00 to 0.25 |
+
+### What round 2 shows
+
+- **The Qwen3 lead holds on blind labels.** On round 2 alone, matches
+  the cosine ranks below its 15th and labelled without seeing a score,
+  the four Qwen3 scorers reach 0.83 to 0.87 for y against p+n, against
+  the cosine's 0.76, and beat it in 90 to 99% of the resamples. Pooled
+  with round 1, every AUC moves by 0.03 or less, and the first four keep
+  their order on both tasks. Qwen3-Embedding now
+  beats the cosine in 92% of the resamples for y against p+n (79% on
+  round 1), the default reranker in 84% (80%).
+- **Our instruction's edge over Qwen3-Embedding doesn't survive the blind
+  labels.** On round 1 qwen3-rr-ours led qwen3-embed by 3.5 points for y
+  against p+n (0.877 against 0.842); on round 2 alone the two are level
+  (0.868 against 0.873, intervals 0.79–0.93 and 0.81–0.93). It stays
+  ahead of the same model with llama.cpp's instruction (0.829). So the
+  caveat above holds in part: some of round 1's edge was agreement with
+  the definition the instruction was written from.
+- **At the top of the list the gain is small.** In the top 5, 51% of
+  qwen3-rr-ours's picks are y, 48% of the other two Qwen3 models', and 45%
+  of the cosine's (y+p: 75, 74, 73 against 69%). The AUC gain is larger
+  (0.88 against 0.83) because it counts every labelled match: the Qwen3
+  models push the n further down and, with their instruction, make the
+  scores of different ideas comparable (check 1). That is what a level
+  built on a threshold needs. For the first five, the cosine already gets
+  most of the ranking right.
+- **NDCG@10 fell for every scorer** (by 0.01 to 0.10): round 2 added n
+  that the other scorers rank high, and y and p that the cosine ranks
+  low. Qwen3-Embedding has the highest (0.843).
+- **What each scorer brought.** Of the top-5 picks that round 1 hadn't
+  listed, each of the Qwen3 models with an instruction had 36 to 41, of
+  which 9 or 10 were y. nli-deberta had 125: 15 y, 16 p and 92 n. Twelve
+  of round 2's 37 y were in nli-deberta's top 5 and in no Qwen3 scorer's.
+  The labels still miss implementations further down the lists: AUC
+  doesn't care about that, but a count of y does (E4). (Counted from
+  `data/pairs.tsv` and `scores/`, not by `e3.py`.)
+- **Four ideas labelled Open have an implementation among their
+  candidates**, and the Qwen3 models rank it high:
+
+  | idea | implementation | cosine | qwen3-embed | qwen3-reranker | qwen3-rr-ours |
+  |---|---|---|---|---|---|
+  | 032 (Japanese: kill the process on a port) | okamyuji/devpulse, a TUI whose `K` ends it | 48 of 63 | 1 | 1 | 1 |
+  | 052 (convert between markdown, latex, word) | jgm/pandoc | 23 of 87 | 6 | 11 | 3 |
+  | 060 (self-hosted, Bitwarden-compatible) | lj5645/FlexVault, Workers or Node, not Docker | 46 of 68 | 1 | 4 | 4 |
+  | 079 (browse OAI-PMH endpoints) | oai-pmh-mcp, an MCP server | 47 of 117 | 5 | 6 | 21 |
+
+  Round 1 set these levels from what it listed, the cosine's top 15 and
+  the keyword score's top 5 ("pandoc didn't turn up"). With round 2's y counted, 4 of the 14 Opens
+  have one; 047 (4 y to 5) and 064 (4 to 7) cross into Saturated by the
+  y count. E2 counted the LLM's Open on 079 as correct.
+
+**What this means:**
+
+- Qwen3-Embedding with its instruction and Qwen3-Reranker with ours are
+  the two scorers worth taking into E4. They are level on the blind
+  labels; Qwen3-Embedding runs on the Ollama silt already talks to, the
+  reranker with our instruction needs a server that takes it.
+- The levels were judged on the cosine's top 15. A scorer that ranks
+  every candidate finds implementations that list didn't show, so E4
+  needs levels that say what the candidates hold, or it counts finding
+  pandoc as a mistake.
+
 ## Status and next steps
 
 As of 2026-11-01.
@@ -621,21 +730,31 @@ As of 2026-11-01.
   `scripts/labels.py` reads `<labeller>-round2.txt` sheets as round 2 of
   that labeller (a `round` column in `data/pairs.tsv`, no levels) and
   keeps the agreement on round 1.
+- Labels, round 2 (above): Claude's round-2 sheet, labelled blind in a
+  new session; 346 of 348 matches (37 y, 37 p, 272 n).
+- E3 on both rounds (above): `scripts/e3.py` reports each round alone and
+  both together (`rounds`), and the share of positives in each scorer's
+  top 5. The Qwen3 lead holds on the blind labels; there, our
+  instruction's edge over Qwen3-Embedding is gone. E3 is done.
 
 ### Next
 
-1. **Labels, round 2.** Label `labels/claude-round2.txt` blind: in a new
-   session that hasn't seen the scorers' results (this one has, and wrote
-   the reranker's instruction). Then `make labels` and `make e3` again;
-   report E3 on both rounds, and on round 1 alone for comparison.
-   Round-1 labels stay as they are, so the agreement above keeps
-   measuring blind labels.
-2. **E4, aggregators.** Features per idea from the best E3 scorer (see the
-   verdict note, "(b) Aggregation into a level"); refit floor, ordinal
-   logistic regression, depth-3 tree; leave-one-out cross-validation; the
-   floor stays a lower bound. Report confusion matrices, QWK and false
-   Opens against the floor, which E2 sets as the bar: 2 false Opens in 61,
-   QWK 0.44, 10 of 14 Opens missed.
+1. **Levels after round 2.** Round 2 found an implementation among the
+   candidates of 4 of the 14 Opens (032, 052, 060, 079), and takes 047
+   and 064 past 5 y. Decide what E4 aims at: the levels as labelled
+   (judged on round 1's list) or levels revised to what the candidates
+   hold. The proposal: keep `level` as it is, so the agreement keeps
+   measuring blind labels, and add a revised level beside it, as
+   `from_y` is; let `from_y` count both rounds' y. The E2 bar would then
+   need recounting against the revised levels (079 was one of the LLM's
+   correct Opens).
+2. **E4, aggregators.** Features per idea from Qwen3-Embedding and from
+   Qwen3-Reranker with our instruction, level on round 2 (see the verdict
+   note, "(b) Aggregation into a level"); refit floor, ordinal logistic
+   regression, depth-3 tree; leave-one-out cross-validation; the floor
+   stays a lower bound. Report confusion matrices, QWK and false Opens
+   against the floor, which E2 sets as the bar: 2 false Opens in 61, QWK
+   0.44, 10 of 14 Opens missed (against the levels as labelled).
 
 ### Things to know
 
@@ -654,9 +773,14 @@ As of 2026-11-01.
 - `labelsheet.py` never overwrites a sheet; delete one to regenerate it
   (only if it holds no labels).
 - `make labels` lists the 213 unlabelled matches of Claude's 12 vague ideas
-  among its checks; that is expected.
-- The session that labelled Claude's sheet has since seen the person's
-  labels. If round 2 needs a blind Claude sheet, start a new session.
+  among its checks, and round 2's two (057, 080); that is expected.
+- The session that labelled Claude's round-1 sheet has since seen the
+  person's labels; round 2 was labelled in a new session, which has since
+  seen the results. A further blind round needs a new session again.
+- In keyword and idf many candidates tie at the fifth place (81 and 55
+  ideas). `e3.py` breaks ties by URL, the round-2 sheet broke them
+  otherwise, so 66 of their top-5 picks are unlabelled and count as
+  negative: their share in the top 5 is a lower bound.
 - `data/runs.jsonl` is 4.2 MB; gzip it if that is too big for the
   repository (the scripts then need to read the .gz).
 - `data/prompts.jsonl` is built once and kept (`make prompts` never

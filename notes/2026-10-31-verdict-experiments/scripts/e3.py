@@ -184,12 +184,14 @@ def main():
             return cache[name, task]
 
         for name, sc in scorers.items():
-            # The scorer's order of all of an idea's candidates.
+            # The scorer's order of all of an idea's candidates. Ties keep
+            # the file's order, which is the cosine's, as labelsheet.py's
+            # round 2 does.
             cands = collections.defaultdict(list)
             for (idea, url), v in sc["score"].items():
                 if idea in by_idea:
                     cands[idea].append((v, url))
-            top = {i: [u for _, u in sorted(cands[i], reverse=True)] for i in ideas}
+            top = {i: [u for _, u in sorted(cands[i], key=lambda x: -x[0])] for i in ideas}
             covered = whole and not sc["partial"]
             unjudged = [sum((i, u) not in label_of for u in top[i][:10]) for i in ideas]
             nd = [ndcg([l for _, l in sorted(scored(name, i), key=lambda x: -x[0])]) for i in ideas]
