@@ -18,7 +18,9 @@ labeller and task:
     ndcg10        graded (y 2, p 1, n 0), over the labelled matches only
                   (a condensed list), averaged over ideas
     unjudged10    unlabelled candidates in the scorer's top 10, averaged
-                  over ideas: how far round 1's labels cover its picks
+                  over ideas: how far round 1's labels cover its picks;
+                  blank for a scorer run on the labelled matches only
+                  (score.py --labelled)
     ms50          median time for an idea with 50 matches
 
 and prints the rows of Claude's labels. A candidate without a score (the
@@ -110,6 +112,8 @@ def targets(scorers):
                 continue
             row = {"idea": r["id"], "target": t.split("|")[0], "url": url}
             for name, sc in scorers.items():
+                if sc["partial"]:
+                    continue
                 mine = sc["by_idea"][r["id"]]
                 row[name] = 1 + sum(v >= mine[url] for u, v in mine.items() if u != url)
             rows.append(row)
@@ -137,6 +141,9 @@ def main():
             scorers[name]["by_idea"][idea][url] = v
     if "cosine" not in scorers:
         sys.exit("scores/cosine.tsv is missing: uv run scripts/score.py cosine")
+    every = len(scorers["cosine"]["score"])
+    for sc in scorers.values():
+        sc["partial"] = len(sc["score"]) < every
 
     out = []
     for who in ("claude", "human"):
@@ -189,7 +196,7 @@ def main():
                     "beats_cosine": "" if name == "cosine" else f"{beats:.2f}",
                     "auc_idea": f"{statistics.mean(per_idea):.3f}",
                     "ndcg10": f"{statistics.mean(nd):.3f}",
-                    "unjudged10": f"{statistics.mean(unjudged):.1f}",
+                    "unjudged10": "" if sc["partial"] else f"{statistics.mean(unjudged):.1f}",
                     "ms50": f"{statistics.median(ms):.1f}" if ms else "",
                 })
 
@@ -214,7 +221,8 @@ def main():
         tw.writerows(trows)
     print(f"\n# the reworded package's rank, {len(trows)} positive ideas")
     w.writerow(["scorer", "top1", "top5", "top15", "median"])
-    for name in sorted(scorers, key=lambda n: statistics.median(r[n] for r in trows)):
+    full = [n for n in scorers if not scorers[n]["partial"]]
+    for name in sorted(full, key=lambda n: statistics.median(r[n] for r in trows)):
         ranks = [r[name] for r in trows]
         w.writerow([name, sum(x == 1 for x in ranks), sum(x <= 5 for x in ranks),
                     sum(x <= 15 for x in ranks), statistics.median(ranks)])

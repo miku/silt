@@ -18,6 +18,11 @@
 
     uv run scripts/score.py SCORER...     # e.g. idf ms-marco
     uv run scripts/score.py all
+    uv run scripts/score.py --labelled qwen3-rr-ours
+
+--labelled scores only the matches in data/pairs.tsv: enough for AUC, at a
+sixth of the cost, for a slow scorer; e3.py then leaves out what needs
+every candidate (the top 10, the packages' ranks).
 
 Writes scores/<scorer>.tsv: idea, url, score, ms (the idea's time divided by
 its candidates, so 50 × ms is the cost of an idea with 50 matches), and
@@ -46,6 +51,13 @@ Scorers:
     qwen3-reranker  Qwen3-Reranker-0.6B on strix (llama-swap, /v1/rerank)
     qwen3-embed     Qwen3-Embedding-0.6B on strix (Ollama), with an
                     instruction on the query
+    qwen3-embed-plain  the same, the idea alone as the query
+    qwen3-rr-web    Qwen/Qwen3-Reranker-0.6B here, with transformers, by
+                    the model card's recipe: log P(yes) - log P(no) after
+                    the prompt, with the card's (and llama.cpp's) default
+                    instruction
+    qwen3-rr-ours   the same with an instruction of our own, from the
+                    labelling sheet's meaning of y
 """
 
 import collections
@@ -192,18 +204,60 @@ QWEN3_EMBED_TASK = ("Given a description of a software tool, retrieve packages a
                     "repositories that implement it")
 
 
-def make_qwen3_embed():
+def make_qwen3_embed(instruct=True):
     model = "qwen3-embedding:0.6b"
 
     def score(idea, texts):
-        v = post(STRIX_OLLAMA + "/api/embed",
-                 {"model": model, "input": [f"Instruct: {QWEN3_EMBED_TASK}\nQuery:{idea}"] + texts})
+        q = f"Instruct: {QWEN3_EMBED_TASK}\nQuery:{idea}" if instruct else idea
+        v = post(STRIX_OLLAMA + "/api/embed", {"model": model, "input": [q] + texts})
         es = v["embeddings"]
         norm = lambda e: math.sqrt(sum(x * x for x in e)) or 1.0
         q = es[0]
         nq = norm(q)
         return [sum(a * b for a, b in zip(q, e)) / (nq * norm(e)) for e in es[1:]]
-    return score, f"{model} @ {STRIX_OLLAMA}", ""
+    return score, f"{model} @ {STRIX_OLLAMA}" + ("" if instruct else ", no instruction"), ""
+
+
+# The model card's prompt (huggingface.co/Qwen/Qwen3-Reranker-0.6B).
+RR_PREFIX = ("<|im_start|>system\nJudge whether the Document meets the requirements based on "
+             "the Query and the Instruct provided. Note that the answer can only be \"yes\" or "
+             "\"no\".<|im_end|>\n<|im_start|>user\n")
+RR_SUFFIX = "<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n"
+RR_WEB = "Given a web search query, retrieve relevant passages that answer the query"
+RR_OURS = ("The Query is an idea for a software tool; the Document describes a piece of "
+           "software. Judge whether the software implements the idea: it is such a tool, or "
+           "does the same job in another form. Software that is only on the same topic, "
+           "works with the same data, or does the job for another language or platform "
+           "does not.")
+RR_DOC_CHARS = 2000
+
+
+def make_qwen3_rr(instruction):
+    import torch
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+    repo = "Qwen/Qwen3-Reranker-0.6B"
+    path, rev = hf_path(repo)
+    tok = AutoTokenizer.from_pretrained(path, padding_side="left")
+    model = AutoModelForCausalLM.from_pretrained(path, dtype=torch.float32).eval()
+    yes, no = tok.convert_tokens_to_ids("yes"), tok.convert_tokens_to_ids("no")
+    pre, suf = tok.encode(RR_PREFIX, add_special_tokens=False), tok.encode(RR_SUFFIX, add_special_tokens=False)
+
+    def score(idea, texts):
+        bodies = [f"<Instruct>: {instruction}\n<Query>: {idea}\n<Document>: {t[:RR_DOC_CHARS]}"
+                  for t in texts]
+        ids = [pre + tok.encode(b, add_special_tokens=False) + suf for b in bodies]
+        out = [0.0] * len(ids)
+        order = sorted(range(len(ids)), key=lambda i: len(ids[i]))
+        for k in range(0, len(order), 16):
+            batch = order[k:k + 16]
+            enc = tok.pad({"input_ids": [ids[i] for i in batch]}, padding=True, return_tensors="pt")
+            with torch.inference_mode():
+                logits = model(**enc).logits[:, -1, :]
+            for i, d in zip(batch, (logits[:, yes] - logits[:, no]).tolist()):
+                out[i] = d
+        return out
+    which = "default" if instruction == RR_WEB else "our"
+    return score, f"{repo}, {which} instruction", rev
 
 
 SCORERS = {
@@ -217,6 +271,9 @@ SCORERS = {
     "nli-deberta": lambda c: make_nli("cross-encoder/nli-deberta-v3-small"),
     "qwen3-reranker": lambda c: make_qwen3_reranker(),
     "qwen3-embed": lambda c: make_qwen3_embed(),
+    "qwen3-embed-plain": lambda c: make_qwen3_embed(instruct=False),
+    "qwen3-rr-web": lambda c: make_qwen3_rr(RR_WEB),
+    "qwen3-rr-ours": lambda c: make_qwen3_rr(RR_OURS),
 }
 RECORDED = ("cosine", "keyword")
 
@@ -266,11 +323,18 @@ def run(name, cands):
 
 def main():
     names = sys.argv[1:]
+    labelled = "--labelled" in names
+    names = [n for n in names if n != "--labelled"]
     if names == ["all"]:
         names = [*RECORDED, *SCORERS]
     if not names or any(n not in SCORERS and n not in RECORDED for n in names):
         sys.exit(__doc__)
     cands = candidates()
+    if labelled:
+        with open("data/pairs.tsv") as f:
+            keep = {(r["idea"], r["url"]) for r in csv.DictReader(f, delimiter="\t")}
+        cands = [(i, idea, [c for c in cs if (i, c[0]) in keep]) for i, idea, cs in cands]
+        cands = [x for x in cands if x[2]]
     for name in names:
         run(name, cands)
 

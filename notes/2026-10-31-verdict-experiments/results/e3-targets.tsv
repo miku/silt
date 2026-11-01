@@ -1,19 +1,19 @@
-idea	target	url	bge-small	cosine	e5-small	idf	keyword	minilm	ms-marco	nli-deberta	nli-minilm	qwen3-embed	qwen3-reranker
-041	crates-io:ripgrep	https://github.com/BurntSushi/ripgrep	2	3	2	25	7	3	5	1	8	1	2
-033	npm:chalk	https://www.npmjs.com/package/chalk	12	8	16	30	34	8	22	7	11	5	8
-034	npm:dotenv	https://github.com/motdotla/dotenv	2	1	2	10	8	1	1	2	1	1	2
-035	npm:ink	https://github.com/vadimdemedes/ink	4	3	2	9	7	3	4	1	3	3	3
-036	npm:date-fns	https://www.npmjs.com/package/date-fns	1	1	4	4	13	1	1	3	2	3	1
-039	pypi:httpie	https://httpie.io/	1	1	1	1	1	1	1	21	39	1	1
-042	crates-io:bat	https://crates.io/crates/bat	114	90	101	27	48	90	39	13	78	112	29
-046	go:github.com/charmbracelet/bubbletea	https://pkg.go.dev/github.com/charmbracelet/bubbletea	14	14	14	15	15	14	15	17	15	12	3
-048	github:junegunn/fzf	https://github.com/junegunn/fzf	3	2	3	5	5	2	4	13	4	1	3
-049	rubygems:devise	https://github.com/heartcombo/devise	10	11	11	31	36	11	19	13	10	10	6
-050	rubygems:sidekiq	https://github.com/sidekiq/sidekiq	20	18	13	22	22	18	16	23	28	6	18
-051	hex:oban	https://github.com/oban-bg/oban	6	3	11	12	47	3	2	2	3	4	3
-052	hackage:pandoc	https://github.com/jgm/pandoc	17	23	15	87	49	23	34	10	13	6	11
-053	maven:jackson-databind	https://github.com/FasterXML/jackson-databind	28	17	37	89	89	17	84	57	23	7	9
-055	packagist:guzzlehttp/guzzle	https://github.com/guzzle/guzzle	7	6	14	22	30	6	16	2	9	3	11
-056	homebrew:htop	https://github.com/htop-dev/htop	5	3	3	5	9	3	6	61	45	3	1
-058	vscode-marketplace:gitlens	https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens	5	2	19	56	77	2	7	27	8	1	1
-059	jetbrains:rainbow brackets	https://marketplace.visualstudio.com/items?itemName=tal7aouy.rainbow-bracket	1	3	3	6	11	3	3	9	4	3	1
+idea	target	url	bge-small	cosine	e5-small	idf	keyword	minilm	ms-marco	nli-deberta	nli-minilm	qwen3-embed-plain	qwen3-embed	qwen3-reranker
+041	crates-io:ripgrep	https://github.com/BurntSushi/ripgrep	2	3	2	25	7	3	5	1	8	1	1	2
+033	npm:chalk	https://www.npmjs.com/package/chalk	12	8	16	30	34	8	22	7	11	2	5	8
+034	npm:dotenv	https://github.com/motdotla/dotenv	2	1	2	10	8	1	1	2	1	1	1	2
+035	npm:ink	https://github.com/vadimdemedes/ink	4	3	2	9	7	3	4	1	3	2	3	3
+036	npm:date-fns	https://www.npmjs.com/package/date-fns	1	1	4	4	13	1	1	3	2	2	3	1
+039	pypi:httpie	https://httpie.io/	1	1	1	1	1	1	1	21	39	1	1	1
+042	crates-io:bat	https://crates.io/crates/bat	114	90	101	27	48	90	39	13	78	103	112	29
+046	go:github.com/charmbracelet/bubbletea	https://pkg.go.dev/github.com/charmbracelet/bubbletea	14	14	14	15	15	14	15	17	15	6	12	3
+048	github:junegunn/fzf	https://github.com/junegunn/fzf	3	2	3	5	5	2	4	13	4	4	1	3
+049	rubygems:devise	https://github.com/heartcombo/devise	10	11	11	31	36	11	19	13	10	17	10	6
+050	rubygems:sidekiq	https://github.com/sidekiq/sidekiq	20	18	13	22	22	18	16	23	28	3	6	18
+051	hex:oban	https://github.com/oban-bg/oban	6	3	11	12	47	3	2	2	3	9	4	3
+052	hackage:pandoc	https://github.com/jgm/pandoc	17	23	15	87	49	23	34	10	13	6	6	11
+053	maven:jackson-databind	https://github.com/FasterXML/jackson-databind	28	17	37	89	89	17	84	57	23	12	7	9
+055	packagist:guzzlehttp/guzzle	https://github.com/guzzle/guzzle	7	6	14	22	30	6	16	2	9	6	3	11
+056	homebrew:htop	https://github.com/htop-dev/htop	5	3	3	5	9	3	6	61	45	3	3	1
+058	vscode-marketplace:gitlens	https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens	5	2	19	56	77	2	7	27	8	1	1	1
+059	jetbrains:rainbow brackets	https://marketplace.visualstudio.com/items?itemName=tal7aouy.rainbow-bracket	1	3	3	6	11	3	3	9	4	3	3	1
