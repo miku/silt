@@ -1,21 +1,16 @@
 # silt
 
-A prior-art search for code ideas: has this developer tool already been
-shipped? silt is a Go port of [patent](https://github.com/r14dd/patent).
+A prior-art search for code ideas: has this already been shipped? silt is a Go
+port of [patent](https://github.com/r14dd/patent).
 
-> silt can prove that something **exists**, but never that it **doesn't** — it
-> only searched some sources. Every verdict is scoped to "found in the sources
-> checked", and sources that were selected but failed are reported as such.
-
-**Status:** work in progress; see [notes/todo.md](notes/todo.md). Today silt
-searches all 19 of patent's sources (crates.io, npm, PyPI, GitHub, Go, Maven,
+Searches all 19 of patent's sources (crates.io, npm, PyPI, GitHub, Go, Maven,
 NuGet, RubyGems, Docker Hub, Homebrew, Packagist, Hex, Artifact Hub, AUR,
 Hackage, Nixpkgs, the VS Code and JetBrains marketplaces, Hacker News) and two
 of its own (the official Arch Linux repositories, and Codeberg on request),
-ranks the matches by semantic similarity to the idea (all-MiniLM-L6-v2 in
-pure Go, downloaded once, about 90 MB) or by keyword overlap, and estimates
-from those similarities how crowded the space is; see
-[The verdict](#the-verdict). On a terminal, the results open in a TUI.
+ranks the matches by semantic similarity to the idea
+([all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2)
+in pure Go, downloaded once, about 90 MB) or by keyword overlap, and estimates
+from those similarities how crowded the space is.
 
 ```shell
 $ go install github.com/miku/silt/cmd/silt@latest
@@ -26,13 +21,6 @@ $ silt --keyword-only --json "react component for infinite scroll"  # no model a
 $ silt --sources npm,crates-io "embedded vector database for mobile apps"
 $ silt --list-sources
 ```
-
-The exit code is the verdict, so scripts can gate on it: 0 Open, 1 Crowded,
-2 Saturated. Errors exit 1, argument errors 2. Output that isn't a terminal
-gets JSON.
-
-Binaries for Linux, macOS and Windows are on the
-[releases page](https://github.com/miku/silt/releases).
 
 ## Which sources are searched
 
