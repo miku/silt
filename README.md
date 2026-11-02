@@ -199,6 +199,12 @@ reached.
 | `?` | help |
 | `q`, `Ctrl+C` | quit |
 
+While a search runs, the TUI says what it searches, e.g. "Searching 8.4M
+packages, GitHub and Hacker News…", and how many packages each registry
+holds. The counts were taken on 2026-11-03, from each registry where it
+publishes one and from [ecosyste.ms](https://ecosyste.ms) for Go and Hex,
+and are shown to two digits; `scripts/sizes.sh` takes them again.
+
 The mouse wheel scrolls, a click selects a match, a second click opens it.
 Scores of 0.55 or more, the close matches the verdict counts, are yellow,
 and green from 0.70. `⚑` marks a match with no update in 2+ years, and only

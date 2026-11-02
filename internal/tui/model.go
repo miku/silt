@@ -39,6 +39,9 @@ type Options struct {
 	Result *pipeline.Result
 	// Search runs the searches started from the prompt.
 	Search SearchFunc
+	// Sources, if not nil, says which sources Search searches for an idea,
+	// so that the progress screen can say how many packages they hold.
+	Sources func(idea string) []model.Source
 }
 
 // Run runs the TUI until the user quits.
@@ -74,6 +77,7 @@ const statusDuration = 2 * time.Second
 type Model struct {
 	ctx           context.Context
 	search        SearchFunc
+	sources       func(idea string) []model.Source
 	width, height int
 	phase         phase
 	mode          mode
@@ -82,13 +86,14 @@ type Model struct {
 	input    textinput.Model
 	inputErr string
 
-	// The running search.
-	spinner    spinner.Model
-	searchIdea string
-	searchID   int
-	cancel     context.CancelFunc
-	logLines   []string
-	download   string
+	// The running search, and the sources it searches, if known.
+	spinner       spinner.Model
+	searchIdea    string
+	searchSources []model.Source
+	searchID      int
+	cancel        context.CancelFunc
+	logLines      []string
+	download      string
 
 	// The results.
 	hasResults   bool
@@ -111,6 +116,7 @@ func New(ctx context.Context, opts Options) *Model {
 	m := &Model{
 		ctx:      ctx,
 		search:   opts.Search,
+		sources:  opts.Sources,
 		input:    textinput.New(),
 		spinner:  spinner.New(spinner.WithSpinner(spinner.Dot), spinner.WithStyle(accentStyle)),
 		openURL:  openURL,
@@ -292,6 +298,10 @@ func (m *Model) startSearch(idea string) tea.Cmd {
 	m.searchID++
 	id := m.searchID
 	m.phase, m.searchIdea, m.logLines, m.download = phaseSearching, idea, nil, ""
+	m.searchSources = nil
+	if m.sources != nil {
+		m.searchSources = m.sources(idea)
+	}
 
 	events := make(chan tea.Msg)
 	next := func() tea.Msg { return <-events }

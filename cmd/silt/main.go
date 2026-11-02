@@ -259,7 +259,7 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 		checkSources(ctx, pcfg, stdout)
 		return 0, nil
 	}
-	tuiOpts := tui.Options{Search: searcher(pcfg)}
+	tuiOpts := tui.Options{Search: searcher(pcfg), Sources: pcfg.Sources}
 
 	if len(args) == 0 {
 		if f.json {

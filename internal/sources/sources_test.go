@@ -159,6 +159,14 @@ func TestCodebergIsSearchedOnlyWhenAskedFor(t *testing.T) {
 	}
 }
 
+func TestSearcherSourcesAddsAndExcludesAsSearchFilteredDoes(t *testing.T) {
+	s := Searcher{Add: []model.Source{model.Codeberg}}
+	got := s.Sources("a rust crate for parsing", nil, []model.Source{model.HackerNews})
+	if want := []model.Source{model.CratesIO, model.GitHub, model.Codeberg}; !slices.Equal(got, want) {
+		t.Errorf("Sources = %v, want %v", got, want)
+	}
+}
+
 func TestArchLinuxIsSelectedForArchAndCLIIdeas(t *testing.T) {
 	for idea, want := range map[string]bool{
 		"a pacman hook that cleans the package cache": true,

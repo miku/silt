@@ -489,13 +489,19 @@ func (s Searcher) SearchFiltered(ctx context.Context, q model.Query, include, ex
 		client = NewHTTPClient()
 	}
 	var adapters []Adapter
-	for _, id := range selectSources(q.Idea, include, s.Add, exclude) {
+	for _, id := range s.Sources(q.Idea, include, exclude) {
 		adapters = append(adapters, s.newAdapter(id, client))
 	}
 	s.Cache.prune()
 	f := defaultFanout
 	f.cache = s.Cache
 	return f.search(ctx, adapters, q)
+}
+
+// Sources returns the sources [Searcher.SearchFiltered] searches for idea,
+// with the same include and exclude, in [model.All] order.
+func (s Searcher) Sources(idea string, include, exclude []model.Source) []model.Source {
+	return selectSources(idea, include, s.Add, exclude)
 }
 
 // selectSources returns the sources SearchFiltered searches, in model.All

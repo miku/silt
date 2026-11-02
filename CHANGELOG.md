@@ -41,7 +41,10 @@ Where silt differs from patent:
 - The TUI is silt's own, with patent's layout, keys and integrity rules,
   but without the verdict's caveat; the JSON keeps it. Scores are coloured
   by the verdict's thresholds: yellow from 0.55, the close matches the
-  headline counts, and green from 0.70.
+  headline counts, and green from 0.70. While a search runs, it says how
+  many packages the registries searched hold: "Searching 8.4M packages,
+  GitHub and Hacker News…", from counts taken on 2026-11-03
+  (`scripts/sizes.sh`).
 - Duplicate matches are resolved in source order; in patent, which duplicate
   wins changes from run to run.
 - Each source's results are cached for an hour, so the same idea run again

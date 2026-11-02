@@ -98,6 +98,11 @@ func (cfg Config) searcher() sources.Searcher {
 	return sources.Searcher{Cache: cfg.Cache, Browser: cfg.Browser, Catalogs: cfg.Catalogs, PyPIIndex: cfg.PyPIIndex, Add: cfg.Add}
 }
 
+// Sources returns the sources [Run] searches for idea with cfg.
+func (cfg Config) Sources(idea string) []model.Source {
+	return cfg.searcher().Sources(idea, cfg.Include, cfg.Exclude)
+}
+
 // reachedNames names the sources out reached, saying which of them were
 // reached through the browser, or by matching names only.
 func reachedNames(out sources.Outcome) string {

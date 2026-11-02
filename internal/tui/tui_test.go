@@ -881,6 +881,54 @@ func TestSearchingScreenShowsSpinnerProgressAndIdea(t *testing.T) {
 	}
 }
 
+func TestSearchingScreenSaysHowManyPackagesItSearches(t *testing.T) {
+	m, _ := newModel(t, 100, 30, nil, nil)
+	var asked []string
+	m.sources = func(idea string) []model.Source {
+		asked = append(asked, idea)
+		return []model.Source{model.CratesIO, model.GitHub, model.Npm, model.PyPI, model.HackerNews}
+	}
+	submit(t, m, "kubernetes log viewer with live filtering")
+	s := screen(m)
+	for _, want := range []string{"Searching 5.9M packages, GitHub and Hacker News…",
+		"crates.io 370k · npm 4.6M · PyPI 930k", "kubernetes log viewer with live filtering"} {
+		if !strings.Contains(s, want) {
+			t.Errorf("the progress screen lacks %q:\n%s", want, s)
+		}
+	}
+	if !reflect.DeepEqual(asked, []string{"kubernetes log viewer with live filtering"}) {
+		t.Errorf("sources asked for %q", asked)
+	}
+}
+
+func TestSearchingTitle(t *testing.T) {
+	for _, tt := range []struct {
+		sources []model.Source
+		want    string
+	}{
+		{nil, "Searching…"},
+		{[]model.Source{model.GitHub}, "Searching GitHub…"},
+		{[]model.Source{model.GitHub, model.HackerNews, model.Codeberg}, "Searching GitHub, Hacker News and Codeberg…"},
+		{[]model.Source{model.CratesIO}, "Searching 370k packages…"},
+		{[]model.Source{model.CratesIO, model.GitHub}, "Searching 370k packages and GitHub…"},
+	} {
+		if got := searchingTitle(tt.sources); got != tt.want {
+			t.Errorf("searchingTitle(%v) = %q, want %q", tt.sources, got, tt.want)
+		}
+	}
+}
+
+func TestRounded(t *testing.T) {
+	for n, want := range map[int]string{
+		0: "0", 7: "7", 99: "99", 999: "1k", 1_234: "1.2k", 16_502: "17k", 368_156: "370k",
+		930_149: "930k", 4_561_160: "4.6M", 9_950_000: "10M", 13_615_962: "14M",
+	} {
+		if got := rounded(n); got != want {
+			t.Errorf("rounded(%d) = %q, want %q", n, got, want)
+		}
+	}
+}
+
 func TestSearchingScreenSpinnerChangesWithTick(t *testing.T) {
 	m, _ := newModel(t, 100, 30, nil, nil)
 	submit(t, m, "kubernetes log viewer with live filtering")

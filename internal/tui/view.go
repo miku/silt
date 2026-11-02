@@ -13,6 +13,7 @@ import (
 
 	"github.com/miku/silt/internal/freshness"
 	"github.com/miku/silt/internal/model"
+	"github.com/miku/silt/internal/sources"
 	"github.com/miku/silt/internal/verdict"
 )
 
@@ -228,7 +229,9 @@ const progressLines = 8
 
 func (m *Model) searchingView() string {
 	w := promptWidth(m.width)
-	lines := []string{m.spinner.View() + " " + boldStyle.Render("Searching…"), ""}
+	lines := []string{m.spinner.View() + " " + boldStyle.Render(searchingTitle(m.searchSources))}
+	lines = append(lines, sizeLines(m.searchSources, w)...)
+	lines = append(lines, "")
 	lines = append(lines, wrap(clean(m.searchIdea), w, "  ", "  ", accentStyle)...)
 	lines = append(lines, "")
 	for _, l := range m.logLines[max(0, len(m.logLines)-progressLines):] {
@@ -239,6 +242,58 @@ func (m *Model) searchingView() string {
 	}
 	lines = append(lines, "", hints("Esc", "cancel", "Ctrl+C", "quit"))
 	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, lipgloss.JoinVertical(lipgloss.Left, lines...))
+}
+
+// searchingTitle is the progress screen's heading for a search of ss: how
+// many packages the package registries among them hold, and the other
+// sources by name, e.g. "Searching 7.3M packages, GitHub and Hacker News…".
+func searchingTitle(ss []model.Source) string {
+	var (
+		packages int
+		names    []string
+	)
+	for _, s := range ss {
+		if n, ok := sources.Size(s); ok {
+			packages += n
+		} else {
+			names = append(names, s.String())
+		}
+	}
+	if packages > 0 {
+		names = slices.Insert(names, 0, rounded(packages)+" packages")
+	}
+	if len(names) == 0 {
+		return "Searching…"
+	}
+	if len(names) == 1 {
+		return "Searching " + names[0] + "…"
+	}
+	return "Searching " + strings.Join(names[:len(names)-1], ", ") + " and " + names[len(names)-1] + "…"
+}
+
+// sizeLines name the package registries among ss with their sizes, e.g.
+// "npm 4.6M · PyPI 930k · crates.io 370k", in width cells.
+func sizeLines(ss []model.Source, width int) []string {
+	var items []string
+	for _, s := range ss {
+		if n, ok := sources.Size(s); ok {
+			items = append(items, sourceStyle(s).Render(s.String())+dimStyle.Render(" "+rounded(n)))
+		}
+	}
+	if len(items) == 0 {
+		return nil
+	}
+	return pack("  ", items, func(int) lipgloss.Style { return lipgloss.NewStyle() }, width)
+}
+
+// rounded formats n to two significant digits, e.g. 7.3M or 370k: the sizes
+// are rough counts from a day in the past, and more digits would claim more.
+func rounded(n int) string {
+	unit := 1
+	for n/unit >= 100 {
+		unit *= 10
+	}
+	return compact(uint64((n + unit/2) / unit * unit))
 }
 
 // -- The results ---------------------------------------------------------------
