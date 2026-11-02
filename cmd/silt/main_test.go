@@ -34,7 +34,7 @@ func TestResolveBackendPrecedence(t *testing.T) {
 	cfg := config.Config{Model: str("cfg-model"), APIBase: str("http://cfg/v1"), APIKey: str("cfg-key")}
 
 	// Flag (or its env var) beats the config file.
-	b, _, err := resolveBackend(str("http://flag/v1"), str("flag-key"), str("flag-model"), false, cfg, env(nil))
+	b, _, err := resolveBackend(str("http://flag/v1"), str("flag-key"), str("flag-model"), true, cfg, env(nil))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,18 +43,18 @@ func TestResolveBackendPrecedence(t *testing.T) {
 	}
 
 	// The config file beats the defaults, and OPENAI_API_KEY comes last.
-	b, _, _ = resolveBackend(nil, nil, nil, false, cfg, env(map[string]string{"OPENAI_API_KEY": "openai"}))
+	b, _, _ = resolveBackend(nil, nil, nil, true, cfg, env(map[string]string{"OPENAI_API_KEY": "openai"}))
 	if deref(b.apiBase) != "http://cfg/v1" || deref(b.apiKey) != "cfg-key" || deref(b.model) != "cfg-model" {
 		t.Errorf("config: %v %v %v", deref(b.apiBase), deref(b.apiKey), deref(b.model))
 	}
-	b, _, _ = resolveBackend(nil, nil, nil, false, config.Config{}, env(map[string]string{"OPENAI_API_KEY": "openai"}))
+	b, _, _ = resolveBackend(nil, nil, nil, true, config.Config{}, env(map[string]string{"OPENAI_API_KEY": "openai"}))
 	if deref(b.apiKey) != "openai" || b.apiBase != nil || b.model != nil || b.ollamaEndpoint != nil {
 		t.Errorf("defaults: %v %v %v %v", deref(b.apiBase), deref(b.apiKey), deref(b.model), deref(b.ollamaEndpoint))
 	}
 }
 
 func TestResolveBackendReadsOLLAMA_HOST(t *testing.T) {
-	b, notes, err := resolveBackend(nil, nil, nil, false, config.Config{}, env(map[string]string{"OLLAMA_HOST": "strix.tiny.vpn"}))
+	b, notes, err := resolveBackend(nil, nil, nil, true, config.Config{}, env(map[string]string{"OLLAMA_HOST": "strix.tiny.vpn"}))
 	if err != nil || len(notes) != 0 || deref(b.ollamaEndpoint) != "http://strix.tiny.vpn:11434" {
 		t.Errorf("endpoint %v, notes %q, err %v", deref(b.ollamaEndpoint), notes, err)
 	}

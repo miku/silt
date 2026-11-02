@@ -115,7 +115,7 @@ func match(name, desc string) model.Match {
 	return model.Match{Name: name, Source: model.Npm, URL: "https://npmjs.com/package/" + name, Description: desc}
 }
 
-func TestRunFastKeywordOnlyVerdictSeesMoreThanTheLimit(t *testing.T) {
+func TestRunKeywordOnlyVerdictSeesMoreThanTheLimit(t *testing.T) {
 	q := fakeSearch(t, sources.Outcome{
 		Matches: []model.Match{
 			match("kill-port", "kill the process on a port"),
@@ -126,7 +126,7 @@ func TestRunFastKeywordOnlyVerdictSeesMoreThanTheLimit(t *testing.T) {
 		Failed:  []model.Source{model.PyPI},
 	})
 	var logs []string
-	res, err := Run(context.Background(), "kill process port", Config{Fast: true, KeywordOnly: true, Limit: 1},
+	res, err := Run(context.Background(), "kill process port", Config{KeywordOnly: true, Limit: 1},
 		func(s string) { logs = append(logs, s) })
 	if err != nil {
 		t.Fatal(err)
@@ -145,7 +145,7 @@ func TestRunFastKeywordOnlyVerdictSeesMoreThanTheLimit(t *testing.T) {
 	if !reflect.DeepEqual(res.Verdict.SourcesFailed, []model.Source{model.PyPI}) {
 		t.Errorf("failed sources must reach the verdict: %v", res.Verdict.SourcesFailed)
 	}
-	want := []string{"   3 matches from 1 sources in", "Keyword-ranked to top 2 in", "--fast: skipping the LLM (verdict from similarity data only)"}
+	want := []string{"   3 matches from 1 sources in", "Keyword-ranked to top 2 in", "Verdict from the similarity data (--llm-verdict asks an LLM instead)"}
 	if len(logs) != len(want) {
 		t.Fatalf("logs = %q", logs)
 	}
@@ -162,7 +162,7 @@ func TestRunFastKeywordOnlyVerdictSeesMoreThanTheLimit(t *testing.T) {
 func TestRunSkipsTheVerdictBelowMinRelevance(t *testing.T) {
 	fakeSearch(t, sources.Outcome{Matches: []model.Match{match("bread", "baking bread")}, Reached: []model.Source{model.Npm}})
 	var logs []string
-	res, err := Run(context.Background(), "kill process port", Config{KeywordOnly: true, Limit: 50},
+	res, err := Run(context.Background(), "kill process port", Config{LLMVerdict: true, KeywordOnly: true, Limit: 50},
 		func(s string) { logs = append(logs, s) })
 	if err != nil {
 		t.Fatal(err)
@@ -198,7 +198,7 @@ func TestRunPassesTheCachesAndBrowserAndSaysHowSourcesWereReached(t *testing.T) 
 	}
 	t.Cleanup(func() { searchFiltered = orig })
 	var logs []string
-	cfg := Config{Fast: true, KeywordOnly: true, Limit: 50, Cache: cache, Browser: nopBrowser{}, Catalogs: catalogs, PyPIIndex: true}
+	cfg := Config{KeywordOnly: true, Limit: 50, Cache: cache, Browser: nopBrowser{}, Catalogs: catalogs, PyPIIndex: true}
 	if _, err := Run(context.Background(), "kill process port", cfg, func(s string) { logs = append(logs, s) }); err != nil {
 		t.Fatal(err)
 	}
@@ -266,7 +266,7 @@ func killPortSearch(t *testing.T) {
 	})
 }
 
-func TestRunGeneratesTheVerdictViaOllamaByDefault(t *testing.T) {
+func TestRunGeneratesTheLLMVerdictViaOllamaByDefault(t *testing.T) {
 	killPortSearch(t)
 	var req struct{ Model, Prompt string }
 	fakeOllama(t, func(w http.ResponseWriter, r *http.Request) {
@@ -279,7 +279,7 @@ func TestRunGeneratesTheVerdictViaOllamaByDefault(t *testing.T) {
 		writeJSON(w, 200, map[string]any{"response": modelVerdict, "done": true})
 	})
 	var logs []string
-	res, err := Run(context.Background(), "kill process port", Config{KeywordOnly: true, Limit: 1},
+	res, err := Run(context.Background(), "kill process port", Config{LLMVerdict: true, KeywordOnly: true, Limit: 1},
 		func(s string) { logs = append(logs, s) })
 	if err != nil {
 		t.Fatal(err)
@@ -307,6 +307,28 @@ func TestRunGeneratesTheVerdictViaOllamaByDefault(t *testing.T) {
 	}
 }
 
+func TestRunAsksNoLLMUnlessTold(t *testing.T) {
+	killPortSearch(t)
+	fakeOllama(t, func(http.ResponseWriter, *http.Request) {
+		t.Error("the LLM was asked without LLMVerdict")
+	})
+	res, err := Run(context.Background(), "kill process port", Config{KeywordOnly: true, Limit: 50, Model: ptr("qwen3.5")}, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := model.Verdict{
+		Level:          model.Crowded,
+		Headline:       "We believe this space is crowded: 2 closely-related tools turned up in the sources checked.",
+		Gaps:           []string{},
+		SourcesChecked: []model.Source{model.Npm},
+		SourcesFailed:  []model.Source{model.PyPI},
+		Caveat:         verdict.Caveat,
+	}
+	if !reflect.DeepEqual(res.Verdict, want) {
+		t.Errorf("verdict = %+v\nwant %+v", res.Verdict, want)
+	}
+}
+
 func TestRunUsesTheConfiguredOllamaEndpoint(t *testing.T) {
 	killPortSearch(t)
 	// The default endpoint stays the dead one TestMain sets, so only a
@@ -315,7 +337,7 @@ func TestRunUsesTheConfiguredOllamaEndpoint(t *testing.T) {
 		writeJSON(w, 200, map[string]any{"response": modelVerdict, "done": true})
 	}))
 	t.Cleanup(srv.Close)
-	res, err := Run(context.Background(), "kill process port", Config{KeywordOnly: true, Limit: 1, OllamaEndpoint: ptr(srv.URL)}, nil)
+	res, err := Run(context.Background(), "kill process port", Config{LLMVerdict: true, KeywordOnly: true, Limit: 1, OllamaEndpoint: ptr(srv.URL)}, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -338,7 +360,7 @@ func TestRunUsesTheOpenAICompatibleAPIWhenAPIBaseIsSet(t *testing.T) {
 	}))
 	t.Cleanup(srv.Close)
 	var logs []string
-	cfg := Config{KeywordOnly: true, Limit: 50, APIBase: ptr(srv.URL + "/v1"), APIKey: ptr("sk-test"), Model: ptr("gpt-4o-mini")}
+	cfg := Config{LLMVerdict: true, KeywordOnly: true, Limit: 50, APIBase: ptr(srv.URL + "/v1"), APIKey: ptr("sk-test"), Model: ptr("gpt-4o-mini")}
 	res, err := Run(context.Background(), "kill process port", cfg, func(s string) { logs = append(logs, s) })
 	if err != nil {
 		t.Fatal(err)
@@ -357,7 +379,7 @@ func TestRunFallsBackToSearchOnlyVerdictWhenTheLLMFails(t *testing.T) {
 		writeJSON(w, 404, map[string]any{"error": "model 'qwen2.5:3b' not found"})
 	})
 	var logs []string
-	res, err := Run(context.Background(), "kill process port", Config{KeywordOnly: true, Limit: 50, Model: ptr("qwen2.5:3b")},
+	res, err := Run(context.Background(), "kill process port", Config{LLMVerdict: true, KeywordOnly: true, Limit: 50, Model: ptr("qwen2.5:3b")},
 		func(s string) { logs = append(logs, s) })
 	if err != nil {
 		t.Fatal(err)
@@ -413,7 +435,7 @@ func TestRunRanksSemanticallyWithTheModel(t *testing.T) {
 		return fakeRanker{map[string]float32{"weak": 0.2, "close": 0.6, "closer": 0.75}}, nil
 	})
 	var logs []string
-	res, err := Run(context.Background(), "kill process port", Config{Fast: true, Limit: 2},
+	res, err := Run(context.Background(), "kill process port", Config{Limit: 2},
 		func(s string) { logs = append(logs, s) })
 	if err != nil {
 		t.Fatal(err)
@@ -435,7 +457,7 @@ func TestRunFailsWhenTheModelCannotBeLoaded(t *testing.T) {
 	fakeModel(t, func(context.Context, rank.Progress) (ranker, error) {
 		return nil, &silt.EmbeddingError{Msg: "downloading model.onnx: no network"}
 	})
-	_, err := Run(context.Background(), "kill process port", Config{Fast: true, Limit: 50}, nil)
+	_, err := Run(context.Background(), "kill process port", Config{Limit: 50}, nil)
 	var embedding *silt.EmbeddingError
 	if !errors.As(err, &embedding) {
 		t.Errorf("err = %v, want the EmbeddingError", err)
@@ -460,7 +482,7 @@ func TestRunLoadsTheModelWhileTheSourcesSearch(t *testing.T) {
 	})
 	done := make(chan error, 1)
 	go func() {
-		_, err := Run(context.Background(), "kill process port", Config{Fast: true, Limit: 50}, nil)
+		_, err := Run(context.Background(), "kill process port", Config{Limit: 50}, nil)
 		done <- err
 	}()
 	select {
@@ -485,7 +507,7 @@ func TestRunSaysWhichSourcesWereRateLimited(t *testing.T) {
 		},
 	})
 	var logs []string
-	if _, err := Run(context.Background(), "kill process port", Config{Fast: true, KeywordOnly: true, Limit: 50},
+	if _, err := Run(context.Background(), "kill process port", Config{KeywordOnly: true, Limit: 50},
 		func(s string) { logs = append(logs, s) }); err != nil {
 		t.Fatal(err)
 	}
@@ -505,7 +527,7 @@ func TestRunSaysWhichSourcesStoodInFromTheCache(t *testing.T) {
 		},
 	})
 	var logs []string
-	if _, err := Run(context.Background(), "kill process port", Config{Fast: true, KeywordOnly: true, Limit: 50},
+	if _, err := Run(context.Background(), "kill process port", Config{KeywordOnly: true, Limit: 50},
 		func(s string) { logs = append(logs, s) }); err != nil {
 		t.Fatal(err)
 	}

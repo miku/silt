@@ -75,11 +75,10 @@ func TestSimilaritiesMatchPatentOnRecordedSearches(t *testing.T) {
 			matches[i].Similarity = got
 		}
 		v := verdict.FromData(matches, run.Verdict.SourcesChecked, run.Verdict.SourcesFailed)
+		// The headline is silt's own wording, compared with patent's in
+		// verdict.TestFromDataMatchesPatent.
 		if v.Level != run.Verdict.Level {
 			t.Errorf("%q: level %v, patent %v", run.Query, v.Level, run.Verdict.Level)
-		}
-		if v.Headline != run.Verdict.Headline {
-			t.Errorf("%q: headline %q, patent %q", run.Query, v.Headline, run.Verdict.Headline)
 		}
 	}
 	t.Logf("%d similarities, worst delta %.2e", n, worst)

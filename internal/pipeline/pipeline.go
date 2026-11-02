@@ -19,8 +19,8 @@ import (
 )
 
 // MinRelevance is the similarity below which matches are noise, not signal:
-// the LLM verdict is skipped entirely, to avoid hallucinating a judgement
-// from irrelevant results.
+// the LLM verdict, if asked for, is skipped entirely, to avoid hallucinating
+// a judgement from irrelevant results.
 const MinRelevance float32 = 0.35
 
 // Config configures a run. Nil pointers are settings left unset.
@@ -31,8 +31,10 @@ type Config struct {
 	// OllamaEndpoint is the base URL of the Ollama daemon, used when APIBase
 	// is not set; nil is a local one.
 	OllamaEndpoint *string
-	Fast           bool
-	KeywordOnly    bool
+	// LLMVerdict asks the LLM for the verdict. Without it, the verdict comes
+	// from the similarity data alone.
+	LLMVerdict  bool
+	KeywordOnly bool
 	// Limit is how many matches to keep after ranking.
 	Limit int
 	// Include, if not nil, replaces the auto-detected sources.
@@ -218,8 +220,8 @@ func Run(ctx context.Context, idea string, cfg Config, log func(string)) (Result
 	}
 	var v model.Verdict
 	switch {
-	case cfg.Fast:
-		log("--fast: skipping the LLM (verdict from similarity data only)")
+	case !cfg.LLMVerdict:
+		log("Verdict from the similarity data (--llm-verdict asks an LLM instead)")
 		v = verdict.FromData(ranked, out.Reached, out.Failed)
 	case bestSim < MinRelevance:
 		log(fmt.Sprintf("warning: best similarity %.2f < %.2f — skipping verdict", bestSim, MinRelevance))

@@ -2,7 +2,11 @@
 // already been shipped?
 //
 //	silt "interactive cli to kill whatever's on a port"
-//	silt --keyword-only --fast --json "react component for infinite scroll"
+//	silt --keyword-only --json "react component for infinite scroll"
+//	silt --llm-verdict "kubernetes log viewer with live filtering"
+//
+// The verdict comes from the similarity data unless --llm-verdict asks an
+// LLM for it.
 //
 // The exit code reflects the verdict — 0 Open, 1 Crowded, 2 Saturated — so
 // that scripts can gate on it. Errors exit 1, argument errors 2.
@@ -66,6 +70,7 @@ var (
 	errAPIBaseWithoutModel = errors.New("api_base is set but no model was specified. " +
 		"Pass --model <NAME>, set SILT_MODEL, or add `model = \"...\"` to " +
 		"your silt config file (its location is shown in the README).")
+	errFastWithLLMVerdict = usageError{errors.New("--fast and --llm-verdict can't be used together")}
 )
 
 // usageError is a problem with the arguments themselves. As with clap, these
@@ -76,7 +81,9 @@ type usageError struct{ error }
 type flags struct {
 	limit                          limitValue
 	model, apiBase, apiKey         string
-	keywordOnly, fast, printPrompt bool
+	keywordOnly, llmVerdict, printPrompt bool
+	// fast is the default now; the flag is still accepted.
+	fast                           bool
 	listSources, checkSources      bool
 	json                           bool
 	sources, exclude               listValue
@@ -134,11 +141,13 @@ func (f *flags) register(cmd *cobra.Command) {
 	fs := cmd.Flags()
 	fs.SortFlags = false
 	fs.Var(&f.limit, "limit", "Max number of matches to keep after ranking (must be at least 1)")
-	fs.StringVar(&f.model, "model", "", "LLM model for the verdict. Defaults to qwen3.5 for Ollama; required with\n--api-base. Can also be set via SILT_MODEL or config file")
-	fs.StringVar(&f.apiBase, "api-base", "", "Use an OpenAI-compatible API instead of local Ollama. Base URL ending in\n/v1, e.g. https://api.openai.com/v1 or http://localhost:1234/v1.\nCan also be set via SILT_API_BASE or config file")
+	fs.BoolVar(&f.llmVerdict, "llm-verdict", false, "Ask an LLM for the verdict, with a headline and gaps in its own words,\ninstead of estimating it from the similarity data. Takes seconds more")
+	fs.StringVar(&f.model, "model", "", "LLM model for --llm-verdict. Defaults to qwen3.5 for Ollama; required with\n--api-base. Can also be set via SILT_MODEL or config file")
+	fs.StringVar(&f.apiBase, "api-base", "", "Use an OpenAI-compatible API instead of local Ollama for --llm-verdict.\nBase URL ending in /v1, e.g. https://api.openai.com/v1 or\nhttp://localhost:1234/v1. Can also be set via SILT_API_BASE or config file")
 	fs.StringVar(&f.apiKey, "api-key", "", "API key for --api-base. Falls back to SILT_API_KEY, config file, then\nOPENAI_API_KEY. Omit for servers without auth")
 	fs.BoolVar(&f.keywordOnly, "keyword-only", false, "Skip the embedding model and rank by keyword overlap instead.\nUseful offline or to avoid the ~80 MB model download")
-	fs.BoolVar(&f.fast, "fast", false, "Skip the LLM verdict for an instant, search-only result")
+	fs.BoolVar(&f.fast, "fast", false, "Without an LLM: the default now")
+	_ = fs.MarkHidden("fast")
 	fs.Var(&f.sources, "sources", "Only search these sources (comma-separated, e.g. \"npm,crates-io,github\").\nOverrides the automatic source detection. See --list-sources for valid names")
 	fs.Var(&f.exclude, "exclude", "Exclude these sources from the search (comma-separated)")
 	fs.Var(&f.cacheTTL, "cache-ttl", "How long a source's results are reused for the same idea, e.g. 30m or 24h;\n0 turns the cache off. Failed searches are never cached. Can also be set\nvia SILT_CACHE_TTL")
@@ -185,8 +194,10 @@ type backend struct {
 // built-in default, with OPENAI_API_KEY as a last fallback for the key only.
 // The Ollama daemon is the one OLLAMA_HOST names, as for the ollama CLI. It
 // returns the warnings and notes to print, or an error if the settings can't
-// work.
-func resolveBackend(flagBase, flagKey, flagModel *string, fast bool, cfg config.Config, lookupEnv func(string) (string, bool)) (backend, []string, error) {
+// work. Without llm, no LLM is asked, and the settings are neither checked
+// nor warned about: the environment and the config file may well hold them
+// for the runs with --llm-verdict.
+func resolveBackend(flagBase, flagKey, flagModel *string, llm bool, cfg config.Config, lookupEnv func(string) (string, bool)) (backend, []string, error) {
 	var openAIKey *string
 	if v, ok := lookupEnv("OPENAI_API_KEY"); ok {
 		openAIKey = &v
@@ -200,23 +211,46 @@ func resolveBackend(flagBase, flagKey, flagModel *string, fast bool, cfg config.
 		endpoint := ollama.Endpoint(v)
 		b.ollamaEndpoint = &endpoint
 	}
+	if !llm {
+		return b, nil, nil
+	}
 	keyExplicit := flagKey != nil || cfg.APIKey != nil
 
-	if !fast && b.apiBase != nil && b.model == nil {
+	if b.apiBase != nil && b.model == nil {
 		return backend{}, nil, errAPIBaseWithoutModel
 	}
 	var notes []string
 	if keyExplicit && b.apiBase == nil {
 		notes = append(notes, "warning: api_key has no effect without api_base; using local Ollama.")
 	}
-	if fast && b.apiBase != nil {
-		notes = append(notes, "warning: --fast skips the LLM, so api_base has no effect.")
-	}
-	if b.apiBase != nil && !fast {
+	if b.apiBase != nil {
 		notes = append(notes, fmt.Sprintf("note: --api-base sends your search query to %s to generate the verdict; "+
-			"the default local Ollama backend and --fast keep it on your machine.", *b.apiBase))
+			"the default local Ollama backend and the verdict without --llm-verdict keep it on your machine.", *b.apiBase))
 	}
 	return b, notes, nil
+}
+
+// ignoredLLMFlags warns about the LLM flags given on the command line when
+// no LLM is asked: likely a run that meant --llm-verdict.
+func ignoredLLMFlags(cmd *cobra.Command, llm bool) []string {
+	if llm {
+		return nil
+	}
+	var given []string
+	for _, name := range []string{"model", "api-base", "api-key"} {
+		if cmd.Flags().Changed(name) {
+			given = append(given, "--"+name)
+		}
+	}
+	verb := "apply"
+	switch len(given) {
+	case 0:
+		return nil
+	case 1:
+		verb = "applies"
+	}
+	return []string{fmt.Sprintf("warning: %s only %s with --llm-verdict; the verdict comes from the similarity data.",
+		strings.Join(given, ", "), verb)}
 }
 
 // resolveTTL applies the precedence of a TTL flag, such as --cache-ttl, over
@@ -268,6 +302,15 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 		return 0, nil
 	}
 
+	if f.fast && f.llmVerdict {
+		return 0, errFastWithLLMVerdict
+	}
+	if f.fast {
+		fmt.Fprintln(stderr, "note: --fast is the default now; --llm-verdict asks an LLM for the verdict.")
+	}
+	// --print-prompt prints the prompt for an LLM rather than asking one.
+	llm := f.llmVerdict && !f.printPrompt
+
 	var include []model.Source
 	if len(f.sources) > 0 {
 		ss, err := parseSources(f.sources)
@@ -291,9 +334,12 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 		flagOrEnv(cmd, "api-base", f.apiBase, "SILT_API_BASE", env.lookupEnv),
 		flagOrEnv(cmd, "api-key", f.apiKey, "SILT_API_KEY", env.lookupEnv),
 		flagOrEnv(cmd, "model", f.model, "SILT_MODEL", env.lookupEnv),
-		f.fast, cfg, env.lookupEnv)
+		llm, cfg, env.lookupEnv)
 	if err != nil {
 		return 0, err
+	}
+	if !f.printPrompt {
+		notes = append(notes, ignoredLLMFlags(cmd, llm)...)
 	}
 	for _, n := range notes {
 		fmt.Fprintln(stderr, n)
@@ -317,7 +363,7 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 		APIKey:         b.apiKey,
 		Model:          b.model,
 		OllamaEndpoint: b.ollamaEndpoint,
-		Fast:           f.fast || f.printPrompt,
+		LLMVerdict:     llm,
 		KeywordOnly:    f.keywordOnly,
 		Limit:          int(f.limit),
 		Include:        include,
@@ -349,7 +395,7 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 		checkSources(ctx, pcfg, stdout)
 		return 0, nil
 	}
-	tuiOpts := tui.Options{Search: searcher(pcfg), Backend: backendNote(b, pcfg.Fast)}
+	tuiOpts := tui.Options{Search: searcher(pcfg), Backend: backendNote(b, pcfg.LLMVerdict)}
 
 	if len(args) == 0 {
 		if f.json {
@@ -424,14 +470,14 @@ func searcher(cfg pipeline.Config) tui.SearchFunc {
 }
 
 // backendNote says how the TUI's searches get their verdict.
-func backendNote(b backend, fast bool) string {
+func backendNote(b backend, llm bool) string {
 	model := ollama.DefaultModel
 	if b.model != nil {
 		model = *b.model
 	}
 	switch {
-	case fast:
-		return "--fast: verdicts come from the similarity data, without an LLM."
+	case !llm:
+		return "Verdicts are estimated from the similarity data; --llm-verdict asks an LLM."
 	case b.apiBase != nil:
 		return fmt.Sprintf("Verdicts by %s, through the API at %s.", model, *b.apiBase)
 	case b.ollamaEndpoint != nil:
