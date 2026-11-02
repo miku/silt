@@ -196,10 +196,7 @@ type Match struct {
 // Saturation says how crowded the space looks, based on what was found in
 // the sources checked.
 //
-// The values are ordered Open < Crowded < Saturated so that the verdict level
-// can be floored against the similarity data with max: the model is never
-// allowed to under-rate a space that the embeddings show is clearly
-// populated.
+// The values are ordered Open < Crowded < Saturated, and are the exit codes.
 //
 // It marshals to lowercase ("open", "crowded", "saturated"). The old
 // PascalCase names are accepted when unmarshaling, for backward
@@ -251,14 +248,14 @@ func (s *Saturation) UnmarshalText(text []byte) error {
 	return fmt.Errorf("unknown saturation %q", name)
 }
 
-// Verdict is the model-written, integrity-scoped verdict.
+// Verdict says how crowded the space of an idea looks, from the similarity of
+// the matches found; see the verdict package.
 //
 // Invariant: copy is always phrased as "found in the sources checked" and
 // never asserts that something does not exist anywhere.
 type Verdict struct {
 	Level    Saturation `json:"level"`
 	Headline string     `json:"headline"`
-	Gaps     []string   `json:"gaps"`
 	// SourcesChecked are the sources that were searched successfully —
 	// always surfaced for transparency.
 	SourcesChecked []Source `json:"sources_checked"`
@@ -275,9 +272,6 @@ type Verdict struct {
 func (v Verdict) MarshalJSON() ([]byte, error) {
 	type plain Verdict
 	p := plain(v)
-	if p.Gaps == nil {
-		p.Gaps = []string{}
-	}
 	if p.SourcesChecked == nil {
 		p.SourcesChecked = []Source{}
 	}

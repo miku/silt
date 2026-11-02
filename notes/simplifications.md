@@ -11,6 +11,11 @@ Ordered by value per effort. §1 is free, §2 is mechanical, §3 needs a decisio
 
 Line numbers are as of `54b4476`.
 
+Update, 2026-11-02: the LLM verdict is gone (D8 in
+[decisions.md](decisions.md)), so the items on `llm/`, `verdict/assess.go`
+(`stripHedges`, `isWholeWord`, `parseVerdict`), `verdict.sourceList`, the
+backend precedence chain in `cmd/silt` and `ollamaEndpoint` are moot.
+
 ## 1. Dead code — delete outright
 
 Found by listing every exported name in the non-test files and counting its

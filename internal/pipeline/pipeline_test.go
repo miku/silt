@@ -3,11 +3,7 @@ package pipeline
 import (
 	"cmp"
 	"context"
-	"encoding/json"
 	"errors"
-	"net/http"
-	"net/http/httptest"
-	"os"
 	"reflect"
 	"slices"
 	"strings"
@@ -145,7 +141,7 @@ func TestRunKeywordOnlyVerdictSeesMoreThanTheLimit(t *testing.T) {
 	if !reflect.DeepEqual(res.Verdict.SourcesFailed, []model.Source{model.PyPI}) {
 		t.Errorf("failed sources must reach the verdict: %v", res.Verdict.SourcesFailed)
 	}
-	want := []string{"   3 matches from 1 sources in", "Keyword-ranked to top 2 in", "Verdict from the similarity data (--llm-verdict asks an LLM instead)"}
+	want := []string{"   3 matches from 1 sources in", "Keyword-ranked to top 2 in"}
 	if len(logs) != len(want) {
 		t.Fatalf("logs = %q", logs)
 	}
@@ -156,23 +152,6 @@ func TestRunKeywordOnlyVerdictSeesMoreThanTheLimit(t *testing.T) {
 	}
 	if !strings.HasSuffix(logs[0], "s: npm") {
 		t.Errorf("log = %q", logs[0])
-	}
-}
-
-func TestRunSkipsTheVerdictBelowMinRelevance(t *testing.T) {
-	fakeSearch(t, sources.Outcome{Matches: []model.Match{match("bread", "baking bread")}, Reached: []model.Source{model.Npm}})
-	var logs []string
-	res, err := Run(context.Background(), "kill process port", Config{LLMVerdict: true, KeywordOnly: true, Limit: 50},
-		func(s string) { logs = append(logs, s) })
-	if err != nil {
-		t.Fatal(err)
-	}
-	if res.Verdict.Level != model.Open || !strings.HasPrefix(res.Verdict.Headline, "Nothing relevant turned up") ||
-		res.Verdict.Caveat != verdict.Caveat || res.Verdict.Gaps == nil {
-		t.Errorf("verdict = %+v", res.Verdict)
-	}
-	if got := logs[len(logs)-1]; got != "warning: best similarity 0.00 < 0.35 — skipping verdict" {
-		t.Errorf("log = %q", got)
 	}
 }
 
@@ -230,181 +209,25 @@ func TestShortDuration(t *testing.T) {
 	}
 }
 
-func TestMain(m *testing.M) {
-	// No test may reach a real Ollama on this machine: a test that needs one
-	// serves it with fakeOllama.
-	ollamaEndpoint = "http://127.0.0.1:1"
-	os.Exit(m.Run())
-}
-
-func ptr[T any](v T) *T { return &v }
-
-// fakeOllama points the default LLM backend at a server running h for the
-// duration of a test, and returns the server's URL.
-func fakeOllama(t *testing.T, h http.HandlerFunc) string {
-	t.Helper()
-	srv := httptest.NewServer(h)
-	t.Cleanup(srv.Close)
-	orig := ollamaEndpoint
-	ollamaEndpoint = srv.URL
-	t.Cleanup(func() { ollamaEndpoint = orig })
-	return srv.URL
-}
-
-func writeJSON(w http.ResponseWriter, status int, v any) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(v) //nolint:errcheck // a test response
-}
-
-const modelVerdict = `{"level": "Crowded", "headline": "kill-port and fkill already do this.", "gaps": ["a Windows build"]}`
-
-// killPortSearch finds two matches for "kill process port" that rank above
-// the relevance gate.
-func killPortSearch(t *testing.T) {
+func TestRunGivesTheVerdictFromTheSimilarities(t *testing.T) {
 	fakeSearch(t, sources.Outcome{
 		Matches: []model.Match{match("kill-port", "kill the process on a port"), match("fkill", "kill processes on a port")},
 		Reached: []model.Source{model.Npm},
 		Failed:  []model.Source{model.PyPI},
 	})
-}
-
-func TestRunGeneratesTheLLMVerdictViaOllamaByDefault(t *testing.T) {
-	killPortSearch(t)
-	var req struct{ Model, Prompt string }
-	endpoint := fakeOllama(t, func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/api/generate" {
-			t.Errorf("path = %q", r.URL.Path)
-		}
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			t.Error(err)
-		}
-		writeJSON(w, 200, map[string]any{"response": modelVerdict, "done": true})
-	})
-	var logs []string
-	res, err := Run(context.Background(), "kill process port", Config{LLMVerdict: true, KeywordOnly: true, Limit: 1},
-		func(s string) { logs = append(logs, s) })
-	if err != nil {
-		t.Fatal(err)
-	}
-	if req.Model != "qwen3.5" || !strings.Contains(req.Prompt, "for existing implementations: npm.\n") ||
-		!strings.Contains(req.Prompt, "**fkill**") {
-		t.Errorf("request = %+v; want the default model and a prompt with all ranked matches and the reached sources", req)
-	}
-	want := model.Verdict{
-		Level:          model.Crowded,
-		Headline:       "kill-port and fkill already do this.",
-		Gaps:           []string{"a Windows build"},
-		SourcesChecked: []model.Source{model.Npm},
-		SourcesFailed:  []model.Source{model.PyPI},
-		Caveat:         verdict.Caveat,
-	}
-	if !reflect.DeepEqual(res.Verdict, want) || len(res.Matches) != 1 {
-		t.Errorf("result = %+v", res)
-	}
-	if got := logs[len(logs)-2]; got != "Generating verdict via Ollama at "+endpoint+" (qwen3.5)..." {
-		t.Errorf("log = %q", got)
-	}
-	if got := logs[len(logs)-1]; !strings.HasPrefix(got, "   verdict in ") {
-		t.Errorf("log = %q", got)
-	}
-}
-
-func TestRunAsksNoLLMUnlessTold(t *testing.T) {
-	killPortSearch(t)
-	fakeOllama(t, func(http.ResponseWriter, *http.Request) {
-		t.Error("the LLM was asked without LLMVerdict")
-	})
-	res, err := Run(context.Background(), "kill process port", Config{KeywordOnly: true, Limit: 50, Model: ptr("qwen3.5")}, nil)
+	res, err := Run(context.Background(), "kill process port", Config{KeywordOnly: true, Limit: 50}, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 	want := model.Verdict{
 		Level:          model.Crowded,
 		Headline:       "We believe this space is crowded: 2 closely-related tools turned up in the sources checked.",
-		Gaps:           []string{},
-		SourcesChecked: []model.Source{model.Npm},
-		SourcesFailed:  []model.Source{model.PyPI},
-		Caveat:         verdict.Caveat,
-	}
-	if !reflect.DeepEqual(res.Verdict, want) {
-		t.Errorf("verdict = %+v\nwant %+v", res.Verdict, want)
-	}
-}
-
-func TestRunUsesTheConfiguredOllamaEndpoint(t *testing.T) {
-	killPortSearch(t)
-	// The default endpoint stays the dead one TestMain sets, so only a
-	// request to the configured one can produce the verdict.
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		writeJSON(w, 200, map[string]any{"response": modelVerdict, "done": true})
-	}))
-	t.Cleanup(srv.Close)
-	res, err := Run(context.Background(), "kill process port", Config{LLMVerdict: true, KeywordOnly: true, Limit: 1, OllamaEndpoint: ptr(srv.URL)}, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if res.Verdict.Headline != "kill-port and fkill already do this." {
-		t.Errorf("verdict = %+v", res.Verdict)
-	}
-}
-
-func TestRunUsesTheOpenAICompatibleAPIWhenAPIBaseIsSet(t *testing.T) {
-	killPortSearch(t)
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/v1/chat/completions" || r.Header.Get("Authorization") != "Bearer sk-test" {
-			t.Errorf("path %q, Authorization %q", r.URL.Path, r.Header.Get("Authorization"))
-		}
-		var req struct{ Model string }
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Model != "gpt-4o-mini" {
-			t.Errorf("model %q, %v", req.Model, err)
-		}
-		writeJSON(w, 200, map[string]any{"choices": []any{map[string]any{"message": map[string]any{"content": modelVerdict}}}})
-	}))
-	t.Cleanup(srv.Close)
-	var logs []string
-	cfg := Config{LLMVerdict: true, KeywordOnly: true, Limit: 50, APIBase: ptr(srv.URL + "/v1"), APIKey: ptr("sk-test"), Model: ptr("gpt-4o-mini")}
-	res, err := Run(context.Background(), "kill process port", cfg, func(s string) { logs = append(logs, s) })
-	if err != nil {
-		t.Fatal(err)
-	}
-	if res.Verdict.Headline != "kill-port and fkill already do this." {
-		t.Errorf("verdict = %+v", res.Verdict)
-	}
-	if got := logs[len(logs)-2]; got != "Generating verdict via OpenAI-compatible API at "+srv.URL+"/v1 (gpt-4o-mini)..." {
-		t.Errorf("log = %q", got)
-	}
-}
-
-func TestRunFallsBackToSearchOnlyVerdictWhenTheLLMFails(t *testing.T) {
-	killPortSearch(t)
-	endpoint := fakeOllama(t, func(w http.ResponseWriter, _ *http.Request) {
-		writeJSON(w, 404, map[string]any{"error": "model 'qwen2.5:3b' not found"})
-	})
-	var logs []string
-	res, err := Run(context.Background(), "kill process port", Config{LLMVerdict: true, KeywordOnly: true, Limit: 50, Model: ptr("qwen2.5:3b")},
-		func(s string) { logs = append(logs, s) })
-	if err != nil {
-		t.Fatal(err)
-	}
-	want := model.Verdict{
-		Level:          model.Open,
-		Headline:       "Verdict unavailable — results are ranked by semantic similarity only.",
-		Gaps:           []string{},
 		SourcesChecked: []model.Source{model.Npm},
 		SourcesFailed:  []model.Source{model.PyPI},
 		Caveat:         verdict.Caveat,
 	}
 	if !reflect.DeepEqual(res.Verdict, want) || len(res.Matches) != 2 {
-		t.Errorf("result = %+v", res)
-	}
-	wantLogs := []string{
-		"Generating verdict via Ollama at " + endpoint + " (qwen2.5:3b)...",
-		"warning: model 'qwen2.5:3b' not found (model `qwen2.5:3b`). Run `ollama pull qwen2.5:3b`.",
-		"   showing results without an AI verdict.",
-	}
-	if got := logs[len(logs)-3:]; !reflect.DeepEqual(got, wantLogs) {
-		t.Errorf("logs = %q\nwant %q", got, wantLogs)
+		t.Errorf("result = %+v\nwant verdict %+v", res, want)
 	}
 }
 

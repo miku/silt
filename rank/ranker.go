@@ -38,12 +38,10 @@ func Cosine(a, b []float32) float32 {
 //
 // Ranking is deliberately similarity-only: a match's age is reported but
 // never folded into its score. An abandoned project is still prior art — the
-// idea was had, and shipped — so demoting old matches would thin out the very
-// evidence the verdict is floored against. The verdict derives the
-// saturation floor from this similarity data, so deflating similarity for age
-// would quietly weaken the integrity guard itself and let a well-trodden
-// space read as "Open". Recency belongs in the output, where a human and the
-// LLM can weigh it, not in the score.
+// idea was had, and shipped — and the verdict counts close matches by this
+// similarity, so deflating it for age would let a well-trodden space read as
+// "Open". Recency belongs in the output, where a human can weigh it, not in
+// the score.
 func scoreSortLimit(queryEmb []float32, matches []model.Match, embs [][]float32, limit int) []model.Match {
 	for i := range min(len(matches), len(embs)) {
 		matches[i].Similarity = Cosine(queryEmb, embs[i])

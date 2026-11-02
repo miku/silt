@@ -5,46 +5,43 @@
 The first release: a Go port of [patent](https://github.com/r14dd/patent)
 0.14.1 (`8d741bd`). Given the same idea, silt selects the same sources, sends
 each registry the same queries, ranks with the same model and thresholds,
-and gives the same verdict level, JSON and exit code as patent (silt's
-default against patent's `--fast`, with the headline worded as below); the
-side-by-side check is `go run ./scripts/parity`.
+and gives the same verdict level and exit code as patent's `--fast`, which
+estimates the verdict from the similarities as silt does; the side-by-side
+check is `go run ./scripts/parity`.
 
 - Searches the 19 sources patent searches, picked from the idea or set with
   `--sources` and `--exclude`.
 - Ranks matches by semantic similarity with all-MiniLM-L6-v2, run in pure Go
   (within 1e-6 of patent's ONNX Runtime), or by keyword overlap with
   `--keyword-only`.
-- Estimates the verdict from the similarity data, or with `--llm-verdict`
-  gets it from a local Ollama or an OpenAI-compatible API, with patent's
-  integrity guards. `--print-prompt` prints the LLM's prompt instead.
+- Estimates the verdict from the similarities: Saturated with 5 or more
+  matches at 0.60 or more, Crowded with 2 or more at 0.55 or 1 at 0.70,
+  Open otherwise.
 - Shows the results in a TUI on a terminal, and as JSON otherwise.
 - Static binaries for Linux, macOS and Windows, on amd64 and arm64.
 
 Where silt differs from patent:
 
-- It is called `silt`: `SILT_MODEL`, `SILT_API_BASE` and `SILT_API_KEY`,
-  `<config>/silt/config.toml`, `<cache>/silt/`, and its own User-Agent.
-- The verdict comes from the similarity data unless `--llm-verdict` asks an
-  LLM for it; patent asks the LLM unless `--fast` is given. In
-  [the experiments](notes/2026-10-31-verdict-experiments/README.md) the LLM
-  picked the level no better, at about 5 s per idea. Since the level is an
-  estimate, the headline says so: "We believe this space is crowded: 3
-  closely-related tools turned up in the sources checked." where patent says
-  "Crowded — 3 closely-related tools turned up in the sources checked."
-  `--fast` is still accepted and changes nothing.
+- It is called `silt`: `SILT_*`, `<cache>/silt/`, and its own User-Agent.
+- It has no LLM verdict: the verdict always comes from the similarities, as
+  with patent's `--fast`. In our experiments an LLM picked the level no
+  better, at about 5 s more per idea. So there is no `--fast`,
+  `--model`, `--api-base`, `--api-key` or `--print-prompt`, no config file,
+  and no gaps, which only the LLM wrote: the JSON is at `schema_version` 2,
+  patent's 1 without `verdict.gaps`. Since the level is an estimate, the
+  headline says so: "We believe this space is crowded: 3 closely-related
+  tools turned up in the sources checked." where patent says "Crowded — 3
+  closely-related tools turned up in the sources checked."
 - Two more sources: the official Arch Linux repositories (`arch-linux`),
   searched next to the AUR and for CLI tools, and Codeberg, searched only
   when asked for, since its search takes 5–15 s. `--add` searches any
   source on top of the ones picked from the idea: `--add codeberg`. Both
   narrow a query down to a single keyword when it matches nothing, since
   Codeberg matches a phrase and Arch Linux every word.
-- It reads `OLLAMA_HOST` as the `ollama` CLI does, so the verdict can come
-  from an Ollama on another machine; patent always uses `localhost:11434`.
-- The API key doesn't fall back to `OPENAI_API_KEY`, so a key meant for
-  OpenAI is never sent to the server `--api-base` names; patent reads it
-  last.
 - The TUI is silt's own, with patent's layout, keys and integrity rules,
-  but without the verdict's caveat; the JSON keeps it.
+  but without the verdict's caveat; the JSON keeps it. Scores are coloured
+  by the verdict's thresholds: yellow from 0.55, the close matches the
+  headline counts, and green from 0.70.
 - Duplicate matches are resolved in source order; in patent, which duplicate
   wins changes from run to run.
 - Each source's results are cached for an hour, so the same idea run again
@@ -75,3 +72,5 @@ Where silt differs from patent:
   same flags and exit codes.
 - A date that an offset moves out of the years 0000–9999 is dropped; patent
   panics on it.
+- The first-run notice and `--keyword-only`'s help say the model is about
+  90 MB, as it is; patent says 80.

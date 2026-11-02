@@ -41,25 +41,30 @@ var manual = map[string][]string{
 	"tests/sources.rs::test_homebrew_happy_path":    {"sources.TestHomebrewHappyPath"},
 	"tests/sources.rs::test_homebrew_empty_results": {"sources.TestHomebrewEmptyResults"},
 	"tests/sources.rs::test_homebrew_server_error":  {"sources.TestHomebrewServerError"},
-	// Both backends have a test of this name, and names alone would match
-	// both to whichever is found first.
-	"tests/ollama.rs::generate_maps_connection_error_to_llm_unreachable": {"ollama.TestGenerateMapsConnectionErrorToLLMUnreachable"},
-	"tests/openai.rs::generate_maps_connection_error_to_llm_unreachable": {"openai.TestGenerateMapsConnectionErrorToLLMUnreachable"},
 }
 
 // notApplicable gives the reason why the tests of a file that silt doesn't
 // port are n/a. Those of its tests that a Go test of the same name covers
 // are still ticked off.
 var notApplicable = map[string]string{
-	"src/tui.rs":            tuiReason,
-	"src/bin/patent/tui.rs": tuiReason,
-	"tests/tui.rs":          tuiReason,
+	"src/tui.rs":               tuiReason,
+	"src/bin/patent/tui.rs":    tuiReason,
+	"tests/tui.rs":             tuiReason,
+	"src/bin/patent/config.rs": llmReason,
+	"tests/ollama.rs":          llmReason,
+	"tests/openai.rs":          llmReason,
+	"tests/verdict.rs":         llmReason,
 }
 
 const tuiReason = "silt's TUI is its own design, inspired by patent's (D7), so these tests " +
 	"of patent's state machine and renderer don't apply. internal/tui tests what " +
 	"they protect: the integrity rules, the keys, filtering, sorting, the details " +
 	"and the search."
+
+const llmReason = "silt has no LLM verdict (D8): the verdict always comes from the " +
+	"similarity data, so patent's LLM backends, its prompt, the guards on the " +
+	"model's answer, and the config file that held the model settings are gone. " +
+	"The tests of the verdict from the data are ported."
 
 var (
 	rustAttr = regexp.MustCompile(`^\s*#\[(tokio::)?test(\(.*\))?\]`)

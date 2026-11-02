@@ -13,6 +13,7 @@ import (
 
 	"github.com/miku/silt/freshness"
 	"github.com/miku/silt/model"
+	"github.com/miku/silt/verdict"
 )
 
 var (
@@ -42,14 +43,18 @@ func levelColor(l model.Saturation) color.Color {
 	return [...]color.Color{lipgloss.Green, lipgloss.Yellow, lipgloss.Red}[l]
 }
 
+// scoreColor colours a similarity by the verdict's thresholds, so that the
+// table shows which matches the headline counts: yellow for a close match,
+// green for one close enough to make a space crowded on its own, and muted
+// for the rest.
 func scoreColor(sim float32) color.Color {
 	switch {
-	case sim >= 0.7:
+	case sim >= verdict.VeryStrong:
 		return lipgloss.Green
-	case sim >= 0.4:
+	case sim >= verdict.Close:
 		return lipgloss.Yellow
 	}
-	return lipgloss.Red
+	return muted
 }
 
 var sourceColors = map[model.Source]color.Color{
@@ -214,10 +219,6 @@ func (m *Model) searchView() string {
 			lines = append(lines, wrap(clean(para), w, "", "", errorStyle)...)
 		}
 	}
-	if m.backend != "" {
-		lines = append(lines, "")
-		lines = append(lines, wrap(m.backend, w, "", "", dimStyle)...)
-	}
 	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, lipgloss.JoinVertical(lipgloss.Left, lines...))
 }
 
@@ -313,11 +314,7 @@ func (m *Model) verdictLines() []string {
 	v, w := m.verdict, m.width-1
 	level := lipgloss.NewStyle().Foreground(levelColor(v.Level)).Bold(true)
 	lines := []string{" " + level.Render(levelIcon(v.Level)+" "+v.Level.String())}
-	lines = append(lines, wrap(clean(v.Headline), w, " ", " ", boldStyle)...)
-	for _, gap := range v.Gaps {
-		lines = append(lines, wrap(clean(gap), w, "   "+lipgloss.NewStyle().Foreground(lipgloss.Yellow).Render("•")+" ", "     ", lipgloss.NewStyle())...)
-	}
-	return lines
+	return append(lines, wrap(clean(v.Headline), w, " ", " ", boldStyle)...)
 }
 
 func (m *Model) resultsView() string {
@@ -649,6 +646,7 @@ func (m *Model) helpPopup() string {
 		"",
 		section("Markers"),
 		row(staleMark, fmt.Sprintf("no update in %d+ years, where the source reports a date", freshness.StaleAfterYears)),
+		row(fmt.Sprintf("%.2f+", verdict.Close), "a close match, which the verdict counts"),
 	}
 	w := m.popupWidth()
 	for i, l := range lines {

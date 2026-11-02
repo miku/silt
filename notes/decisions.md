@@ -222,3 +222,27 @@ stale lines there; a forced full repaint showed silt's frame is right.
   Hackage, the Homebrew catalogs) do reject `null`, as patent does.
 - Building a `net/http` client cannot fail, so `HTTPClientError` is never
   returned today. It exists so the taxonomy and `IsRetryable` stay complete.
+
+## D8 No LLM verdict (2026-11-02)
+
+Decided with the user: the verdict always comes from the similarities, and
+the LLM verdict is gone. That removes `--llm-verdict`, `--model`,
+`--api-base`, `--api-key`, `--print-prompt` and the hidden `--fast`; the
+config file, which only held the model settings (D3's `SILT_MODEL`,
+`SILT_API_BASE`, `SILT_API_KEY`, D5's TOML); `llm/`, `verdict.Assess` with
+its prompt and guards, and D6's `LLMUnreachableError` and `LLMRejectedError`;
+and the verdict's gaps, which only the LLM wrote. The JSON is at
+`schema_version` 2: patent's 1 without `verdict.gaps`.
+
+Why: in the verdict experiments (2026-10-31; deleted, as they said little
+more than this) the LLM picked the level no better than the similarities, at
+5–9 s more per idea, and its headline and gaps needed a long list of guards
+to stay honest. The similarity rule is a few lines and fits in a table (the
+README's "The verdict").
+
+Kept: patent's rule and thresholds, now named in one place
+(`verdict.Close`, `Strong`, `VeryStrong`), the headline worded as an
+estimate, the caveat, and the parity of the level with patent's `--fast`.
+The TUI colours the scores by the same thresholds, so the yellow and green
+scores are the matches the headline counts. patent's LLM and config tests
+are n/a in `notes/parity-tests.md`.

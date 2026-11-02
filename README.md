@@ -1,7 +1,7 @@
 # silt
 
 A prior-art search for code ideas: has this developer tool already been
-shipped? silt is an Go port of [patent](https://github.com/r14dd/patent).
+shipped? silt is a Go port of [patent](https://github.com/r14dd/patent).
 
 > silt can prove that something **exists**, but never that it **doesn't** — it
 > only searched some sources. Every verdict is scoped to "found in the sources
@@ -12,31 +12,18 @@ searches all 19 of patent's sources (crates.io, npm, PyPI, GitHub, Go, Maven,
 NuGet, RubyGems, Docker Hub, Homebrew, Packagist, Hex, Artifact Hub, AUR,
 Hackage, Nixpkgs, the VS Code and JetBrains marketplaces, Hacker News) and two
 of its own (the official Arch Linux repositories, and Codeberg on request),
-ranks
-matches by semantic similarity (all-MiniLM-L6-v2 in pure Go, downloaded once,
-about 90 MB) or by keyword overlap, and estimates the verdict from the
-similarity data: how many matches come close to the idea. Since that is an
-estimate, the headline says so: "We believe this space is crowded: 3
-closely-related tools turned up in the sources checked." On a terminal, the
-results open in a TUI.
-
-With `--llm-verdict`, an LLM gives the verdict instead, with a headline and
-gaps in its own words: a local Ollama (`qwen3.5` by default) or any
-OpenAI-compatible API. Its level never drops below what the similarity data
-shows, and a headline or gap that claims something doesn't exist is
-replaced or dropped. It is slower (about 5 s more per idea with `qwen3.5` on
-a GPU), and in [our experiments](notes/2026-10-31-verdict-experiments/README.md)
-it picked the level no better than the similarity data.
+ranks the matches by semantic similarity to the idea (all-MiniLM-L6-v2 in
+pure Go, downloaded once, about 90 MB) or by keyword overlap, and estimates
+from those similarities how crowded the space is; see
+[The verdict](#the-verdict). On a terminal, the results open in a TUI.
 
 ```shell
 $ go install github.com/miku/silt/cmd/silt@latest
-$ silt                                                                   # search interactively
-$ silt "cli tool that kills a process on a given port"                   # results in the TUI
-$ silt --json "cli tool that kills a process on a given port"            # JSON
-$ silt --llm-verdict --json "cli tool that kills a process on a given port"   # verdict via local Ollama
-$ silt --llm-verdict --json --api-base http://localhost:1234/v1 --model qwen3.5-122b "embedded vector database for mobile apps"
-$ silt --keyword-only --json "react component for infinite scroll"       # no model at all
-$ silt --print-prompt "kubernetes log viewer with live filtering"   # the LLM verdict's prompt, for your own agent
+$ silt                                                              # search interactively
+$ silt "cli tool that kills a process on a given port"              # results in the TUI
+$ silt --json "cli tool that kills a process on a given port"       # JSON
+$ silt --keyword-only --json "react component for infinite scroll"  # no model at all
+$ silt --sources npm,crates-io "embedded vector database for mobile apps"
 $ silt --list-sources
 ```
 
@@ -47,6 +34,61 @@ gets JSON.
 Binaries for Linux, macOS and Windows are on the
 [releases page](https://github.com/miku/silt/releases).
 
+## The verdict
+
+silt embeds the idea and each match ("name: description") with
+all-MiniLM-L6-v2, and scores the match by the cosine similarity of the two:
+near 0 for unrelated text, 1 for the same meaning. The verdict counts the
+matches that come close:
+
+| Level | When |
+|---|---|
+| 🔴 Saturated | 5 or more matches with a similarity of at least 0.60 |
+| 🟡 Crowded | 2 or more with at least 0.55, or 1 with at least 0.70 |
+| 🟢 Open | anything less |
+
+The headline words the level as the estimate it is, and counts the
+closely-related matches, those at 0.55 or more: "We believe this space is
+crowded: 3 closely-related tools turned up in the sources checked." The TUI
+shows their scores in yellow, or in green from 0.70. A `--limit` below 50
+only shortens the list: the verdict still counts among the best 50.
+
+The thresholds are patent's. With `--keyword-only`, a match's score is the
+share of the idea's keywords it contains, and the same thresholds apply, so
+the level is a rougher estimate there.
+
+The JSON output has the verdict, with a fixed caveat that the TUI leaves out,
+and the matches, best first:
+
+```json
+{
+  "schema_version": 2,
+  "query": "cli tool that kills a process on a given port",
+  "verdict": {
+    "level": "saturated",
+    "headline": "We believe this space is saturated: 7 closely-related tools turned up in the sources checked.",
+    "sources_checked": ["crates-io", "npm"],
+    "sources_failed": [],
+    "caveat": "Not proof it doesn't exist — only that nothing close turned up in the sources checked. Keep looking (web, app stores, niche communities) before committing."
+  },
+  "matches": [
+    {
+      "name": "kill-port",
+      "source": "npm",
+      "url": "https://www.npmjs.com/package/kill-port",
+      "description": "Kill process running on given port",
+      "popularity": 1000000,
+      "similarity": 0.7999609,
+      "last_updated": "2022-06-21T23:47:36Z"
+    }
+  ]
+}
+```
+
+`popularity` (stars, downloads, points, depending on the source) and
+`last_updated` are `null` where the source doesn't report them. Neither
+changes the score: an old project is still prior art.
+
 ## Flags
 
 | Flag | |
@@ -54,42 +96,22 @@ Binaries for Linux, macOS and Windows are on the
 | `IDEA` | the idea to search for; without it, silt asks in the TUI |
 | `--limit N` | how many matches to keep after ranking (default 50) |
 | `--keyword-only` | rank by keyword overlap instead of with the embedding model |
-| `--llm-verdict` | ask an LLM for the verdict instead of estimating it from the similarity data |
-| `--model NAME` | the LLM for `--llm-verdict`: `qwen3.5` on Ollama by default, required with `--api-base` |
-| `--api-base URL` | an OpenAI-compatible API instead of Ollama for `--llm-verdict`, e.g. `http://localhost:1234/v1` |
-| `--api-key KEY` | the key for `--api-base`; omit it for servers without auth |
 | `--sources LIST` | search only these sources, comma-separated, instead of picking them from the idea |
 | `--add LIST` | also search these sources, on top of the ones picked from the idea; Codeberg is searched only when asked for, here or with `--sources`, since its search takes 5–15 s |
 | `--exclude LIST` | leave these sources out |
 | `--cache-ttl DURATION` | how long a source's results are reused for the same idea (default `1h`; `0` turns the cache off) |
 | `--catalog-ttl DURATION` | how long downloaded catalogs (Homebrew's, PyPI's project names) are kept (default `24h`; `0` downloads them on every run) |
 | `--json` | print JSON instead of opening the TUI |
-| `--print-prompt` | print the verdict prompt, for your own agent, and exit |
 | `--list-sources` | list the source names and exit |
 | `--check-sources` | search each source once, without the caches, print whether it was reached and how long it took, and exit |
 | `--completions SHELL` | print completions for bash, fish, powershell or zsh |
 | `-V`, `--version` | print the version |
 | `-h`, `--help` | print the help |
 
-## Configuration
+## Environment and caches
 
-`--model`, `--api-base` and `--api-key` can also be set with `SILT_MODEL`,
-`SILT_API_BASE` and `SILT_API_KEY`, or in `config.toml` in silt's config
-directory: `~/.config/silt` on Linux, `~/Library/Application Support/silt`
-on macOS, `%AppData%\silt` on Windows.
-
-```toml
-model = "qwen3.5-122b"
-api_base = "http://localhost:1234/v1"
-api_key = "..."
-```
-
-A flag beats the environment, which beats the file. `OPENAI_API_KEY` is not
-read. These settings only apply with `--llm-verdict`.
-Without `--api-base`, the LLM verdict comes from the Ollama daemon that
-`OLLAMA_HOST` names, as for the `ollama` CLI, or from `localhost:11434` if
-it is unset. `GITHUB_TOKEN`, if set, lifts GitHub's
-rate limit, and `NO_COLOR` turns off colour in the TUI.
+`GITHUB_TOKEN`, if set, lifts GitHub's rate limit, and `NO_COLOR` turns off
+colour in the TUI.
 
 When a source refuses a search because of its rate limit, silt tries again
 once the limit lifts, if that is within the 15 s each source gets. Otherwise
@@ -173,8 +195,10 @@ reached.
 | `q`, `Ctrl+C` | quit |
 
 The mouse wheel scrolls, a click selects a match, a second click opens it.
-`⚑` marks a match with no update in 2+ years, and only where the source
-reports a date, so its absence is not a claim of freshness. The verdict is
+Scores of 0.55 or more, the close matches the verdict counts, are yellow,
+and green from 0.70. `⚑` marks a match with no update in 2+ years, and only
+where the source reports a date, so its absence is not a claim of freshness.
+The verdict is
 always shown in full: on a terminal too small for it, silt asks for a
 larger one instead of showing part of it.
 

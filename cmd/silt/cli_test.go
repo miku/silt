@@ -39,12 +39,10 @@ func TestMain(m *testing.M) {
 func runSilt(t *testing.T, args ...string) (stdout, stderr string, exitCode int) {
 	t.Helper()
 	cmd := exec.CommandContext(t.Context(), siltBin, args...)
-	// No config file: the user config directory on Linux and on Windows. No
-	// result or catalog cache either, so a live test always searches the
+	// No result or catalog cache, so a live test always searches the
 	// registries, and no browser or PyPI index, so it searches them the way
 	// patent does.
-	config := t.TempDir()
-	cmd.Env = append(os.Environ(), "NO_COLOR=1", "XDG_CONFIG_HOME="+config, "AppData="+config,
+	cmd.Env = append(os.Environ(), "NO_COLOR=1",
 		"SILT_CACHE_TTL=0", "SILT_CATALOG_TTL=0", "SILT_BROWSER=off", "SILT_PYPI_INDEX=off")
 	var out, errOut bytes.Buffer
 	cmd.Stdout, cmd.Stderr = &out, &errOut
@@ -162,12 +160,5 @@ func TestCompletionsAreGenerated(t *testing.T) {
 		if code != 0 || !strings.Contains(stdout, "silt") {
 			t.Errorf("%s: exit %d, %d bytes", shell, code, len(stdout))
 		}
-	}
-}
-
-func TestAPIBaseWithoutModelIsAnError(t *testing.T) {
-	_, stderr, code := runSilt(t, "--llm-verdict", "--api-base", "http://localhost:1/v1", "cli tool that kills a process on a port")
-	if code != 1 || !strings.Contains(stderr, "api_base is set but no model was specified") {
-		t.Errorf("exit %d, stderr %q", code, stderr)
 	}
 }

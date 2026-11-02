@@ -3,11 +3,8 @@
 // small Rust harness that links the patent crate (0.14.1 @ 8d741bd).
 //
 //	fixture.json        the input: an idea, keywords, matches, sources
-//	prompt.txt          verdict::build_prompt, at 2026-10-25T23:27Z
 //	from-data.json      verdict::from_data
 //	rank-keywords.json  rank::rank_by_keywords with limit 50
-//	assess-cases.json   canned model responses and the matches to judge them by
-//	assess.json         verdict::assess on each, with an Llm that returns it
 package patenttest
 
 import (
@@ -17,14 +14,9 @@ import (
 	"reflect"
 	"runtime"
 	"testing"
-	"time"
 
 	"github.com/miku/silt/model"
 )
-
-// Now is the time the reference prompt was recorded at, rounded down to a
-// time that renders the same ages.
-var Now = time.Date(2026, time.October, 25, 23, 0, 0, 0, time.UTC)
 
 // Fixture is the recorded input.
 type Fixture struct {

@@ -198,7 +198,7 @@ func TestVerdictJSONWritesEmptyListsNotNull(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	want := `{"level":"open","headline":"h","gaps":[],"sources_checked":[],"sources_failed":[],"caveat":"c"}`
+	want := `{"level":"open","headline":"h","sources_checked":[],"sources_failed":[],"caveat":"c"}`
 	if string(b) != want {
 		t.Errorf("marshal = %s\nwant      %s", b, want)
 	}
@@ -207,8 +207,7 @@ func TestVerdictJSONWritesEmptyListsNotNull(t *testing.T) {
 func TestVerdictJSONRoundTrip(t *testing.T) {
 	in := Verdict{
 		Level:          Crowded,
-		Headline:       "Crowded — 2 closely-related tools turned up in the sources checked.",
-		Gaps:           []string{"a TUI"},
+		Headline:       "We believe this space is crowded: 2 closely-related tools turned up in the sources checked.",
 		SourcesChecked: []Source{Npm, CratesIO},
 		SourcesFailed:  []Source{PyPI},
 		Caveat:         "caveat",

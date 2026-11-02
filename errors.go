@@ -43,23 +43,6 @@ type UnavailableError struct {
 
 func (e *UnavailableError) Error() string { return e.Msg }
 
-// LLMUnreachableError means the LLM endpoint could not be reached. Msg
-// carries the address and a hint.
-type LLMUnreachableError struct {
-	Msg string
-}
-
-func (e *LLMUnreachableError) Error() string { return e.Msg }
-
-// LLMRejectedError means the LLM endpoint was reached but rejected the
-// request (unknown model, bad key, server error). Msg carries the reason and
-// a hint.
-type LLMRejectedError struct {
-	Msg string
-}
-
-func (e *LLMRejectedError) Error() string { return e.Msg }
-
 // EmbeddingError is a failure to load the embedding model or to embed text.
 type EmbeddingError struct {
 	Msg string

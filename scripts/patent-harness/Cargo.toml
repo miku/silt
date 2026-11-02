@@ -2,17 +2,8 @@
 # Go port can be compared against them. It writes testdata/patent:
 #
 #   cd scripts/patent-harness
-#   cargo run --release -- prompt        ../../testdata/patent/fixture.json > ../../testdata/patent/prompt.txt
 #   cargo run --release -- from-data     ../../testdata/patent/fixture.json > ../../testdata/patent/from-data.json
 #   cargo run --release -- rank-keywords ../../testdata/patent/fixture.json > ../../testdata/patent/rank-keywords.json
-#
-# Then update patenttest.Now to the time prompt.txt was generated at.
-#
-# The assess golden test runs verdict::assess on canned model responses, with
-# the phrase lists read from patent's source:
-#
-#   python3 -I gen_assess_cases.py ~/code/r14dd/patent/src/verdict.rs > ../../testdata/patent/assess-cases.json
-#   cargo run --release -- assess ../../testdata/patent/assess-cases.json > ../../testdata/patent/assess.json
 #
 # The embedding golden test (internal/minilm) uses patent's cached model:
 #
@@ -30,7 +21,6 @@ publish = false
 [dependencies]
 # The port's reference commit (patent 0.14.1).
 patent = { git = "https://github.com/r14dd/patent", rev = "8d741bd273306a4f2cb20a9583a1a94b19546255" }
-async-trait = "0.1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 # The tokenizer fastembed uses (same version), to record token ids.

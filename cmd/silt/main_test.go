@@ -10,90 +10,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/miku/silt/internal/config"
 	"github.com/miku/silt/internal/tui"
 )
-
-func str(s string) *string { return &s }
-
-func deref(p *string) any {
-	if p == nil {
-		return nil
-	}
-	return *p
-}
 
 func env(vars map[string]string) func(string) (string, bool) {
 	return func(k string) (string, bool) {
 		v, ok := vars[k]
 		return v, ok
-	}
-}
-
-func TestResolveBackendPrecedence(t *testing.T) {
-	cfg := config.Config{Model: str("cfg-model"), APIBase: str("http://cfg/v1"), APIKey: str("cfg-key")}
-
-	// Flag (or its env var) beats the config file.
-	b, _, err := resolveBackend(str("http://flag/v1"), str("flag-key"), str("flag-model"), true, cfg, env(nil))
-	if err != nil {
-		t.Fatal(err)
-	}
-	if deref(b.apiBase) != "http://flag/v1" || deref(b.apiKey) != "flag-key" || deref(b.model) != "flag-model" {
-		t.Errorf("flags: %v %v %v", deref(b.apiBase), deref(b.apiKey), deref(b.model))
-	}
-
-	// The config file beats the defaults.
-	b, _, _ = resolveBackend(nil, nil, nil, true, cfg, env(nil))
-	if deref(b.apiBase) != "http://cfg/v1" || deref(b.apiKey) != "cfg-key" || deref(b.model) != "cfg-model" {
-		t.Errorf("config: %v %v %v", deref(b.apiBase), deref(b.apiKey), deref(b.model))
-	}
-
-	// OPENAI_API_KEY is not read, so a key meant for OpenAI is never sent
-	// to the server api_base names.
-	b, _, _ = resolveBackend(nil, nil, nil, true, config.Config{}, env(map[string]string{"OPENAI_API_KEY": "openai"}))
-	if b.apiKey != nil || b.apiBase != nil || b.model != nil || b.ollamaEndpoint != nil {
-		t.Errorf("defaults: %v %v %v %v", deref(b.apiBase), deref(b.apiKey), deref(b.model), deref(b.ollamaEndpoint))
-	}
-}
-
-func TestResolveBackendReadsOLLAMA_HOST(t *testing.T) {
-	b, notes, err := resolveBackend(nil, nil, nil, true, config.Config{}, env(map[string]string{"OLLAMA_HOST": "strix.tiny.vpn"}))
-	if err != nil || len(notes) != 0 || deref(b.ollamaEndpoint) != "http://strix.tiny.vpn:11434" {
-		t.Errorf("endpoint %v, notes %q, err %v", deref(b.ollamaEndpoint), notes, err)
-	}
-}
-
-func TestResolveBackendWarnings(t *testing.T) {
-	for _, tc := range []struct {
-		name             string
-		base, key, model *string
-		llm              bool
-		cfg              config.Config
-		want             []string
-		wantErr          bool
-	}{
-		{name: "nothing set", llm: true},
-		{name: "base without model", base: str("http://x/v1"), llm: true, wantErr: true},
-		{name: "explicit key without base", key: str("k"), llm: true,
-			want: []string{"warning: api_key has no effect without api_base; using local Ollama."}},
-		{name: "key from the config file without base", cfg: config.Config{APIKey: str("k")}, llm: true,
-			want: []string{"warning: api_key has no effect without api_base; using local Ollama."}},
-		{name: "base and model", base: str("http://x/v1"), model: str("m"), llm: true,
-			want: []string{"note: --api-base sends your search query to http://x/v1 to generate the verdict; " +
-				"the default local Ollama backend and the verdict without --llm-verdict keep it on your machine."}},
-		// Without --llm-verdict nothing is sent anywhere, and settings kept
-		// for the runs with it are no reason to fail or warn.
-		{name: "base without model, but no LLM", base: str("http://x/v1")},
-		{name: "key without base, but no LLM", key: str("k")},
-		{name: "base and model, but no LLM", base: str("http://x/v1"), model: str("m")},
-	} {
-		_, notes, err := resolveBackend(tc.base, tc.key, tc.model, tc.llm, tc.cfg, env(nil))
-		if (err != nil) != tc.wantErr {
-			t.Errorf("%s: err = %v", tc.name, err)
-		}
-		if len(notes) != len(tc.want) || (len(notes) > 0 && !reflect.DeepEqual(notes, tc.want)) {
-			t.Errorf("%s: notes = %q, want %q", tc.name, notes, tc.want)
-		}
 	}
 }
 
@@ -202,7 +125,6 @@ func tuiEnv(stderr io.Writer, opened *[]tui.Options, err error) environment {
 		stderr:     stderr,
 		isTerminal: true,
 		lookupEnv:  env(nil),
-		loadConfig: func() (config.Config, error) { return config.Config{}, nil },
 		runTUI: func(_ context.Context, o tui.Options) error {
 			*opened = append(*opened, o)
 			return err
@@ -212,11 +134,10 @@ func tuiEnv(stderr io.Writer, opened *[]tui.Options, err error) environment {
 
 func TestNoIdeaOnATerminalOpensTheInteractiveTUI(t *testing.T) {
 	var opened []tui.Options
-	if code := run([]string{"--llm-verdict", "--model", "llama3"}, tuiEnv(io.Discard, &opened, nil)); code != 0 {
+	if code := run(nil, tuiEnv(io.Discard, &opened, nil)); code != 0 {
 		t.Errorf("exit %d", code)
 	}
-	if len(opened) != 1 || opened[0].Result != nil || opened[0].Search == nil ||
-		opened[0].Backend != "Verdicts by llama3 on the local Ollama." {
+	if len(opened) != 1 || opened[0].Result != nil || opened[0].Search == nil {
 		t.Errorf("opened %+v", opened)
 	}
 
@@ -227,68 +148,6 @@ func TestNoIdeaOnATerminalOpensTheInteractiveTUI(t *testing.T) {
 	// --json still needs an idea, on a terminal too.
 	if code := run([]string{"--json"}, tuiEnv(io.Discard, &opened, nil)); code != 1 || len(opened) != 2 {
 		t.Errorf("exit %d, %d TUIs", code, len(opened))
-	}
-}
-
-func TestTheVerdictComesFromTheDataUnlessAnLLMIsAsked(t *testing.T) {
-	for _, tc := range []struct {
-		args        []string
-		wantBackend string
-		wantStderr  string
-	}{
-		{nil, "Verdicts are estimated from the similarity data; --llm-verdict asks an LLM.", ""},
-		{[]string{"--llm-verdict"}, "Verdicts by qwen3.5 on the local Ollama.", ""},
-		// --fast is still accepted, and changes nothing.
-		{[]string{"--fast"}, "Verdicts are estimated from the similarity data; --llm-verdict asks an LLM.",
-			"note: --fast is the default now; --llm-verdict asks an LLM for the verdict.\n"},
-		// An LLM flag without --llm-verdict likely meant it.
-		{[]string{"--model", "llama3"}, "Verdicts are estimated from the similarity data; --llm-verdict asks an LLM.",
-			"warning: --model only applies with --llm-verdict; the verdict comes from the similarity data.\n"},
-		{[]string{"--api-base", "http://x/v1", "--model", "m"}, "Verdicts are estimated from the similarity data; --llm-verdict asks an LLM.",
-			"warning: --model, --api-base only apply with --llm-verdict; the verdict comes from the similarity data.\n"},
-	} {
-		var opened []tui.Options
-		var stderr strings.Builder
-		if code := run(tc.args, tuiEnv(&stderr, &opened, nil)); code != 0 || len(opened) != 1 {
-			t.Errorf("%q: exit %d, %d TUIs, stderr %q", tc.args, code, len(opened), stderr.String())
-			continue
-		}
-		if opened[0].Backend != tc.wantBackend || stderr.String() != tc.wantStderr {
-			t.Errorf("%q: backend %q, stderr %q", tc.args, opened[0].Backend, stderr.String())
-		}
-	}
-}
-
-func TestFastWithLLMVerdictIsAnArgumentError(t *testing.T) {
-	var opened []tui.Options
-	var stderr strings.Builder
-	code := run([]string{"--fast", "--llm-verdict"}, tuiEnv(&stderr, &opened, nil))
-	if code != 2 || !strings.HasPrefix(stderr.String(), "error: --fast and --llm-verdict can't be used together") || len(opened) != 0 {
-		t.Errorf("exit %d, stderr %q", code, stderr.String())
-	}
-}
-
-func TestBackendNote(t *testing.T) {
-	for _, tc := range []struct {
-		b    backend
-		llm  bool
-		want string
-	}{
-		{backend{}, true, "Verdicts by qwen3.5 on the local Ollama."},
-		{backend{model: str("llama3")}, true, "Verdicts by llama3 on the local Ollama."},
-		{backend{ollamaEndpoint: str("http://strix.tiny.vpn:11434")}, true,
-			"Verdicts by qwen3.5 on the Ollama at http://strix.tiny.vpn:11434."},
-		// --api-base wins over OLLAMA_HOST.
-		{backend{apiBase: str("http://localhost:1234/v1"), model: str("qwen3.5-122b"), ollamaEndpoint: str("http://strix.tiny.vpn:11434")}, true,
-			"Verdicts by qwen3.5-122b, through the API at http://localhost:1234/v1."},
-		{backend{apiBase: str("http://localhost:1234/v1"), model: str("qwen3.5-122b")}, true,
-			"Verdicts by qwen3.5-122b, through the API at http://localhost:1234/v1."},
-		{backend{apiBase: str("http://localhost:1234/v1"), model: str("qwen3.5-122b")}, false,
-			"Verdicts are estimated from the similarity data; --llm-verdict asks an LLM."},
-	} {
-		if got := backendNote(tc.b, tc.llm); got != tc.want {
-			t.Errorf("backendNote(%+v, %v) = %q", tc.b, tc.llm, got)
-		}
 	}
 }
 

@@ -39,8 +39,6 @@ type Options struct {
 	Result *pipeline.Result
 	// Search runs the searches started from the prompt.
 	Search SearchFunc
-	// Backend says how verdicts are made, shown under the prompt.
-	Backend string
 }
 
 // Run runs the TUI until the user quits.
@@ -74,10 +72,8 @@ const statusDuration = 2 * time.Second
 
 // Model is the TUI's state. It implements [tea.Model].
 type Model struct {
-	ctx    context.Context
-	search SearchFunc
-	// backend describes the verdict backend.
-	backend       string
+	ctx           context.Context
+	search        SearchFunc
 	width, height int
 	phase         phase
 	mode          mode
@@ -115,7 +111,6 @@ func New(ctx context.Context, opts Options) *Model {
 	m := &Model{
 		ctx:      ctx,
 		search:   opts.Search,
-		backend:  opts.Backend,
 		input:    textinput.New(),
 		spinner:  spinner.New(spinner.WithSpinner(spinner.Dot), spinner.WithStyle(accentStyle)),
 		openURL:  openURL,

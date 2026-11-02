@@ -3,8 +3,9 @@
 // and failed, the match URLs, and the similarities of the matches both found.
 // patent runs with --fast, silt with its default: both derive the verdict
 // from the similarity data. The headline is not compared, since silt words it
-// as a belief ("We believe this space is crowded: ..."); its patent wording
-// is checked by verdict.TestFromDataMatchesPatent. The two run at the same
+// as a belief ("We believe this space is crowded: ..."); the number of
+// closely-related tools it counts is checked against patent's by
+// verdict.TestFromDataMatchesPatent. The two run at the same
 // time against the live registries, so that they see the same data as far as
 // the registries allow.
 //

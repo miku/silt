@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"image/color"
 	"reflect"
 	"strings"
 	"testing"
 	"time"
 
 	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/ansi"
 
 	"github.com/miku/silt/internal/pipeline"
@@ -40,23 +42,21 @@ func testMatches() []model.Match {
 	}
 }
 
-func testVerdict(gaps int, failed ...model.Source) model.Verdict {
-	v := model.Verdict{
+func testVerdict(failed ...model.Source) model.Verdict {
+	return model.Verdict{
 		Level:          model.Crowded,
-		Headline:       "kill-port and fkill-cli already do this in the sources checked.",
-		Gaps:           []string{},
+		Headline:       "We believe this space is crowded: 3 closely-related tools turned up in the sources checked.",
 		SourcesChecked: []model.Source{model.CratesIO, model.GitHub, model.Npm, model.HackerNews},
 		SourcesFailed:  failed,
 		Caveat:         verdict.Caveat,
 	}
-	for i := range gaps {
-		v.Gaps = append(v.Gaps, fmt.Sprintf("gap %d: a tool that also shows which process holds the port before killing it", i+1))
-	}
-	return v
 }
 
+// longHeadline wraps to several lines on any terminal.
+var longHeadline = strings.Repeat("a headline far longer than any the verdict writes ", 6)
+
 func testResult() *pipeline.Result {
-	return &pipeline.Result{Verdict: testVerdict(2, model.PyPI), Matches: testMatches()}
+	return &pipeline.Result{Verdict: testVerdict(model.PyPI), Matches: testMatches()}
 }
 
 // fakes records the side effects of a model.
@@ -84,7 +84,6 @@ func newModel(t *testing.T, width, height int, res *pipeline.Result, search Sear
 			f.searches = append(f.searches, idea)
 			return search(ctx, idea, log, p)
 		},
-		Backend: "Verdicts by qwen3.5 on the local Ollama.",
 	})
 	m.now = func() time.Time { return testNow }
 	m.openURL = func(url string) error { f.opened = append(f.opened, url); return nil }
@@ -198,29 +197,24 @@ func TestKeyNames(t *testing.T) {
 
 var commonSizes = [][2]int{{80, 24}, {100, 30}, {120, 40}, {160, 50}, {200, 60}}
 
-// verdictShown reports whether screen s shows v's headline and every gap in
-// full.
+// verdictShown reports whether screen s shows v's headline in full.
 func verdictShown(s string, v model.Verdict) bool {
-	for _, text := range append([]string{v.Headline}, v.Gaps...) {
-		if !strings.Contains(squash(s), squash(text)) {
-			return false
-		}
-	}
-	return true
+	return strings.Contains(squash(s), squash(v.Headline))
 }
 
 func TestVerdictIsNeverClippedAtCommonSizes(t *testing.T) {
 	for _, size := range commonSizes {
-		for gaps := range 7 {
-			res := &pipeline.Result{Verdict: testVerdict(gaps, model.PyPI, model.Go), Matches: testMatches()}
+		for _, headline := range []string{testVerdict().Headline, longHeadline} {
+			res := &pipeline.Result{Verdict: testVerdict(model.PyPI, model.Go), Matches: testMatches()}
+			res.Verdict.Headline = headline
 			m, _ := newModel(t, size[0], size[1], res, nil)
 			s := screen(m)
 			checkFits(t, s, size[0], size[1])
 			if !verdictShown(s, res.Verdict) {
-				t.Errorf("%v, %d gaps: the verdict is clipped:\n%s", size, gaps, s)
+				t.Errorf("%v, %d-character headline: the verdict is clipped:\n%s", size, len(headline), s)
 			}
 			if !strings.Contains(s, "Not reached: PyPI · Go") {
-				t.Errorf("%v, %d gaps: the sources not reached are not named:\n%s", size, gaps, s)
+				t.Errorf("%v, %d-character headline: the sources not reached are not named:\n%s", size, len(headline), s)
 			}
 		}
 	}
@@ -236,11 +230,11 @@ func TestCaveatIsNotShown(t *testing.T) {
 }
 
 func TestNotReachedSourcesAreSurfaced(t *testing.T) {
-	m, _ := newModel(t, 100, 30, &pipeline.Result{Verdict: testVerdict(0, model.PyPI, model.Go), Matches: testMatches()}, nil)
+	m, _ := newModel(t, 100, 30, &pipeline.Result{Verdict: testVerdict(model.PyPI, model.Go), Matches: testMatches()}, nil)
 	if s := screen(m); !strings.Contains(s, "Not reached: PyPI · Go") {
 		t.Errorf("failed sources must be named:\n%s", s)
 	}
-	m, _ = newModel(t, 100, 30, &pipeline.Result{Verdict: testVerdict(0), Matches: testMatches()}, nil)
+	m, _ = newModel(t, 100, 30, &pipeline.Result{Verdict: testVerdict(), Matches: testMatches()}, nil)
 	if s := screen(m); strings.Contains(s, "Not reached") {
 		t.Errorf("no failed source, no line:\n%s", s)
 	}
@@ -252,7 +246,8 @@ func TestRendersWithoutPanicAtTinySizes(t *testing.T) {
 	for w := 1; w <= 40; w += 3 {
 		for h := 1; h <= 30; h += 2 {
 			for _, mode := range []string{"", "enter", "?"} {
-				v := testVerdict(3, model.PyPI)
+				v := testVerdict(model.PyPI)
+				v.Headline = longHeadline
 				m, _ := newModel(t, w, h, &pipeline.Result{Verdict: v, Matches: testMatches()}, nil)
 				if mode != "" {
 					press(m, mode)
@@ -310,7 +305,7 @@ func TestUndatedMatchIsNeverFlaggedAsStale(t *testing.T) {
 func TestTextFromOutsideCannotReachTheTerminal(t *testing.T) {
 	res := testResult()
 	res.Matches[0].Description = "evil\x1b]0;pwned\x07 \x1b[2Jclear"
-	res.Verdict.Gaps = []string{"gap\x1b[31m red"}
+	res.Matches[1].Name = "fkill\x1b[31m red"
 	m, _ := newModel(t, 120, 30, res, nil)
 	raw := m.View().Content
 	for _, seq := range []string{"\x1b]0;pwned", "\x1b[2J", "\x1b[31m red"} {
@@ -318,12 +313,28 @@ func TestTextFromOutsideCannotReachTheTerminal(t *testing.T) {
 			t.Errorf("the escape sequence %q reached the screen", seq)
 		}
 	}
-	if s := screen(m); !strings.Contains(s, "evil clear") || !strings.Contains(s, "gap red") {
+	if s := screen(m); !strings.Contains(s, "evil clear") || !strings.Contains(s, "fkill red") {
 		t.Errorf("the text around the sequences must stay:\n%s", s)
 	}
 }
 
 // -- The table -------------------------------------------------------------------
+
+func TestScoresAreColouredByTheVerdictThresholds(t *testing.T) {
+	// The coloured scores are the close matches the headline counts.
+	for _, tc := range []struct {
+		sim  float32
+		want color.Color
+	}{
+		{0.9, lipgloss.Green}, {verdict.VeryStrong, lipgloss.Green},
+		{0.69, lipgloss.Yellow}, {verdict.Close, lipgloss.Yellow},
+		{0.549, muted}, {0, muted},
+	} {
+		if got := scoreColor(tc.sim); got != tc.want {
+			t.Errorf("scoreColor(%v) = %v, want %v", tc.sim, got, tc.want)
+		}
+	}
+}
 
 func TestTableTitleShowsActiveSortKey(t *testing.T) {
 	m, _ := newModel(t, 100, 30, testResult(), nil)
@@ -446,7 +457,7 @@ func manyMatches(n int) []model.Match {
 }
 
 func TestTheSelectedRowStaysOnScreen(t *testing.T) {
-	m, _ := newModel(t, 100, 30, &pipeline.Result{Verdict: testVerdict(0), Matches: manyMatches(50)}, nil)
+	m, _ := newModel(t, 100, 30, &pipeline.Result{Verdict: testVerdict(), Matches: manyMatches(50)}, nil)
 	for _, keys := range [][]string{{"G"}, {"g"}, {"pgdown"}, {"pgdown", "pgdown"}, {"k"}, {"j"}} {
 		press(m, keys...)
 		if s := screen(m); !strings.Contains(s, selectedName(m)) {
@@ -456,7 +467,7 @@ func TestTheSelectedRowStaysOnScreen(t *testing.T) {
 }
 
 func TestScrollbarDoesNotMoveWithinViewport(t *testing.T) {
-	m, _ := newModel(t, 100, 30, &pipeline.Result{Verdict: testVerdict(0), Matches: manyMatches(50)}, nil)
+	m, _ := newModel(t, 100, 30, &pipeline.Result{Verdict: testVerdict(), Matches: manyMatches(50)}, nil)
 	before := screen(m)
 	press(m, "j", "j")
 	if m.list.offset != 0 {
@@ -518,7 +529,7 @@ func TestCompact(t *testing.T) {
 }
 
 func TestEmptyResultsSayWhereNothingTurnedUp(t *testing.T) {
-	m, _ := newModel(t, 100, 30, &pipeline.Result{Verdict: testVerdict(0)}, nil)
+	m, _ := newModel(t, 100, 30, &pipeline.Result{Verdict: testVerdict()}, nil)
 	if s := screen(m); !strings.Contains(s, "No matches turned up in the sources checked.") {
 		t.Errorf("screen:\n%s", s)
 	}
@@ -780,7 +791,7 @@ func TestSearchScreenShowsTypedInput(t *testing.T) {
 func TestSearchScreenShowsKeybindingHints(t *testing.T) {
 	m, _ := newModel(t, 100, 30, nil, nil)
 	s := screen(m)
-	for _, want := range []string{"Enter search", "Esc quit", "Verdicts by qwen3.5 on the local Ollama."} {
+	for _, want := range []string{"Enter search", "Esc quit"} {
 		if !strings.Contains(s, want) {
 			t.Errorf("the prompt lacks %q:\n%s", want, s)
 		}
