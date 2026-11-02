@@ -1,3 +1,0 @@
-model	api	url	ideas	answered	levels	unparsed	request_failed	below_floor	at_floor	above_floor	s_median	s_p90	s_max	over_120s	prompt_tokens_median	output_tokens_median	prefill_s_median	decode_s_median
-qwen3.5-122b	openai	http://strix:8080	87	87	87	0	0	9	60	18	9.23	10.82	11.82	0	1580	138	3.565	5.431
-qwen3.5-9b	ollama	http://strix:11434	87	87	87	0	0	8	62	17	5.05	5.9	7.35	0	1580	134	1.346	3.498
