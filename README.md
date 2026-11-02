@@ -22,6 +22,8 @@ $ silt --sources npm,crates-io "embedded vector database for mobile apps"
 $ silt --list-sources
 ```
 
+![](demo/prompt.gif)
+
 ## Which sources are searched
 
 GitHub and Hacker News are searched for every idea. The other sources are
