@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"slices"
 	"strings"
+	"unicode"
 
 	"github.com/miku/silt/freshness"
 	"github.com/miku/silt/internal/textutil"
@@ -87,8 +88,8 @@ func (a *ArchLinux) Search(ctx context.Context, q model.Query) ([]model.Match, e
 var archStableRepos = []string{"core", "extra", "multilib"}
 
 // toMatches keeps one entry per package, from a stable repository where it
-// is in one, and of those the archLinuxMaxHits that contain the most
-// keywords, in the server's order otherwise.
+// is in one, and of those the archLinuxMaxHits that hold the most keywords,
+// in the server's order otherwise.
 func (a *ArchLinux) toMatches(pkgs []archPackage, keywords []string) []model.Match {
 	var kept []archPackage
 	index := make(map[string]int)
@@ -103,24 +104,29 @@ func (a *ArchLinux) toMatches(pkgs []archPackage, keywords []string) []model.Mat
 		}
 	}
 
-	// A keyword counts if its stem is in the name or description: "kills"
-	// counts for "kill processes".
+	// A keyword counts if a word of the name or description starts with its
+	// stem: "kills" counts for "kill processes", but "port" not for
+	// "support". Measured live, that lifts stern, the multi-pod log tailer,
+	// from third to first of 38 for "kubernetes log viewer with live
+	// filtering", where anywhere in the text it trailed two packages that
+	// merely mention Kubernetes and one of the other keywords.
 	var terms []string
 	for _, k := range keywords {
 		if t := stemS(textutil.ToLower(k)); t != "" && !slices.Contains(terms, t) {
 			terms = append(terms, t)
 		}
 	}
+	notAlnum := func(r rune) bool { return !unicode.IsLetter(r) && !unicode.IsDigit(r) }
 	type scored struct {
 		pkg  archPackage
 		hits int
 	}
 	ranked := make([]scored, len(kept))
 	for i, p := range kept {
-		text := textutil.ToLower(*p.PkgName + " " + p.PkgDesc)
+		words := strings.FieldsFunc(textutil.ToLower(*p.PkgName+" "+p.PkgDesc), notAlnum)
 		ranked[i].pkg = p
 		for _, t := range terms {
-			if strings.Contains(text, t) {
+			if slices.ContainsFunc(words, func(w string) bool { return strings.HasPrefix(w, t) }) {
 				ranked[i].hits++
 			}
 		}

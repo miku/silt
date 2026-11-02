@@ -119,14 +119,15 @@ func TestArchLinuxKeepsOnePackagePreferringTheStableRepository(t *testing.T) {
 
 func TestArchLinuxKeepsThePackagesWithTheMostKeywords(t *testing.T) {
 	// One broad keyword matches hundreds of packages, listed by name: the
-	// ones that hold more of the idea's keywords are kept, stemmed ("kills"
-	// counts for "kill"), and otherwise the server's order.
+	// ones that hold more of the idea's keywords are kept, and otherwise the
+	// server's order. A keyword counts at the start of a word, stemmed
+	// ("kills" counts for "kill"), not inside one ("port" in "support").
 	var pkgs []string
 	for i := range 30 {
-		pkgs = append(pkgs, archLinuxPkg(fmt.Sprintf("a%02d", i), "extra", "a tool to process images"))
+		pkgs = append(pkgs, archLinuxPkg(fmt.Sprintf("a%02d", i), "extra", "a tool to process images, with export support"))
 	}
 	pkgs = append(pkgs, archLinuxPkg("zz-fkill", "extra", "Fabulously kill processes"))
-	q := model.Query{Idea: "a tool that kills a process", Keywords: []string{"kills", "process"}}
+	q := model.Query{Idea: "a tool that kills a process on a port", Keywords: []string{"kills", "process", "port"}}
 	m := mustSearch(t, archLinuxFor(archLinuxServer(t, 200, archLinuxResults(pkgs...))), q)
 	if len(m) != archLinuxMaxHits || m[0].Name != "zz-fkill" || m[1].Name != "a00" || m[archLinuxMaxHits-1].Name != "a18" {
 		t.Errorf("got %d matches, first %q, second %q, last %q", len(m), m[0].Name, m[1].Name, m[len(m)-1].Name)
