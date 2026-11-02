@@ -156,8 +156,8 @@ Kept from patent: the screen (the idea, the sources checked, the sources not
 reached, the verdict, the table), the keys, filter, sort, details, open,
 copy, help, new search and the mouse, and its integrity rules:
 
-- The caveat is never clipped. The verdict gets all the room it needs, then
-  the table what is left; on a short terminal the idea and the sources
+- The verdict is never clipped. It gets all the room it needs, then the
+  table what is left; on a short terminal the idea and the sources
   checked go first. If the verdict still doesn't fit, or the terminal is
   narrower than 30 columns, no verdict is shown at all ("Enlarge the
   terminal").
@@ -177,10 +177,12 @@ Different on purpose:
   "Updated" and a popularity column where the width allows.
 - Names, descriptions, URLs and the model's text are stripped of escape
   sequences and other control characters before they are drawn.
+- The verdict's caveat is not shown; the JSON output keeps it (decided with
+  the user, 2026-11-02). patent always shows it below the verdict.
 
 Tested in two ways: `internal/tui` drives the model with key and mouse
 messages and checks the views (every screen at common and tiny sizes fits
-exactly; the caveat test runs 0–6 gaps at five sizes), and the real binary
+exactly; the verdict test runs 0–6 gaps at five sizes), and the real binary
 was driven in a pseudo-terminal through the `pyte` emulator. pyte lacks
 scroll-up (`CSI n S`), which bubbletea's renderer uses, so a frame can keep
 stale lines there; a forced full repaint showed silt's frame is right.

@@ -171,9 +171,9 @@ reached.
 
 The mouse wheel scrolls, a click selects a match, a second click opens it.
 `⚑` marks a match with no update in 2+ years, and only where the source
-reports a date, so its absence is not a claim of freshness. The verdict's
-caveat is always shown in full: on a terminal too small for it, silt asks
-for a larger one instead of showing a verdict without it.
+reports a date, so its absence is not a claim of freshness. The verdict is
+always shown in full: on a terminal too small for it, silt asks for a
+larger one instead of showing part of it.
 
 ## Development
 

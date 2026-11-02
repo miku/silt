@@ -198,20 +198,40 @@ func TestKeyNames(t *testing.T) {
 
 var commonSizes = [][2]int{{80, 24}, {100, 30}, {120, 40}, {160, 50}, {200, 60}}
 
-func TestCaveatIsNeverClippedAtCommonSizes(t *testing.T) {
+// verdictShown reports whether screen s shows v's headline and every gap in
+// full.
+func verdictShown(s string, v model.Verdict) bool {
+	for _, text := range append([]string{v.Headline}, v.Gaps...) {
+		if !strings.Contains(squash(s), squash(text)) {
+			return false
+		}
+	}
+	return true
+}
+
+func TestVerdictIsNeverClippedAtCommonSizes(t *testing.T) {
 	for _, size := range commonSizes {
 		for gaps := range 7 {
 			res := &pipeline.Result{Verdict: testVerdict(gaps, model.PyPI, model.Go), Matches: testMatches()}
 			m, _ := newModel(t, size[0], size[1], res, nil)
 			s := screen(m)
 			checkFits(t, s, size[0], size[1])
-			if !strings.Contains(squash(s), squash(verdict.Caveat)) {
-				t.Errorf("%v, %d gaps: the caveat is clipped:\n%s", size, gaps, s)
+			if !verdictShown(s, res.Verdict) {
+				t.Errorf("%v, %d gaps: the verdict is clipped:\n%s", size, gaps, s)
 			}
 			if !strings.Contains(s, "Not reached: PyPI · Go") {
 				t.Errorf("%v, %d gaps: the sources not reached are not named:\n%s", size, gaps, s)
 			}
 		}
+	}
+}
+
+func TestCaveatIsNotShown(t *testing.T) {
+	// The verdict carries the caveat, for the JSON output; the TUI leaves it
+	// out.
+	m, _ := newModel(t, 120, 40, testResult(), nil)
+	if s := screen(m); !verdictShown(s, testResult().Verdict) || strings.Contains(squash(s), squash(verdict.Caveat)) {
+		t.Errorf("want the verdict without its caveat:\n%s", s)
 	}
 }
 
@@ -227,20 +247,21 @@ func TestNotReachedSourcesAreSurfaced(t *testing.T) {
 }
 
 func TestRendersWithoutPanicAtTinySizes(t *testing.T) {
-	// At any size, a verdict is either shown with its whole caveat and the
-	// sources not reached, or not at all.
+	// At any size, a verdict is either shown in full, with the sources not
+	// reached, or not at all.
 	for w := 1; w <= 40; w += 3 {
 		for h := 1; h <= 30; h += 2 {
 			for _, mode := range []string{"", "enter", "?"} {
-				m, _ := newModel(t, w, h, &pipeline.Result{Verdict: testVerdict(3, model.PyPI), Matches: testMatches()}, nil)
+				v := testVerdict(3, model.PyPI)
+				m, _ := newModel(t, w, h, &pipeline.Result{Verdict: v, Matches: testMatches()}, nil)
 				if mode != "" {
 					press(m, mode)
 				}
 				s := screen(m)
 				checkFits(t, s, w, h)
 				if mode == "" && strings.Contains(s, "Crowded") &&
-					(!strings.Contains(squash(s), squash(verdict.Caveat)) || !strings.Contains(squash(s), "Not reached: PyPI")) {
-					t.Errorf("%dx%d: a verdict without its caveat:\n%s", w, h, s)
+					(!verdictShown(s, v) || !strings.Contains(squash(s), "Not reached: PyPI")) {
+					t.Errorf("%dx%d: a verdict shown in part:\n%s", w, h, s)
 				}
 			}
 		}

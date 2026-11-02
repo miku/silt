@@ -19,8 +19,8 @@ import (
 	"github.com/miku/silt/model"
 )
 
-// Caveat is the fixed, humble caveat shown on every verdict. Never weaken
-// this.
+// Caveat is the fixed, humble caveat that every verdict carries into the JSON
+// output; the TUI leaves it out. Never weaken this.
 const Caveat = "Not proof it doesn't exist — only that nothing close turned up " +
 	"in the sources checked. Keep looking (web, app stores, niche communities) before committing."
 

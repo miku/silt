@@ -244,8 +244,8 @@ func (m *Model) searchingView() string {
 type resultsLayout struct {
 	// top are the header and verdict lines, in full.
 	top []string
-	// tooSmall is set when the verdict, caveat included, can't be shown in
-	// full; no verdict is shown at all then.
+	// tooSmall is set when the verdict can't be shown in full; no verdict is
+	// shown at all then.
 	tooSmall bool
 	// tableY is the line of the table's title, firstRowY that of its first
 	// match, and tableRows how many matches fit; 0 if there is no table.
@@ -259,8 +259,8 @@ const footerHeight = 1
 // longest name on the "Not reached" line.
 const minWidth = 30
 
-// resultsLayout gives the verdict all the room it needs, caveat included,
-// and the table what is left. On a short terminal the idea and the sources
+// resultsLayout gives the verdict all the room it needs, and the table what
+// is left. On a short terminal the idea and the sources
 // checked go first; the sources that were not reached stay with the
 // verdict.
 func (m *Model) resultsLayout() resultsLayout {
@@ -315,8 +315,7 @@ func (m *Model) verdictLines() []string {
 	for _, gap := range v.Gaps {
 		lines = append(lines, wrap(clean(gap), w, "   "+lipgloss.NewStyle().Foreground(lipgloss.Yellow).Render("•")+" ", "     ", lipgloss.NewStyle())...)
 	}
-	lines = append(lines, "")
-	return append(lines, wrap(clean(v.Caveat), w, " ⚠  ", "    ", dimStyle.Italic(true))...)
+	return lines
 }
 
 func (m *Model) resultsView() string {

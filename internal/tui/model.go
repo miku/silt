@@ -3,10 +3,11 @@
 // filterable, sortable table of matches — with detail and help popups.
 //
 // It is inspired by patent's TUI, not ported from it (D7 in
-// notes/decisions.md), but it keeps patent's integrity rules: the verdict's
-// caveat is never clipped (if it can't be shown in full, no verdict is
-// shown), sources that failed are always named, and the stale marker appears
-// only where a source reports a date.
+// notes/decisions.md), but it keeps patent's integrity rules: the verdict is
+// never clipped (if it can't be shown in full, it isn't shown at all),
+// sources that failed are always named, and the stale marker appears only
+// where a source reports a date. Unlike patent, it leaves out the verdict's
+// caveat; the JSON output keeps it.
 package tui
 
 import (

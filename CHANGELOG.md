@@ -37,7 +37,8 @@ Where silt differs from patent:
 - The API key doesn't fall back to `OPENAI_API_KEY`, so a key meant for
   OpenAI is never sent to the server `--api-base` names; patent reads it
   last.
-- The TUI is silt's own, with patent's layout, keys and integrity rules.
+- The TUI is silt's own, with patent's layout, keys and integrity rules,
+  but without the verdict's caveat; the JSON keeps it.
 - Duplicate matches are resolved in source order; in patent, which duplicate
   wins changes from run to run.
 - Each source's results are cached for an hour, so the same idea run again
