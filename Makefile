@@ -33,5 +33,7 @@ lint:
 .PHONY: clean
 clean:
 	rm -f silt
+	rm -rf .mypy_cache/
+	rm -rf .ropeproject/
 	# -C is nightly only
 	cd scripts/patent-harness/ && cargo clean
