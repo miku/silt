@@ -22,7 +22,7 @@ $ silt --sources npm,crates-io "embedded vector database for mobile apps"
 $ silt --list-sources
 ```
 
-![](demo/prompt.gif)
+![](demo/promptai.gif)
 
 ## Which sources are searched
 
