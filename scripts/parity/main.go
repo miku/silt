@@ -1,11 +1,15 @@
 // Command parity runs patent and silt side by side on the reference ideas and
-// reports where they differ: the verdict level and headline, the sources
-// selected, reached and failed, the match URLs, and the similarities of the
-// matches both found. The two run at the same time against the live
-// registries, so that they see the same data as far as the registries allow.
+// reports where they differ: the verdict level, the sources selected, reached
+// and failed, the match URLs, and the similarities of the matches both found.
+// patent runs with --fast, silt with its default: both derive the verdict
+// from the similarity data. The headline is not compared, since silt words it
+// as a belief ("We believe this space is crowded: ..."); its patent wording
+// is checked by verdict.TestFromDataMatchesPatent. The two run at the same
+// time against the live registries, so that they see the same data as far as
+// the registries allow.
 //
-//	go run ./scripts/parity                 # --fast --keyword-only
-//	go run ./scripts/parity -embeddings     # --fast, ranked with the model
+//	go run ./scripts/parity                 # --keyword-only
+//	go run ./scripts/parity -embeddings     # ranked with the model
 //
 // Run it from the repository root. It builds silt from the working tree, and
 // keeps both tools' output for each idea in -o for a closer look. It exits 1
@@ -77,7 +81,7 @@ func main() {
 		log.Fatalf("building silt: %v\n%s", err, out)
 	}
 
-	args := []string{"--json", "--fast", "--limit", limit}
+	args := []string{"--json", "--limit", limit}
 	if !*embeddings {
 		args = append(args, "--keyword-only")
 	}
@@ -89,7 +93,7 @@ func main() {
 		}
 		var p, s run
 		var wg sync.WaitGroup
-		wg.Go(func() { p = execute(ctx, *patent, args, idea) })
+		wg.Go(func() { p = execute(ctx, *patent, append(slices.Clone(args), "--fast"), idea) })
 		wg.Go(func() { s = execute(ctx, silt, args, idea) })
 		wg.Wait()
 		for tool, r := range map[string]run{"patent": p, "silt": s} {
@@ -227,9 +231,6 @@ func compare(p, s run) comparison {
 	var diffs []string
 	if pv.Level != sv.Level {
 		diffs = append(diffs, fmt.Sprintf("level: patent %v, silt %v", pv.Level, sv.Level))
-	}
-	if pv.Headline != sv.Headline {
-		diffs = append(diffs, fmt.Sprintf("headline:\n  patent %q\n  silt   %q", pv.Headline, sv.Headline))
 	}
 	diffs = append(diffs, sourceDiff("selected", selected(pv), selected(sv))...)
 	diffs = append(diffs, sourceDiff("reached", pv.SourcesChecked, sv.SourcesChecked)...)

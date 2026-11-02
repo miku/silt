@@ -12,22 +12,29 @@ searches all 19 of patent's sources (crates.io, npm, PyPI, GitHub, Go, Maven,
 NuGet, RubyGems, Docker Hub, Homebrew, Packagist, Hex, Artifact Hub, AUR,
 Hackage, Nixpkgs, the VS Code and JetBrains marketplaces, Hacker News), ranks
 matches by semantic similarity (all-MiniLM-L6-v2 in pure Go, downloaded once,
-about 90 MB) or by keyword overlap, and asks an LLM for the verdict: a local
-Ollama (`qwen3.5` by default) or any OpenAI-compatible API. The verdict's
-level never drops below what the similarity data shows, and a headline or
-gap that claims something doesn't exist is replaced or dropped. If the model
-fails, or with `--fast`, the verdict comes from the similarity data alone.
-On a terminal, the results open in a TUI.
+about 90 MB) or by keyword overlap, and estimates the verdict from the
+similarity data: how many matches come close to the idea. Since that is an
+estimate, the headline says so: "We believe this space is crowded: 3
+closely-related tools turned up in the sources checked." On a terminal, the
+results open in a TUI.
+
+With `--llm-verdict`, an LLM gives the verdict instead, with a headline and
+gaps in its own words: a local Ollama (`qwen3.5` by default) or any
+OpenAI-compatible API. Its level never drops below what the similarity data
+shows, and a headline or gap that claims something doesn't exist is
+replaced or dropped. It is slower (about 5 s more per idea with `qwen3.5` on
+a GPU), and in [our experiments](notes/2026-10-31-verdict-experiments/README.md)
+it picked the level no better than the similarity data.
 
 ```shell
 $ go install github.com/miku/silt/cmd/silt@latest
 $ silt                                                                   # search interactively
 $ silt "cli tool that kills a process on a given port"                   # results in the TUI
-$ silt --json "cli tool that kills a process on a given port"            # verdict via local Ollama
-$ silt --json --api-base https://api.openai.com/v1 --model gpt-4o-mini "embedded vector database for mobile apps"
-$ silt --fast --json "cli tool that kills a process on a given port"     # no LLM
-$ silt --keyword-only --fast --json "react component for infinite scroll"   # no model at all
-$ silt --print-prompt "kubernetes log viewer with live filtering"   # the verdict prompt, for your own agent
+$ silt --json "cli tool that kills a process on a given port"            # JSON
+$ silt --llm-verdict --json "cli tool that kills a process on a given port"   # verdict via local Ollama
+$ silt --llm-verdict --json --api-base https://api.openai.com/v1 --model gpt-4o-mini "embedded vector database for mobile apps"
+$ silt --keyword-only --json "react component for infinite scroll"       # no model at all
+$ silt --print-prompt "kubernetes log viewer with live filtering"   # the LLM verdict's prompt, for your own agent
 $ silt --list-sources
 ```
 
@@ -45,9 +52,9 @@ Binaries for Linux, macOS and Windows are on the
 | `IDEA` | the idea to search for; without it, silt asks in the TUI |
 | `--limit N` | how many matches to keep after ranking (default 50) |
 | `--keyword-only` | rank by keyword overlap instead of with the embedding model |
-| `--fast` | skip the LLM: the verdict comes from the similarity data alone |
-| `--model NAME` | the LLM for the verdict: `qwen3.5` on Ollama by default, required with `--api-base` |
-| `--api-base URL` | an OpenAI-compatible API instead of Ollama, e.g. `https://api.openai.com/v1` |
+| `--llm-verdict` | ask an LLM for the verdict instead of estimating it from the similarity data |
+| `--model NAME` | the LLM for `--llm-verdict`: `qwen3.5` on Ollama by default, required with `--api-base` |
+| `--api-base URL` | an OpenAI-compatible API instead of Ollama for `--llm-verdict`, e.g. `https://api.openai.com/v1` |
 | `--api-key KEY` | the key for `--api-base`; omit it for servers without auth |
 | `--sources LIST` | search only these sources, comma-separated, instead of picking them from the idea |
 | `--exclude LIST` | leave these sources out |
@@ -75,9 +82,10 @@ api_key = "sk-..."
 ```
 
 A flag beats the environment, which beats the file. The key falls back to
-`OPENAI_API_KEY` last. Without `--api-base`, the verdict comes from the
-Ollama daemon that `OLLAMA_HOST` names, as for the `ollama` CLI, or from
-`localhost:11434` if it is unset. `GITHUB_TOKEN`, if set, lifts GitHub's
+`OPENAI_API_KEY` last. These settings only apply with `--llm-verdict`.
+Without `--api-base`, the LLM verdict comes from the Ollama daemon that
+`OLLAMA_HOST` names, as for the `ollama` CLI, or from `localhost:11434` if
+it is unset. `GITHUB_TOKEN`, if set, lifts GitHub's
 rate limit, and `NO_COLOR` turns off colour in the TUI.
 
 When a source refuses a search because of its rate limit, silt tries again

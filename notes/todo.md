@@ -37,6 +37,7 @@ plan builds on is in [2026-10-25-patent.md](2026-10-25-patent.md).
 | patent | silt | why |
 |---|---|---|
 | `patent`, `PATENT_MODEL` / `PATENT_API_BASE` / `PATENT_API_KEY`, `<config>/patent/config.toml`, `<cache>/patent/` | `silt`, `SILT_*`, `<config>/silt/config.toml`, `<cache>/silt/` | rename only |
+| the LLM gives the verdict unless `--fast`; the data verdict's headline is "Crowded — 3 closely-related tools turned up in the sources checked." | the data gives the verdict unless `--llm-verdict` (`--fast` is accepted, a no-op, and an argument error with `--llm-verdict`); its headline is "We believe this space is crowded: 3 closely-related tools …"; the LLM path, its guards and their headlines are patent's; the model settings are only checked, and warned about, with `--llm-verdict`; the parity harness runs patent with `--fast` and doesn't compare headlines | E2 found the LLM no better at the level, at 5–9 s per idea; the level is an estimate, so the headline says so (2026-11-02, [2026-10-31-verdict-experiments](2026-10-31-verdict-experiments/README.md)) |
 | User-Agent `patent/x (prior-art search; https://github.com/r14dd/patent)` | `silt/x (...; https://github.com/miku/silt)` | registries should see who is calling |
 | Fan-out iterates a `HashSet`, so which duplicate wins dedup changes from run to run | iterate in `Source.All()` order | patent's order is unspecified, so any fixed order counts as parity, and a fixed order is testable |
 | `--completions` also generates elvish | bash, fish, powershell, zsh | cobra has no elvish generator (D3) |

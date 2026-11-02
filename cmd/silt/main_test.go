@@ -64,32 +64,35 @@ func TestResolveBackendWarnings(t *testing.T) {
 	for _, tc := range []struct {
 		name             string
 		base, key, model *string
-		fast             bool
+		llm              bool
 		cfg              config.Config
 		openAIKey        bool
 		want             []string
 		wantErr          bool
 	}{
-		{name: "nothing set"},
-		{name: "base without model", base: str("http://x/v1"), wantErr: true},
-		{name: "base without model, but --fast skips the LLM", base: str("http://x/v1"), fast: true,
-			want: []string{"warning: --fast skips the LLM, so api_base has no effect."}},
-		{name: "explicit key without base", key: str("k"),
+		{name: "nothing set", llm: true},
+		{name: "base without model", base: str("http://x/v1"), llm: true, wantErr: true},
+		{name: "explicit key without base", key: str("k"), llm: true,
 			want: []string{"warning: api_key has no effect without api_base; using local Ollama."}},
-		{name: "key from the config file without base", cfg: config.Config{APIKey: str("k")},
+		{name: "key from the config file without base", cfg: config.Config{APIKey: str("k")}, llm: true,
 			want: []string{"warning: api_key has no effect without api_base; using local Ollama."}},
 		// OPENAI_API_KEY is only a fallback: having it in the environment is
 		// no reason to warn.
-		{name: "OPENAI_API_KEY without base", openAIKey: true},
-		{name: "base and model", base: str("http://x/v1"), model: str("m"),
+		{name: "OPENAI_API_KEY without base", openAIKey: true, llm: true},
+		{name: "base and model", base: str("http://x/v1"), model: str("m"), llm: true,
 			want: []string{"note: --api-base sends your search query to http://x/v1 to generate the verdict; " +
-				"the default local Ollama backend and --fast keep it on your machine."}},
+				"the default local Ollama backend and the verdict without --llm-verdict keep it on your machine."}},
+		// Without --llm-verdict nothing is sent anywhere, and settings kept
+		// for the runs with it are no reason to fail or warn.
+		{name: "base without model, but no LLM", base: str("http://x/v1")},
+		{name: "key without base, but no LLM", key: str("k")},
+		{name: "base and model, but no LLM", base: str("http://x/v1"), model: str("m")},
 	} {
 		vars := map[string]string{}
 		if tc.openAIKey {
 			vars["OPENAI_API_KEY"] = "sk"
 		}
-		_, notes, err := resolveBackend(tc.base, tc.key, tc.model, tc.fast, tc.cfg, env(vars))
+		_, notes, err := resolveBackend(tc.base, tc.key, tc.model, tc.llm, tc.cfg, env(vars))
 		if (err != nil) != tc.wantErr {
 			t.Errorf("%s: err = %v", tc.name, err)
 		}
@@ -214,7 +217,7 @@ func tuiEnv(stderr io.Writer, opened *[]tui.Options, err error) environment {
 
 func TestNoIdeaOnATerminalOpensTheInteractiveTUI(t *testing.T) {
 	var opened []tui.Options
-	if code := run([]string{"--model", "llama3"}, tuiEnv(io.Discard, &opened, nil)); code != 0 {
+	if code := run([]string{"--llm-verdict", "--model", "llama3"}, tuiEnv(io.Discard, &opened, nil)); code != 0 {
 		t.Errorf("exit %d", code)
 	}
 	if len(opened) != 1 || opened[0].Result != nil || opened[0].Search == nil ||
@@ -232,26 +235,64 @@ func TestNoIdeaOnATerminalOpensTheInteractiveTUI(t *testing.T) {
 	}
 }
 
+func TestTheVerdictComesFromTheDataUnlessAnLLMIsAsked(t *testing.T) {
+	for _, tc := range []struct {
+		args        []string
+		wantBackend string
+		wantStderr  string
+	}{
+		{nil, "Verdicts are estimated from the similarity data; --llm-verdict asks an LLM.", ""},
+		{[]string{"--llm-verdict"}, "Verdicts by qwen3.5 on the local Ollama.", ""},
+		// --fast is still accepted, and changes nothing.
+		{[]string{"--fast"}, "Verdicts are estimated from the similarity data; --llm-verdict asks an LLM.",
+			"note: --fast is the default now; --llm-verdict asks an LLM for the verdict.\n"},
+		// An LLM flag without --llm-verdict likely meant it.
+		{[]string{"--model", "llama3"}, "Verdicts are estimated from the similarity data; --llm-verdict asks an LLM.",
+			"warning: --model only applies with --llm-verdict; the verdict comes from the similarity data.\n"},
+		{[]string{"--api-base", "http://x/v1", "--model", "m"}, "Verdicts are estimated from the similarity data; --llm-verdict asks an LLM.",
+			"warning: --model, --api-base only apply with --llm-verdict; the verdict comes from the similarity data.\n"},
+	} {
+		var opened []tui.Options
+		var stderr strings.Builder
+		if code := run(tc.args, tuiEnv(&stderr, &opened, nil)); code != 0 || len(opened) != 1 {
+			t.Errorf("%q: exit %d, %d TUIs, stderr %q", tc.args, code, len(opened), stderr.String())
+			continue
+		}
+		if opened[0].Backend != tc.wantBackend || stderr.String() != tc.wantStderr {
+			t.Errorf("%q: backend %q, stderr %q", tc.args, opened[0].Backend, stderr.String())
+		}
+	}
+}
+
+func TestFastWithLLMVerdictIsAnArgumentError(t *testing.T) {
+	var opened []tui.Options
+	var stderr strings.Builder
+	code := run([]string{"--fast", "--llm-verdict"}, tuiEnv(&stderr, &opened, nil))
+	if code != 2 || !strings.HasPrefix(stderr.String(), "error: --fast and --llm-verdict can't be used together") || len(opened) != 0 {
+		t.Errorf("exit %d, stderr %q", code, stderr.String())
+	}
+}
+
 func TestBackendNote(t *testing.T) {
 	for _, tc := range []struct {
 		b    backend
-		fast bool
+		llm  bool
 		want string
 	}{
-		{backend{}, false, "Verdicts by qwen3.5 on the local Ollama."},
-		{backend{model: str("llama3")}, false, "Verdicts by llama3 on the local Ollama."},
-		{backend{ollamaEndpoint: str("http://strix.tiny.vpn:11434")}, false,
+		{backend{}, true, "Verdicts by qwen3.5 on the local Ollama."},
+		{backend{model: str("llama3")}, true, "Verdicts by llama3 on the local Ollama."},
+		{backend{ollamaEndpoint: str("http://strix.tiny.vpn:11434")}, true,
 			"Verdicts by qwen3.5 on the Ollama at http://strix.tiny.vpn:11434."},
 		// --api-base wins over OLLAMA_HOST.
-		{backend{apiBase: str("https://api.openai.com/v1"), model: str("gpt-4o-mini"), ollamaEndpoint: str("http://strix.tiny.vpn:11434")}, false,
-			"Verdicts by gpt-4o-mini, through the API at https://api.openai.com/v1."},
-		{backend{apiBase: str("https://api.openai.com/v1"), model: str("gpt-4o-mini")}, false,
+		{backend{apiBase: str("https://api.openai.com/v1"), model: str("gpt-4o-mini"), ollamaEndpoint: str("http://strix.tiny.vpn:11434")}, true,
 			"Verdicts by gpt-4o-mini, through the API at https://api.openai.com/v1."},
 		{backend{apiBase: str("https://api.openai.com/v1"), model: str("gpt-4o-mini")}, true,
-			"--fast: verdicts come from the similarity data, without an LLM."},
+			"Verdicts by gpt-4o-mini, through the API at https://api.openai.com/v1."},
+		{backend{apiBase: str("https://api.openai.com/v1"), model: str("gpt-4o-mini")}, false,
+			"Verdicts are estimated from the similarity data; --llm-verdict asks an LLM."},
 	} {
-		if got := backendNote(tc.b, tc.fast); got != tc.want {
-			t.Errorf("backendNote(%+v, %v) = %q", tc.b, tc.fast, got)
+		if got := backendNote(tc.b, tc.llm); got != tc.want {
+			t.Errorf("backendNote(%+v, %v) = %q", tc.b, tc.llm, got)
 		}
 	}
 }

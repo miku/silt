@@ -79,16 +79,16 @@ type usageError struct{ error }
 
 // flags holds the parsed command line.
 type flags struct {
-	limit                          limitValue
-	model, apiBase, apiKey         string
+	limit                                limitValue
+	model, apiBase, apiKey               string
 	keywordOnly, llmVerdict, printPrompt bool
 	// fast is the default now; the flag is still accepted.
-	fast                           bool
-	listSources, checkSources      bool
-	json                           bool
-	sources, exclude               listValue
-	cacheTTL, catalogTTL           ttlValue
-	completions                    string
+	fast                      bool
+	listSources, checkSources bool
+	json                      bool
+	sources, exclude          listValue
+	cacheTTL, catalogTTL      ttlValue
+	completions               string
 }
 
 // run runs silt with args and returns its exit code.

@@ -163,7 +163,7 @@ func TestCompletionsAreGenerated(t *testing.T) {
 }
 
 func TestAPIBaseWithoutModelIsAnError(t *testing.T) {
-	_, stderr, code := runSilt(t, "--api-base", "http://localhost:1/v1", "cli tool that kills a process on a port")
+	_, stderr, code := runSilt(t, "--llm-verdict", "--api-base", "http://localhost:1/v1", "cli tool that kills a process on a port")
 	if code != 1 || !strings.Contains(stderr, "api_base is set but no model was specified") {
 		t.Errorf("exit %d, stderr %q", code, stderr)
 	}

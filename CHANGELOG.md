@@ -5,17 +5,18 @@
 The first release: a Go port of [patent](https://github.com/r14dd/patent)
 0.14.1 (`8d741bd`). Given the same idea, silt selects the same sources, sends
 each registry the same queries, ranks with the same model and thresholds,
-and gives the same verdict, JSON and exit code as patent; the side-by-side
-check is `go run ./scripts/parity`.
+and gives the same verdict level, JSON and exit code as patent (silt's
+default against patent's `--fast`, with the headline worded as below); the
+side-by-side check is `go run ./scripts/parity`.
 
 - Searches the 19 sources patent searches, picked from the idea or set with
   `--sources` and `--exclude`.
 - Ranks matches by semantic similarity with all-MiniLM-L6-v2, run in pure Go
   (within 1e-6 of patent's ONNX Runtime), or by keyword overlap with
   `--keyword-only`.
-- Gets the verdict from a local Ollama or an OpenAI-compatible API, with
-  patent's integrity guards, or from the similarity data alone with `--fast`.
-  `--print-prompt` prints the prompt instead.
+- Estimates the verdict from the similarity data, or with `--llm-verdict`
+  gets it from a local Ollama or an OpenAI-compatible API, with patent's
+  integrity guards. `--print-prompt` prints the LLM's prompt instead.
 - Shows the results in a TUI on a terminal, and as JSON otherwise.
 - Static binaries for Linux, macOS and Windows, on amd64 and arm64.
 
@@ -23,6 +24,14 @@ Where silt differs from patent:
 
 - It is called `silt`: `SILT_MODEL`, `SILT_API_BASE` and `SILT_API_KEY`,
   `<config>/silt/config.toml`, `<cache>/silt/`, and its own User-Agent.
+- The verdict comes from the similarity data unless `--llm-verdict` asks an
+  LLM for it; patent asks the LLM unless `--fast` is given. In
+  [the experiments](notes/2026-10-31-verdict-experiments/README.md) the LLM
+  picked the level no better, at about 5 s per idea. Since the level is an
+  estimate, the headline says so: "We believe this space is crowded: 3
+  closely-related tools turned up in the sources checked." where patent says
+  "Crowded — 3 closely-related tools turned up in the sources checked."
+  `--fast` is still accepted and changes nothing.
 - It reads `OLLAMA_HOST` as the `ollama` CLI does, so the verdict can come
   from an Ollama on another machine; patent always uses `localhost:11434`.
 - The TUI is silt's own, with patent's layout, keys and integrity rules.

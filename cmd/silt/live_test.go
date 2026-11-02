@@ -10,7 +10,7 @@ import (
 
 // TestJSONOutputIsValidJSON hits the network: go test -tags live.
 func TestJSONOutputIsValidJSON(t *testing.T) {
-	stdout, stderr, code := runSilt(t, "--json", "--fast", "--keyword-only", "cli tool that kills a process on a given port")
+	stdout, stderr, code := runSilt(t, "--json", "--keyword-only", "cli tool that kills a process on a given port")
 	// The exit code reflects the verdict (0 Open, 1 Crowded, 2 Saturated), so
 	// only check that the process didn't fail outright.
 	if code > 2 {
