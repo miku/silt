@@ -9,7 +9,7 @@ of the ones that are not.
 Ordered by value per effort. §1 is free, §2 is mechanical, §3 needs a decision,
 §4 is outside the Go code, §5 is left as found.
 
-Line numbers are as of `54b4476`.
+Line numbers are as of `8c5003c`.
 
 Update, 2026-11-02: the LLM verdict is gone (D8 in
 [decisions.md](decisions.md)), so the items on `llm/`, `verdict/assess.go`
@@ -19,8 +19,8 @@ backend precedence chain in `cmd/silt` and `ollamaEndpoint` are moot.
 Update, 2026-11-03: §1 is done (`HTTPClientError` dropped as well; see D6),
 and the packages moved under `internal/` (D1), so a path such as
 `sources/sources.go` below is now `internal/sources/sources.go`. In §4 the
-`dbis` media and the verdict experiments are gone from the tree, though
-still in the history.
+`dbis` media are gone from the tree and the history, and the verdict
+experiments from the tree, though still in the history.
 
 ## 1. Dead code — delete outright
 
