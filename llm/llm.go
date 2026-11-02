@@ -16,7 +16,8 @@ import (
 type LLM interface {
 	// Generate returns a completion for prompt.
 	Generate(ctx context.Context, prompt string) (string, error)
-	// Label is a short name shown in progress output, e.g. "Ollama".
+	// Label names the backend and the server it talks to, for progress
+	// output, e.g. "Ollama at http://localhost:11434".
 	Label() string
 }
 

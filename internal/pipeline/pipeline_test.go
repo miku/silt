@@ -238,14 +238,15 @@ func TestMain(m *testing.M) {
 func ptr[T any](v T) *T { return &v }
 
 // fakeOllama points the default LLM backend at a server running h for the
-// duration of a test.
-func fakeOllama(t *testing.T, h http.HandlerFunc) {
+// duration of a test, and returns the server's URL.
+func fakeOllama(t *testing.T, h http.HandlerFunc) string {
 	t.Helper()
 	srv := httptest.NewServer(h)
 	t.Cleanup(srv.Close)
 	orig := ollamaEndpoint
 	ollamaEndpoint = srv.URL
 	t.Cleanup(func() { ollamaEndpoint = orig })
+	return srv.URL
 }
 
 func writeJSON(w http.ResponseWriter, status int, v any) {
@@ -269,7 +270,7 @@ func killPortSearch(t *testing.T) {
 func TestRunGeneratesTheLLMVerdictViaOllamaByDefault(t *testing.T) {
 	killPortSearch(t)
 	var req struct{ Model, Prompt string }
-	fakeOllama(t, func(w http.ResponseWriter, r *http.Request) {
+	endpoint := fakeOllama(t, func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/api/generate" {
 			t.Errorf("path = %q", r.URL.Path)
 		}
@@ -299,7 +300,7 @@ func TestRunGeneratesTheLLMVerdictViaOllamaByDefault(t *testing.T) {
 	if !reflect.DeepEqual(res.Verdict, want) || len(res.Matches) != 1 {
 		t.Errorf("result = %+v", res)
 	}
-	if got := logs[len(logs)-2]; got != "Generating verdict via Ollama (qwen3.5)..." {
+	if got := logs[len(logs)-2]; got != "Generating verdict via Ollama at "+endpoint+" (qwen3.5)..." {
 		t.Errorf("log = %q", got)
 	}
 	if got := logs[len(logs)-1]; !strings.HasPrefix(got, "   verdict in ") {
@@ -368,14 +369,14 @@ func TestRunUsesTheOpenAICompatibleAPIWhenAPIBaseIsSet(t *testing.T) {
 	if res.Verdict.Headline != "kill-port and fkill already do this." {
 		t.Errorf("verdict = %+v", res.Verdict)
 	}
-	if got := logs[len(logs)-2]; got != "Generating verdict via OpenAI API (gpt-4o-mini)..." {
+	if got := logs[len(logs)-2]; got != "Generating verdict via OpenAI-compatible API at "+srv.URL+"/v1 (gpt-4o-mini)..." {
 		t.Errorf("log = %q", got)
 	}
 }
 
 func TestRunFallsBackToSearchOnlyVerdictWhenTheLLMFails(t *testing.T) {
 	killPortSearch(t)
-	fakeOllama(t, func(w http.ResponseWriter, _ *http.Request) {
+	endpoint := fakeOllama(t, func(w http.ResponseWriter, _ *http.Request) {
 		writeJSON(w, 404, map[string]any{"error": "model 'qwen2.5:3b' not found"})
 	})
 	var logs []string
@@ -396,7 +397,7 @@ func TestRunFallsBackToSearchOnlyVerdictWhenTheLLMFails(t *testing.T) {
 		t.Errorf("result = %+v", res)
 	}
 	wantLogs := []string{
-		"Generating verdict via Ollama (qwen2.5:3b)...",
+		"Generating verdict via Ollama at " + endpoint + " (qwen2.5:3b)...",
 		"warning: model 'qwen2.5:3b' not found (model `qwen2.5:3b`). Run `ollama pull qwen2.5:3b`.",
 		"   showing results without an AI verdict.",
 	}

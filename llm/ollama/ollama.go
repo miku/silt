@@ -74,7 +74,7 @@ func New(endpoint, model string) *Client {
 }
 
 // Label implements [llm.LLM].
-func (c *Client) Label() string { return "Ollama" }
+func (c *Client) Label() string { return "Ollama at " + c.Endpoint }
 
 type generateRequest struct {
 	Model  string `json:"model"`

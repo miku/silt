@@ -36,7 +36,7 @@ func New(baseURL, model string, apiKey *string) *Client {
 }
 
 // Label implements [llm.LLM].
-func (c *Client) Label() string { return "OpenAI API" }
+func (c *Client) Label() string { return "OpenAI-compatible API at " + c.BaseURL }
 
 type message struct {
 	Role    string `json:"role"`
