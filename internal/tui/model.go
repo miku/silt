@@ -21,10 +21,10 @@ import (
 	"charm.land/bubbles/v2/textinput"
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/miku/silt/freshness"
+	"github.com/miku/silt/internal/freshness"
+	"github.com/miku/silt/internal/model"
 	"github.com/miku/silt/internal/pipeline"
-	"github.com/miku/silt/model"
-	"github.com/miku/silt/rank"
+	"github.com/miku/silt/internal/rank"
 )
 
 // SearchFunc runs a search for idea. log receives the pipeline's progress

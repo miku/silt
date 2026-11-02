@@ -16,6 +16,12 @@ Update, 2026-11-02: the LLM verdict is gone (D8 in
 (`stripHedges`, `isWholeWord`, `parseVerdict`), `verdict.sourceList`, the
 backend precedence chain in `cmd/silt` and `ollamaEndpoint` are moot.
 
+Update, 2026-11-03: §1 is done (`HTTPClientError` dropped as well; see D6),
+and the packages moved under `internal/` (D1), so a path such as
+`sources/sources.go` below is now `internal/sources/sources.go`. In §4 the
+`dbis` media and the verdict experiments are gone from the tree, though
+still in the history.
+
 ## 1. Dead code — delete outright
 
 Found by listing every exported name in the non-test files and counting its

@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/miku/silt"
-	"github.com/miku/silt/model"
-	"github.com/miku/silt/sources"
+	"github.com/miku/silt/internal/model"
+	"github.com/miku/silt/internal/silt"
+	"github.com/miku/silt/internal/sources"
 )
 
 func TestPrintChecks(t *testing.T) {

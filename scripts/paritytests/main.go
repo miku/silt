@@ -38,10 +38,16 @@ var manual = map[string][]string{
 		"sources.TestArtifactHubMalformedDateNeverFailsTheSource",
 		"sources.TestJetBrainsWrongTypeCdateDegradesToNoneNotError",
 	},
-	"tests/sources.rs::test_homebrew_happy_path":    {"sources.TestHomebrewHappyPath"},
-	"tests/sources.rs::test_homebrew_empty_results": {"sources.TestHomebrewEmptyResults"},
-	"tests/sources.rs::test_homebrew_server_error":  {"sources.TestHomebrewServerError"},
+	"tests/sources.rs::test_homebrew_happy_path":               {"sources.TestHomebrewHappyPath"},
+	"tests/sources.rs::test_homebrew_empty_results":            {"sources.TestHomebrewEmptyResults"},
+	"tests/sources.rs::test_homebrew_server_error":             {"sources.TestHomebrewServerError"},
+	"src/rank.rs::rank_async_empty_returns_empty":              {"n/a: " + rankAsyncReason},
+	"src/rank.rs::rank_async_orders_relevant_above_irrelevant": {"n/a: " + rankAsyncReason},
 }
+
+const rankAsyncReason = "silt has no one-call rank_async: the pipeline loads the " +
+	"model while the sources are searched, then ranks with RankWith, which the " +
+	"rank_* tests above cover"
 
 // notApplicable gives the reason why the tests of a file that silt doesn't
 // port are n/a. Those of its tests that a Go test of the same name covers
@@ -107,11 +113,14 @@ func main() {
 	}
 	for _, f := range files {
 		var lines []string
-		n := 0
+		n, fileNotAp := 0, 0
 		reason, na := notApplicable[f]
 		for _, t := range byFile[f] {
 			targets := manual[t.file+"::"+t.name]
-			if targets == nil {
+			var why string
+			if len(targets) == 1 && strings.HasPrefix(targets[0], "n/a: ") {
+				why, targets = strings.TrimPrefix(targets[0], "n/a: "), nil
+			} else if targets == nil {
 				if g, ok := ported[normalize(t.name)]; ok {
 					targets = []string{g}
 				}
@@ -121,20 +130,27 @@ func main() {
 			case targets != nil:
 				box = "x"
 				n++
-			case na:
+			case na || why != "":
 				box = "-"
-				notAp++
+				fileNotAp++
 			}
 			line := fmt.Sprintf("- [%s] `%s`", box, t.name)
-			if targets != nil {
+			switch {
+			case targets != nil:
 				line += " → " + strings.Join(targets, ", ")
+			case why != "":
+				line += " — n/a: " + why
 			}
 			lines = append(lines, line)
 		}
 		done += n
+		notAp += fileNotAp
 		heading := fmt.Sprintf("## %s (%d/%d)\n\n", f, n, len(byFile[f]))
-		if na {
+		switch {
+		case na:
 			heading = fmt.Sprintf("## %s (%d/%d, the rest n/a)\n\n%s\n\n", f, n, len(byFile[f]), wrapText(reason, 80))
+		case fileNotAp > 0:
+			heading = fmt.Sprintf("## %s (%d/%d, the rest n/a)\n\n", f, n, len(byFile[f]))
 		}
 		sections = append(sections, heading+strings.Join(lines, "\n")+"\n")
 	}

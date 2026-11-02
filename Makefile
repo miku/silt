@@ -1,7 +1,7 @@
 # VERSION overrides the version silt reports; by default it comes from the
 # module's build info (a VCS-stamped pseudo-version for local builds).
 VERSION ?=
-LDFLAGS := $(if $(VERSION),-X github.com/miku/silt.version=$(VERSION))
+LDFLAGS := $(if $(VERSION),-X github.com/miku/silt/internal/silt.version=$(VERSION))
 
 SHELL := /bin/bash
 
@@ -35,5 +35,5 @@ clean:
 	rm -f silt
 	rm -rf .mypy_cache/
 	rm -rf .ropeproject/
-	# -C is nightly only
-	cd scripts/patent-harness/ && cargo clean
+	# What cargo clean removes, without needing cargo.
+	rm -rf scripts/patent-harness/target/

@@ -5,7 +5,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/miku/silt/model"
+	"github.com/miku/silt/internal/model"
 )
 
 // sortKey orders the matches table; s cycles through the keys.

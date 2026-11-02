@@ -11,9 +11,9 @@ import (
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/ansi"
 
-	"github.com/miku/silt/freshness"
-	"github.com/miku/silt/model"
-	"github.com/miku/silt/verdict"
+	"github.com/miku/silt/internal/freshness"
+	"github.com/miku/silt/internal/model"
+	"github.com/miku/silt/internal/verdict"
 )
 
 var (

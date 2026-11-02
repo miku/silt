@@ -15,7 +15,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/miku/silt/model"
+	"github.com/miku/silt/internal/model"
 )
 
 // Fixture is the recorded input.

@@ -10,8 +10,8 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/miku/silt/internal/model"
 	"github.com/miku/silt/internal/pipeline"
-	"github.com/miku/silt/model"
 )
 
 // limitValue is --limit: a uint32 of at least 1, as clap's

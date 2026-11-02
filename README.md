@@ -125,15 +125,14 @@ the progress output says so, e.g. "GitHub: rate-limited until 21:39; set
 GITHUB_TOKEN for a higher limit". Without a token, GitHub allows 10
 searches a minute.
 
-Each source's results are kept for an hour in silt's cache directory
-(`~/.cache/silt/results` on Linux, `~/Library/Caches/silt/results` on macOS,
-`%LocalAppData%\silt\results` on Windows), so running the same idea again
-doesn't send the same requests to the registries again. A source that failed
-is never cached, and the progress lines say which sources the cache
-answered. `--cache-ttl` or `SILT_CACHE_TTL` sets another duration, such as
-`10m` or `24h`; `0` turns the cache off.
+Each source's results are reused for an hour from silt's cache directory
+(`~/.cache/silt` on Linux), so running the same idea again doesn't send the
+same requests to the registries again. A source that failed is never cached,
+and the progress lines say which sources the cache answered. `--cache-ttl` or
+`SILT_CACHE_TTL` sets another duration, such as `10m` or `24h`; `0` turns the
+cache off.
 
-Results are kept for a day, though, and when a source fails, its result
+Results are kept for a day, though, so that when a source fails, its result
 for the same idea from within the last day stands in, labelled: "not
 reached now, from the local cache instead: crates.io (3h old)".
 

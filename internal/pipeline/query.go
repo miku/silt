@@ -5,8 +5,8 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"github.com/miku/silt/internal/model"
 	"github.com/miku/silt/internal/textutil"
-	"github.com/miku/silt/model"
 )
 
 const example = "e.g.\n  silt \"CLI tool that kills a process on a given port\""

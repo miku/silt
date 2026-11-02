@@ -35,7 +35,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/miku/silt/model"
+	"github.com/miku/silt/internal/model"
 )
 
 // patentVersion is the reference the port is checked against.

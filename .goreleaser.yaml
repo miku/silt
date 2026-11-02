@@ -1,4 +1,4 @@
-# Release binaries, built by .github/workflows/release.yml for a v* tag.
+# Release binaries for a v* tag, built by hand: goreleaser release --clean
 # Try it locally with: goreleaser release --snapshot --clean
 version: 2
 
@@ -12,7 +12,7 @@ builds:
     flags:
       - -trimpath
     ldflags:
-      - -s -w -X github.com/miku/silt.version={{ .Version }}
+      - -s -w -X github.com/miku/silt/internal/silt.version={{ .Version }}
 
 archives:
   - formats: [tar.gz]

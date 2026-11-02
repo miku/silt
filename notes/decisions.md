@@ -29,6 +29,18 @@ Adapters are structs with exported `Client` and `BaseURL` fields plus a
 `NewX(client)` constructor for the live host, the Go equivalent of patent's
 `new` / `with_base_url`.
 
+**2026-11-03: everything is internal.** silt is a command, not a library, so
+`model`, `freshness`, `sources`, `rank` and `verdict` moved under
+`internal/`, and the root package's `doc.go`, `errors.go` and `version.go`
+became `internal/silt`. There is no package at the module root any more;
+`go install github.com/miku/silt/cmd/silt@latest` is unchanged, and the
+version is stamped with `-X github.com/miku/silt/internal/silt.version=…`.
+With no API to keep for outside callers, the exported names that only
+callers outside the module could have wanted went too: `sources.SearchAll`,
+`SearchFiltered` and `SearchFilteredWithClient` (the `Searcher` method stays),
+`SearchSources`, `rank.Rank`, `minilm.Dim`, and `internal/httprec`, which
+nothing imported. `deadcode ./...` now reports only the test helpers.
+
 ## D2 Embedding backend — hand-written pure Go + AVX2 kernel (2026-10-26)
 
 **Decision:** candidate 2, a hand-written forward pass and WordPiece
@@ -222,6 +234,8 @@ stale lines there; a forced full repaint showed silt's frame is right.
   Hackage, the Homebrew catalogs) do reject `null`, as patent does.
 - Building a `net/http` client cannot fail, so `HTTPClientError` is never
   returned today. It exists so the taxonomy and `IsRetryable` stay complete.
+  **2026-11-03:** removed. It was never constructed, so no behaviour changes,
+  and `IsRetryable` is now false for Unavailable only.
 
 ## D8 No LLM verdict (2026-11-02)
 

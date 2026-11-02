@@ -10,11 +10,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/miku/silt"
-	"github.com/miku/silt/model"
-	"github.com/miku/silt/rank"
-	"github.com/miku/silt/sources"
-	"github.com/miku/silt/verdict"
+	"github.com/miku/silt/internal/model"
+	"github.com/miku/silt/internal/rank"
+	"github.com/miku/silt/internal/silt"
+	"github.com/miku/silt/internal/sources"
+	"github.com/miku/silt/internal/verdict"
 )
 
 func TestValidateIdeaAcceptsANormalIdea(t *testing.T) {

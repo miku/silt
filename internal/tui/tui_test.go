@@ -14,10 +14,10 @@ import (
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/ansi"
 
+	"github.com/miku/silt/internal/model"
 	"github.com/miku/silt/internal/pipeline"
-	"github.com/miku/silt/model"
-	"github.com/miku/silt/rank"
-	"github.com/miku/silt/verdict"
+	"github.com/miku/silt/internal/rank"
+	"github.com/miku/silt/internal/verdict"
 )
 
 var testNow = time.Date(2026, time.October, 26, 0, 0, 0, 0, time.UTC)

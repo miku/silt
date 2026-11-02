@@ -645,7 +645,8 @@ noise like this as a difference and exits 1.
   Then repeat with embeddings and compare the similarity deltas.
 - [x] Record/replay: an HTTP-recording `RoundTripper` that lets silt replay a
   recorded fan-out deterministically. It's also useful for regression tests
-  later. (`internal/httprec`, through `sources.SearchFilteredWithClient`.)
+  later. (`internal/httprec`, through `sources.SearchFilteredWithClient`;
+  both removed on 2026-11-03, since nothing used them.)
 - [x] Compare `--list-sources`, `--help`, error messages and exit codes. The
   `--print-prompt` comparison on replayed data moved to M9.
 - [x] README: usage, flags table, exit codes, keybindings, markers, the

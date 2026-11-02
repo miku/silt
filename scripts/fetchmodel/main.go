@@ -12,8 +12,8 @@ import (
 	"os"
 
 	"github.com/miku/silt/internal/minilm"
-	"github.com/miku/silt/rank"
-	"github.com/miku/silt/sources"
+	"github.com/miku/silt/internal/rank"
+	"github.com/miku/silt/internal/sources"
 )
 
 func main() {

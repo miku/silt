@@ -6,7 +6,7 @@ import (
 	"io"
 
 	"github.com/miku/silt/internal/pipeline"
-	"github.com/miku/silt/sources"
+	"github.com/miku/silt/internal/sources"
 )
 
 // checkSources searches the sources cfg selects once each, without the

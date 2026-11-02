@@ -58,7 +58,7 @@ func Find(lookupEnv func(string) (string, bool)) (string, error) {
 	if dir == "" {
 		home, err := os.UserHomeDir()
 		if err != nil {
-			return "", nil
+			return "", nil //nolint:nilerr // this is an optional dependency
 		}
 		dir = filepath.Join(home, ".cloakbrowser")
 	}

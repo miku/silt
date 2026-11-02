@@ -1,3 +1,2 @@
-# LF everywhere, also in Windows checkouts: golden files such as
-# testdata/patent/prompt.txt are compared byte for byte.
+# LF everywhere, also in Windows checkouts.
 * text=auto eol=lf

@@ -30,9 +30,6 @@ const (
 	layerNormEps = 1e-12
 )
 
-// Dim is the length of an embedding.
-const Dim = hidden
-
 // Model is a loaded all-MiniLM-L6-v2. It is safe for concurrent use.
 type Model struct {
 	tok      *Tokenizer

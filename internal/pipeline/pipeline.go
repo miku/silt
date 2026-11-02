@@ -9,10 +9,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miku/silt/model"
-	"github.com/miku/silt/rank"
-	"github.com/miku/silt/sources"
-	"github.com/miku/silt/verdict"
+	"github.com/miku/silt/internal/model"
+	"github.com/miku/silt/internal/rank"
+	"github.com/miku/silt/internal/sources"
+	"github.com/miku/silt/internal/verdict"
 )
 
 // Config configures a run. Nil pointers are settings left unset.

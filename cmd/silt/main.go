@@ -24,13 +24,13 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 
-	"github.com/miku/silt"
 	"github.com/miku/silt/internal/browser"
+	"github.com/miku/silt/internal/model"
 	"github.com/miku/silt/internal/pipeline"
+	"github.com/miku/silt/internal/rank"
+	"github.com/miku/silt/internal/silt"
+	"github.com/miku/silt/internal/sources"
 	"github.com/miku/silt/internal/tui"
-	"github.com/miku/silt/model"
-	"github.com/miku/silt/rank"
-	"github.com/miku/silt/sources"
 )
 
 func main() {
