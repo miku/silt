@@ -25,6 +25,17 @@ test:
 test-live:
 	go test -race -tags live ./...
 
+# The GIFs in demo/, recorded with vhs (https://github.com/charmbracelet/vhs)
+# from the tapes there, e.g. make demos or make demo/json.gif. They search
+# the live registries, so every run records anew.
+DEMOS := $(patsubst %.tape,%.gif,$(filter-out demo/settings.tape,$(wildcard demo/*.tape)))
+
+.PHONY: demos
+demos: $(DEMOS)
+
+demo/%.gif: demo/%.tape demo/settings.tape build
+	cd demo && PATH="$(CURDIR):$$PATH" vhs $*.tape
+
 .PHONY: lint
 lint:
 	go vet ./...
