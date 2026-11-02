@@ -72,6 +72,8 @@ var sourceColors = map[model.Source]color.Color{
 	model.AUR:               lipgloss.Color("#1793d1"),
 	model.Hackage:           lipgloss.Color("#5e5086"),
 	model.Nixpkgs:           lipgloss.Color("#7ebae4"),
+	model.Codeberg:          lipgloss.Color("#2185d0"),
+	model.ArchLinux:         lipgloss.Color("#1793d1"), // Arch blue, as the AUR
 }
 
 func sourceStyle(s model.Source) lipgloss.Style {

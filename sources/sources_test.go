@@ -140,6 +140,39 @@ func TestGitHubAndHackerNewsAreAlwaysSelected(t *testing.T) {
 	}
 }
 
+func TestCodebergIsSearchedOnlyWhenAskedFor(t *testing.T) {
+	// Its search takes 5–15 s, so it is never picked from the idea.
+	for _, idea := range []string{"a ruby gem for parsing csv", "asdf qwer zxcv", "a cli tool for git repositories"} {
+		if s := detectSources(idea); s[model.Codeberg] {
+			t.Errorf("%q: selected %v", idea, s)
+		}
+	}
+	add := []model.Source{model.Codeberg}
+	if got := selectSources("a ruby gem", nil, add, nil); !slices.Contains(got, model.RubyGems) || !slices.Contains(got, model.Codeberg) {
+		t.Errorf("added to the detected sources: %v", got)
+	}
+	if got := selectSources("a ruby gem", []model.Source{model.Npm}, add, nil); !reflect.DeepEqual(got, []model.Source{model.Npm, model.Codeberg}) {
+		t.Errorf("added to the included sources: %v", got)
+	}
+	if got := selectSources("a ruby gem", nil, add, add); slices.Contains(got, model.Codeberg) {
+		t.Errorf("an excluded source is not added: %v", got)
+	}
+}
+
+func TestArchLinuxIsSelectedForArchAndCLIIdeas(t *testing.T) {
+	for idea, want := range map[string]bool{
+		"a pacman hook that cleans the package cache": true,
+		"an aur helper written in go":                 true,
+		"cli tool that kills a process on a port":     true,
+		"a command line markdown previewer":           true,
+		"a python library for parsing toml":           false,
+	} {
+		if got := detectSources(idea)[model.ArchLinux]; got != want {
+			t.Errorf("%q: Arch Linux selected = %v, want %v", idea, got, want)
+		}
+	}
+}
+
 func TestEveryBuiltSourceIsReachableFromSomeIdea(t *testing.T) {
 	// Guards against re-introducing a "marketed but never selected" source:
 	// each source an adapter can be built for must be selectable.
@@ -169,7 +202,8 @@ func TestEveryBuiltSourceIsReachableFromSomeIdea(t *testing.T) {
 		}
 	}
 	for _, s := range model.All() {
-		if !seen[s] {
+		// Codeberg is searched only when asked for, by name.
+		if !seen[s] && s != model.Codeberg {
 			t.Errorf("%v is built but never selected by detectSources", s)
 		}
 	}
@@ -255,7 +289,7 @@ func TestHTTPClientBuilds(t *testing.T) {
 }
 
 func TestSourcesForBuildsSelectedAdapters(t *testing.T) {
-	ids := selectSources("a rust crate for parsing", nil, nil)
+	ids := selectSources("a rust crate for parsing", nil, nil, nil)
 	if len(ids) == 0 {
 		t.Fatal("no sources selected")
 	}
@@ -271,20 +305,20 @@ func TestSelectSourcesUsesStableOrderAndFilters(t *testing.T) {
 	// patent iterates a hash set; silt uses model.All order (a documented
 	// deviation), so the same idea always gives the same order.
 	idea := "a cli tool that kills a process on a port"
-	want := []model.Source{model.CratesIO, model.GitHub, model.Npm, model.PyPI, model.HackerNews, model.Go, model.Homebrew}
-	if got := selectSources(idea, nil, nil); !reflect.DeepEqual(got, want) {
+	want := []model.Source{model.CratesIO, model.GitHub, model.Npm, model.PyPI, model.HackerNews, model.Go, model.Homebrew, model.ArchLinux}
+	if got := selectSources(idea, nil, nil, nil); !reflect.DeepEqual(got, want) {
 		t.Errorf("auto = %v, want %v", got, want)
 	}
-	if got := selectSources(idea, nil, []model.Source{model.PyPI, model.Go}); slices.Contains(got, model.PyPI) || slices.Contains(got, model.Go) {
+	if got := selectSources(idea, nil, nil, []model.Source{model.PyPI, model.Go}); slices.Contains(got, model.PyPI) || slices.Contains(got, model.Go) {
 		t.Errorf("exclude ignored: %v", got)
 	}
 	// An explicit include overrides detection, in All order whatever the
 	// order given.
-	got := selectSources(idea, []model.Source{model.Nixpkgs, model.AUR, model.Nixpkgs}, nil)
+	got := selectSources(idea, []model.Source{model.Nixpkgs, model.AUR, model.Nixpkgs}, nil, nil)
 	if want := []model.Source{model.AUR, model.Nixpkgs}; !reflect.DeepEqual(got, want) {
 		t.Errorf("include = %v, want %v", got, want)
 	}
-	if got := selectSources(idea, []model.Source{}, nil); len(got) != 0 {
+	if got := selectSources(idea, []model.Source{}, nil, nil); len(got) != 0 {
 		t.Errorf("an empty, non-nil include selects nothing, got %v", got)
 	}
 }
@@ -319,6 +353,30 @@ func (*countingSource) ID() model.Source { return model.PyPI }
 func (c *countingSource) Search(context.Context, model.Query) ([]model.Match, error) {
 	c.calls.Add(1)
 	return nil, c.err
+}
+
+// slowSource answers after delay, and asks the fan-out for timeout.
+type slowSource struct{ delay, timeout time.Duration }
+
+func (slowSource) ID() model.Source               { return model.Codeberg }
+func (s slowSource) searchTimeout() time.Duration { return s.timeout }
+func (s slowSource) Search(ctx context.Context, _ model.Query) ([]model.Match, error) {
+	select {
+	case <-time.After(s.delay):
+		return []model.Match{sampleMatch("slow", "https://example.com/slow")}, nil
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	}
+}
+
+func TestASlowSourceGetsTheTimeoutItAsksFor(t *testing.T) {
+	f := fanout{timeout: 50 * time.Millisecond}
+	if out := f.search(t.Context(), []Adapter{slowSource{delay: 150 * time.Millisecond, timeout: 2 * time.Second}}, query()); len(out.Reached) != 1 || len(out.Matches) != 1 {
+		t.Errorf("past the fan-out's timeout, within its own: %+v", out)
+	}
+	if out := f.search(t.Context(), []Adapter{slowSource{delay: 2 * time.Second, timeout: 100 * time.Millisecond}}, query()); len(out.Failed) != 1 {
+		t.Errorf("past its own timeout: %+v", out)
+	}
 }
 
 // fastFanout keeps the tests quick; the shape of the timing is the same.

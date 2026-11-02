@@ -94,7 +94,9 @@ func main() {
 		var p, s run
 		var wg sync.WaitGroup
 		wg.Go(func() { p = execute(ctx, *patent, append(slices.Clone(args), "--fast"), idea) })
-		wg.Go(func() { s = execute(ctx, silt, args, idea) })
+		// silt's own sources, which patent doesn't search, would differ on
+		// every idea they are picked for.
+		wg.Go(func() { s = execute(ctx, silt, append(slices.Clone(args), "--exclude", "arch-linux"), idea) })
 		wg.Wait()
 		for tool, r := range map[string]run{"patent": p, "silt": s} {
 			name := filepath.Join(dir, fmt.Sprintf("%02d-%s", i+1, tool))

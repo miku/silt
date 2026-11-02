@@ -4,7 +4,9 @@
 // Sources are selected based on the query — a Rust query searches crates.io,
 // a Python query searches PyPI, and so on. GitHub and Hacker News are always
 // included. When no language is detected, the three largest registries (npm,
-// PyPI, crates.io) are used as a broad fallback.
+// PyPI, crates.io) are used as a broad fallback. Codeberg is never picked
+// from the idea, since its search takes 5–15 s; it is searched only when
+// asked for, through [Searcher].Add or an explicit include.
 //
 // # Which sources report a last-updated date
 //
@@ -26,6 +28,8 @@
 //	JetBrains Marketplace  cdate (epoch millis, last-updated not creation)
 //	VS Code Marketplace    lastUpdated (needs flags: 914; a narrower flag set silently drops it)
 //	PyPI, by name only     upload_time_iso_8601 of the latest release's files (JSON API)
+//	Codeberg               updated_at (any change to the repo, a settings edit too; Forgejo has no pushed_at)
+//	Arch Linux             last_update (the package's last change in the repositories, rebuilds too)
 //
 // Always nil because the date exists only behind a per-package request, which
 // the timeout does not buy: RubyGems, Docker Hub, NuGet, Packagist, Homebrew
@@ -186,7 +190,7 @@ var selectionRules = []struct {
 		[]string{"helm", "kubernetes", "k8s", "cncf", "cloud-native", "operator", "kubectl", "crd"},
 		[]model.Source{model.ArtifactHub},
 	},
-	{[]string{"arch", "aur", "pacman", "archlinux"}, []model.Source{model.AUR}},
+	{[]string{"arch", "aur", "pacman", "archlinux"}, []model.Source{model.AUR, model.ArchLinux}},
 	{[]string{"haskell", "cabal", "hackage", "ghc", "stack"}, []model.Source{model.Hackage}},
 	{[]string{"nix", "nixos", "nixpkgs", "flake"}, []model.Source{model.Nixpkgs}},
 
@@ -201,10 +205,11 @@ var selectionRules = []struct {
 	// CLI tools span every ecosystem, so a generic "cli" mention casts the net
 	// across the dominant registries rather than just Rust/Go — otherwise the
 	// flagship "kill the process on a port" demo would never search npm,
-	// where fkill-cli / kill-port actually live.
+	// where fkill-cli / kill-port actually live. Homebrew and the Arch Linux
+	// repositories are where established CLI tools get packaged.
 	{
 		[]string{"cli", "command line", "terminal tool", "shell"},
-		[]model.Source{model.CratesIO, model.Go, model.Npm, model.PyPI, model.Homebrew},
+		[]model.Source{model.CratesIO, model.Go, model.Npm, model.PyPI, model.Homebrew, model.ArchLinux},
 	},
 	{
 		[]string{
@@ -343,6 +348,10 @@ func (s Searcher) newAdapter(id model.Source, client *http.Client) Adapter {
 		return NewHackage(client)
 	case model.Nixpkgs:
 		return NewNixpkgs(client)
+	case model.Codeberg:
+		return NewCodeberg(client)
+	case model.ArchLinux:
+		return NewArchLinux(client)
 	}
 	panic(fmt.Sprintf("sources: no adapter for %v", id))
 }
@@ -455,6 +464,10 @@ type Searcher struct {
 	// all its projects when its search is walled and no Browser got
 	// through.
 	PyPIIndex bool
+	// Add are searched on top of the selected sources, unless excluded.
+	// Codeberg, which is never picked from the idea, is searched only
+	// through it or an explicit include.
+	Add []model.Source
 }
 
 // SearchFiltered is the package's [SearchFiltered] with s's client, caches
@@ -465,7 +478,7 @@ func (s Searcher) SearchFiltered(ctx context.Context, q model.Query, include, ex
 		client = NewHTTPClient()
 	}
 	var adapters []Adapter
-	for _, id := range selectSources(q.Idea, include, exclude) {
+	for _, id := range selectSources(q.Idea, include, s.Add, exclude) {
 		adapters = append(adapters, s.newAdapter(id, client))
 	}
 	s.Cache.prune()
@@ -475,8 +488,8 @@ func (s Searcher) SearchFiltered(ctx context.Context, q model.Query, include, ex
 }
 
 // selectSources returns the sources SearchFiltered searches, in model.All
-// order.
-func selectSources(idea string, include, exclude []model.Source) []model.Source {
+// order: those detected for idea, or else include, plus add, less exclude.
+func selectSources(idea string, include, add, exclude []model.Source) []model.Source {
 	var selected map[model.Source]bool
 	if include == nil {
 		selected = detectSources(idea)
@@ -485,6 +498,9 @@ func selectSources(idea string, include, exclude []model.Source) []model.Source 
 		for _, s := range include {
 			selected[s] = true
 		}
+	}
+	for _, s := range add {
+		selected[s] = true
 	}
 	for _, s := range exclude {
 		delete(selected, s)
@@ -596,10 +612,21 @@ func (f fanout) searchOne(ctx context.Context, a Adapter, q model.Query) result 
 	return r
 }
 
-// searchLive searches a single source within the fan-out's timeout, retrying
-// a retryable failure once, as retryWait says.
+// A slowAdapter is an adapter whose source needs more time than the
+// fan-out's timeout gives one.
+type slowAdapter interface {
+	searchTimeout() time.Duration
+}
+
+// searchLive searches a single source within the fan-out's timeout, or the
+// source's own if it is a slowAdapter, retrying a retryable failure once, as
+// retryWait says.
 func (f fanout) searchLive(ctx context.Context, a Adapter, q model.Query) result {
-	ctx, cancel := context.WithTimeout(ctx, f.timeout)
+	timeout := f.timeout
+	if s, ok := a.(slowAdapter); ok {
+		timeout = s.searchTimeout()
+	}
+	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 	deadline, _ := ctx.Deadline()
 	search := func() ([]model.Match, detour, error) {

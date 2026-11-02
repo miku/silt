@@ -12,7 +12,7 @@ import (
 // checkSources searches the sources cfg selects once each, without the
 // caches, and prints how each answered: for --check-sources.
 func checkSources(ctx context.Context, cfg pipeline.Config, w io.Writer) {
-	s := sources.Searcher{Browser: cfg.Browser, PyPIIndex: cfg.PyPIIndex}
+	s := sources.Searcher{Browser: cfg.Browser, PyPIIndex: cfg.PyPIIndex, Add: cfg.Add}
 	// Printed first: the checks can take as long as a source may.
 	fmt.Fprintf(w, "Searching each source once for %q, without the caches:\n", sources.CheckQuery.Idea)
 	printChecks(w, s.Check(ctx, sources.CheckQuery, cfg.Include, cfg.Exclude))

@@ -198,12 +198,14 @@ func TestRunPassesTheCachesAndBrowserAndSaysHowSourcesWereReached(t *testing.T) 
 	}
 	t.Cleanup(func() { searchFiltered = orig })
 	var logs []string
-	cfg := Config{KeywordOnly: true, Limit: 50, Cache: cache, Browser: nopBrowser{}, Catalogs: catalogs, PyPIIndex: true}
+	cfg := Config{KeywordOnly: true, Limit: 50, Cache: cache, Browser: nopBrowser{}, Catalogs: catalogs, PyPIIndex: true,
+		Add: []model.Source{model.Codeberg}}
 	if _, err := Run(context.Background(), "kill process port", cfg, func(s string) { logs = append(logs, s) }); err != nil {
 		t.Fatal(err)
 	}
-	if got.Cache != cache || got.Browser != cfg.Browser || got.Catalogs != catalogs || !got.PyPIIndex {
-		t.Errorf("the fan-out got %+v, want the caches and the browser", got)
+	if got.Cache != cache || got.Browser != cfg.Browser || got.Catalogs != catalogs || !got.PyPIIndex ||
+		!reflect.DeepEqual(got.Add, []model.Source{model.Codeberg}) {
+		t.Errorf("the fan-out got %+v, want the caches, the browser and the added sources", got)
 	}
 	if len(logs) < 2 || !strings.HasSuffix(logs[0], "s: crates.io, npm, PyPI (through CloakBrowser), Homebrew (names only)") ||
 		logs[1] != "   from the local cache (less than 1h30m old): npm" {

@@ -8,8 +8,8 @@ import (
 )
 
 func TestSourceAllReturnsEveryVariant(t *testing.T) {
-	if got := len(All()); got != 19 {
-		t.Fatalf("len(All()) = %d, want 19", got)
+	if got := len(All()); got != 21 {
+		t.Fatalf("len(All()) = %d, want 21", got)
 	}
 }
 
@@ -34,6 +34,7 @@ func TestSaturationIsOrdered(t *testing.T) {
 }
 
 func TestSourceNamesInPatentOrder(t *testing.T) {
+	// patent's 19 in its order, then silt's own.
 	var kebab, display []string
 	for _, s := range All() {
 		kebab = append(kebab, s.KebabName())
@@ -43,11 +44,13 @@ func TestSourceNamesInPatentOrder(t *testing.T) {
 		"crates-io", "github", "npm", "pypi", "hacker-news", "go", "maven",
 		"rubygems", "docker-hub", "vscode-marketplace", "jetbrains", "nuget",
 		"homebrew", "packagist", "hex", "artifact-hub", "aur", "hackage", "nixpkgs",
+		"codeberg", "arch-linux",
 	}
 	wantDisplay := []string{
 		"crates.io", "GitHub", "npm", "PyPI", "Hacker News", "Go", "Maven",
 		"RubyGems", "Docker Hub", "VS Code", "JetBrains", "NuGet", "Homebrew",
 		"Packagist", "Hex", "Artifact Hub", "AUR", "Hackage", "Nixpkgs",
+		"Codeberg", "Arch Linux",
 	}
 	if !reflect.DeepEqual(kebab, wantKebab) {
 		t.Errorf("kebab names = %v", kebab)
@@ -76,6 +79,10 @@ func TestParseSource(t *testing.T) {
 		"brew":               Homebrew,
 		"artifacthub":        ArtifactHub,
 		"AUR":                AUR,
+		"codeberg":           Codeberg,
+		"arch-linux":         ArchLinux,
+		"arch":               ArchLinux,
+		"archlinux":          ArchLinux,
 	} {
 		got, err := ParseSource(in)
 		if err != nil || got != want {
@@ -91,7 +98,7 @@ func TestParseSourceErrorListsValidNames(t *testing.T) {
 	}
 	want := "unknown source `unknown`. Valid: crates-io, github, npm, pypi, hacker-news, go, " +
 		"maven, rubygems, docker-hub, vscode-marketplace, jetbrains, nuget, homebrew, " +
-		"packagist, hex, artifact-hub, aur, hackage, nixpkgs"
+		"packagist, hex, artifact-hub, aur, hackage, nixpkgs, codeberg, arch-linux"
 	if err.Error() != want {
 		t.Errorf("error = %q\nwant    %q", err, want)
 	}

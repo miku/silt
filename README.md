@@ -10,7 +10,9 @@ shipped? silt is an Go port of [patent](https://github.com/r14dd/patent).
 **Status:** work in progress; see [notes/todo.md](notes/todo.md). Today silt
 searches all 19 of patent's sources (crates.io, npm, PyPI, GitHub, Go, Maven,
 NuGet, RubyGems, Docker Hub, Homebrew, Packagist, Hex, Artifact Hub, AUR,
-Hackage, Nixpkgs, the VS Code and JetBrains marketplaces, Hacker News), ranks
+Hackage, Nixpkgs, the VS Code and JetBrains marketplaces, Hacker News) and two
+of its own (the official Arch Linux repositories, and Codeberg on request),
+ranks
 matches by semantic similarity (all-MiniLM-L6-v2 in pure Go, downloaded once,
 about 90 MB) or by keyword overlap, and estimates the verdict from the
 similarity data: how many matches come close to the idea. Since that is an
@@ -57,6 +59,7 @@ Binaries for Linux, macOS and Windows are on the
 | `--api-base URL` | an OpenAI-compatible API instead of Ollama for `--llm-verdict`, e.g. `http://localhost:1234/v1` |
 | `--api-key KEY` | the key for `--api-base`; omit it for servers without auth |
 | `--sources LIST` | search only these sources, comma-separated, instead of picking them from the idea |
+| `--add LIST` | also search these sources, on top of the ones picked from the idea; Codeberg is searched only when asked for, here or with `--sources`, since its search takes 5–15 s |
 | `--exclude LIST` | leave these sources out |
 | `--cache-ttl DURATION` | how long a source's results are reused for the same idea (default `1h`; `0` turns the cache off) |
 | `--catalog-ttl DURATION` | how long downloaded catalogs (Homebrew's, PyPI's project names) are kept (default `24h`; `0` downloads them on every run) |

@@ -32,6 +32,12 @@ Where silt differs from patent:
   closely-related tools turned up in the sources checked." where patent says
   "Crowded — 3 closely-related tools turned up in the sources checked."
   `--fast` is still accepted and changes nothing.
+- Two more sources: the official Arch Linux repositories (`arch-linux`),
+  searched next to the AUR and for CLI tools, and Codeberg, searched only
+  when asked for, since its search takes 5–15 s. `--add` searches any
+  source on top of the ones picked from the idea: `--add codeberg`. Both
+  narrow a query down to a single keyword when it matches nothing, since
+  Codeberg matches a phrase and Arch Linux every word.
 - It reads `OLLAMA_HOST` as the `ollama` CLI does, so the verdict can come
   from an Ollama on another machine; patent always uses `localhost:11434`.
 - The API key doesn't fall back to `OPENAI_API_KEY`, so a key meant for

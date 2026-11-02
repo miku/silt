@@ -106,6 +106,7 @@ func registerCompletions(cmd *cobra.Command) {
 		return names, cobra.ShellCompDirectiveNoFileComp
 	}
 	_ = cmd.RegisterFlagCompletionFunc("sources", sourceNames)
+	_ = cmd.RegisterFlagCompletionFunc("add", sourceNames)
 	_ = cmd.RegisterFlagCompletionFunc("exclude", sourceNames)
 	_ = cmd.RegisterFlagCompletionFunc("completions", cobra.FixedCompletions(shells, cobra.ShellCompDirectiveNoFileComp))
 }

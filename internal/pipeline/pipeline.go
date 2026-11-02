@@ -39,6 +39,9 @@ type Config struct {
 	Limit int
 	// Include, if not nil, replaces the auto-detected sources.
 	Include []model.Source
+	// Add are searched on top of the auto-detected or included sources:
+	// the only way, besides Include, to search Codeberg.
+	Add     []model.Source
 	Exclude []model.Source
 	// Cache, if not nil, answers a source's search when the same query was
 	// searched there within the cache's TTL.
@@ -110,7 +113,7 @@ func sourceNames(ss []model.Source) string {
 
 // searcher is the fan-out's configuration in cfg.
 func (cfg Config) searcher() sources.Searcher {
-	return sources.Searcher{Cache: cfg.Cache, Browser: cfg.Browser, Catalogs: cfg.Catalogs, PyPIIndex: cfg.PyPIIndex}
+	return sources.Searcher{Cache: cfg.Cache, Browser: cfg.Browser, Catalogs: cfg.Catalogs, PyPIIndex: cfg.PyPIIndex, Add: cfg.Add}
 }
 
 // reachedNames names the sources out reached, saying which of them were

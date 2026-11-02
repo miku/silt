@@ -48,6 +48,11 @@ const (
 	AUR
 	Hackage
 	Nixpkgs
+	// silt's own sources, which patent doesn't search, come after its 19.
+	Codeberg
+	ArchLinux
+
+	lastSource = ArchLinux
 )
 
 // sourceNames is indexed by Source.
@@ -71,6 +76,8 @@ var sourceNames = [...]struct{ kebab, display, pascal string }{
 	AUR:               {"aur", "AUR", "Aur"},
 	Hackage:           {"hackage", "Hackage", "Hackage"},
 	Nixpkgs:           {"nixpkgs", "Nixpkgs", "Nixpkgs"},
+	Codeberg:          {"codeberg", "Codeberg", "Codeberg"},
+	ArchLinux:         {"arch-linux", "Arch Linux", "ArchLinux"},
 }
 
 // sourceAliases are the extra spellings [ParseSource] accepts on top of each
@@ -90,19 +97,22 @@ var sourceAliases = map[string]Source{
 	"artifact_hub":       ArtifactHub,
 	"artifacthub":        ArtifactHub,
 	"nix":                Nixpkgs,
+	"arch":               ArchLinux,
+	"archlinux":          ArchLinux,
+	"arch_linux":         ArchLinux,
 }
 
 // All returns every known source, in a stable order. The caller may modify
 // the returned slice.
 func All() []Source {
 	all := make([]Source, 0, len(sourceNames)-1)
-	for s := CratesIO; s <= Nixpkgs; s++ {
+	for s := CratesIO; s <= lastSource; s++ {
 		all = append(all, s)
 	}
 	return all
 }
 
-func (s Source) valid() bool { return s >= CratesIO && s <= Nixpkgs }
+func (s Source) valid() bool { return s >= CratesIO && s <= lastSource }
 
 // KebabName returns the name used in --sources / --exclude and in JSON.
 func (s Source) KebabName() string {

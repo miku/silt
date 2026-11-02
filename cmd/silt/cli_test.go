@@ -115,8 +115,8 @@ func TestListSourcesPrintsEveryKebabAndDisplayName(t *testing.T) {
 		t.Fatalf("exit %d", code)
 	}
 	lines := strings.Split(strings.TrimSuffix(stdout, "\n"), "\n")
-	if len(lines) != 19 {
-		t.Fatalf("got %d lines, want 19", len(lines))
+	if len(lines) != 21 {
+		t.Fatalf("got %d lines, want 21", len(lines))
 	}
 	if lines[0] != "crates-io              crates.io" || lines[9] != "vscode-marketplace     VS Code" {
 		t.Errorf("lines = %q", lines)
@@ -146,6 +146,9 @@ func TestUnknownSourceExitsOneAndListsTheValidNames(t *testing.T) {
 	_, stderr, code := runSilt(t, "--sources", "npm,nope", "cli tool that kills a process on a port")
 	if code != 1 || !strings.Contains(stderr, "unknown source `nope`. Valid: crates-io, github,") {
 		t.Errorf("exit %d, stderr %q", code, stderr)
+	}
+	if _, stderr, code := runSilt(t, "--add", "codeberg,nope", "cli tool that kills a process on a port"); code != 1 || !strings.Contains(stderr, "unknown source `nope`.") {
+		t.Errorf("--add: exit %d, stderr %q", code, stderr)
 	}
 	// As with clap's value_delimiter, an empty item is a name too.
 	if _, stderr, code := runSilt(t, "--sources", "", "cli tool that kills a process on a port"); code != 1 || !strings.Contains(stderr, "unknown source ``") {

@@ -86,7 +86,7 @@ type flags struct {
 	fast                      bool
 	listSources, checkSources bool
 	json                      bool
-	sources, exclude          listValue
+	sources, add, exclude     listValue
 	cacheTTL, catalogTTL      ttlValue
 	completions               string
 }
@@ -149,12 +149,13 @@ func (f *flags) register(cmd *cobra.Command) {
 	fs.BoolVar(&f.fast, "fast", false, "Without an LLM: the default now")
 	_ = fs.MarkHidden("fast")
 	fs.Var(&f.sources, "sources", "Only search these sources (comma-separated, e.g. \"npm,crates-io,github\").\nOverrides the automatic source detection. See --list-sources for valid names")
+	fs.Var(&f.add, "add", "Also search these sources, on top of the ones picked from the idea\n(comma-separated). Codeberg is searched only when asked for, here or with\n--sources: its search takes 5-15 s")
 	fs.Var(&f.exclude, "exclude", "Exclude these sources from the search (comma-separated)")
 	fs.Var(&f.cacheTTL, "cache-ttl", "How long a source's results are reused for the same idea, e.g. 30m or 24h;\n0 turns the cache off. Failed searches are never cached. Can also be set\nvia SILT_CACHE_TTL")
 	fs.Var(&f.catalogTTL, "catalog-ttl", "How long downloaded catalogs (Homebrew's, PyPI's project names) are kept,\ne.g. 6h or 168h; 0 downloads them on every run. Can also be set via\nSILT_CATALOG_TTL")
 	fs.BoolVar(&f.printPrompt, "print-prompt", false, "Print the verdict prompt to stdout and exit (for BYO-agent workflows)")
 	fs.BoolVar(&f.listSources, "list-sources", false, "List all available source names and exit")
-	fs.BoolVar(&f.checkSources, "check-sources", false, "Search each source once, without the caches, print whether it was reached,\nwalled, rate-limited or timed out, and how long it took, and exit.\n--sources and --exclude choose the sources")
+	fs.BoolVar(&f.checkSources, "check-sources", false, "Search each source once, without the caches, print whether it was reached,\nwalled, rate-limited or timed out, and how long it took, and exit.\n--sources, --add and --exclude choose the sources")
 	fs.BoolVar(&f.json, "json", false, "Print structured JSON instead of launching the TUI")
 	fs.StringVar(&f.completions, "completions", "", "Generate shell completions and exit ("+strings.Join(shells, ", ")+")")
 	fs.BoolP("help", "h", false, "Print help")
@@ -314,6 +315,10 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 		}
 		include = ss
 	}
+	add, err := parseSources(f.add)
+	if err != nil {
+		return 0, err
+	}
 	exclude, err := parseSources(f.exclude)
 	if err != nil {
 		return 0, err
@@ -362,6 +367,7 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 		KeywordOnly:    f.keywordOnly,
 		Limit:          int(f.limit),
 		Include:        include,
+		Add:            add,
 		Exclude:        exclude,
 	}
 	if ttl > 0 {

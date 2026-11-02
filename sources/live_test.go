@@ -193,6 +193,14 @@ func TestLiveAURRecoversFromARefusedQuery(t *testing.T) {
 	live(t, NewAUR(client()), "a shared library", []string{"library"}, false)
 }
 
+func TestLiveCodeberg(t *testing.T) {
+	live(t, NewCodeberg(client()), "a self-hosted git forge", []string{"forgejo"}, true)
+}
+
+func TestLiveArchLinux(t *testing.T) {
+	live(t, NewArchLinux(client()), "a fast grep", []string{"ripgrep"}, true)
+}
+
 func TestLiveHackage(t *testing.T) {
 	live(t, NewHackage(client()), "a haskell json parsing library", []string{"json"}, false)
 }

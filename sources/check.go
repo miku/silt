@@ -54,9 +54,9 @@ type SourceCheck struct {
 // Reached reports whether the source was reached, one way or another.
 func (c SourceCheck) Reached() bool { return c.Status <= CheckByName }
 
-// Check searches each source in include once for q, without exclude, all at
-// once, and reports how each answered, in [model.All] order. A nil include
-// checks every source.
+// Check searches each source in include and s.Add once for q, without
+// exclude, all at once, and reports how each answered, in [model.All] order.
+// A nil include checks every source.
 //
 // It searches as [Searcher.SearchFiltered] does, with the same retry, the
 // same browser and PyPI index, but without the caches, so that every source
@@ -71,7 +71,7 @@ func (s Searcher) Check(ctx context.Context, q model.Query, include, exclude []m
 		client = NewHTTPClient()
 	}
 	s.Cache, s.Catalogs = nil, nil
-	ids := selectSources(q.Idea, include, exclude)
+	ids := selectSources(q.Idea, include, s.Add, exclude)
 	checks := make([]SourceCheck, len(ids))
 	var wg sync.WaitGroup
 	for i, id := range ids {
