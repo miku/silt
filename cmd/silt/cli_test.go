@@ -107,7 +107,7 @@ func TestEmptyIdeaExitsWithError(t *testing.T) {
 	}
 }
 
-func TestListSourcesPrintsEveryKebabAndDisplayName(t *testing.T) {
+func TestListSourcesPrintsEveryKebabAndDisplayNameAndWhenItIsSearched(t *testing.T) {
 	stdout, _, code := runSilt(t, "--list-sources")
 	if code != 0 {
 		t.Fatalf("exit %d", code)
@@ -116,8 +116,15 @@ func TestListSourcesPrintsEveryKebabAndDisplayName(t *testing.T) {
 	if len(lines) != 21 {
 		t.Fatalf("got %d lines, want 21", len(lines))
 	}
-	if lines[0] != "crates-io              crates.io" || lines[9] != "vscode-marketplace     VS Code" {
-		t.Errorf("lines = %q", lines)
+	for i, want := range map[int]string{
+		0:  "crates-io              crates.io     if the idea suggests it, or suggests none",
+		1:  "github                 GitHub        always",
+		9:  "vscode-marketplace     VS Code       if the idea suggests it",
+		19: "codeberg               Codeberg      only with --sources or --add",
+	} {
+		if lines[i] != want {
+			t.Errorf("line %d = %q, want %q", i, lines[i], want)
+		}
 	}
 }
 

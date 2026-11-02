@@ -134,7 +134,7 @@ func (f *flags) register(cmd *cobra.Command) {
 	fs.Var(&f.exclude, "exclude", "Exclude these sources from the search (comma-separated)")
 	fs.Var(&f.cacheTTL, "cache-ttl", "How long a source's results are reused for the same idea, e.g. 30m or 24h;\n0 turns the cache off. Failed searches are never cached. Can also be set\nvia SILT_CACHE_TTL")
 	fs.Var(&f.catalogTTL, "catalog-ttl", "How long downloaded catalogs (Homebrew's, PyPI's project names) are kept,\ne.g. 6h or 168h; 0 downloads them on every run. Can also be set via\nSILT_CATALOG_TTL")
-	fs.BoolVar(&f.listSources, "list-sources", false, "List all available source names and exit")
+	fs.BoolVar(&f.listSources, "list-sources", false, "List all available source names, and when each is searched, and exit")
 	fs.BoolVar(&f.checkSources, "check-sources", false, "Search each source once, without the caches, print whether it was reached,\nwalled, rate-limited or timed out, and how long it took, and exit.\n--sources, --add and --exclude choose the sources")
 	fs.BoolVar(&f.json, "json", false, "Print structured JSON instead of launching the TUI")
 	fs.StringVar(&f.completions, "completions", "", "Generate shell completions and exit ("+strings.Join(shells, ", ")+")")
@@ -190,7 +190,7 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 	}
 	if f.listSources {
 		for _, s := range model.All() {
-			fmt.Fprintf(stdout, "%-22s %s\n", s.KebabName(), s)
+			fmt.Fprintf(stdout, "%-22s %-13s %s\n", s.KebabName(), s, whenSearched(sources.SelectionOf(s)))
 		}
 		return 0, nil
 	}
@@ -315,6 +315,19 @@ func (f *flags) run(cmd *cobra.Command, args []string, env environment) (int, er
 		return 0, err
 	}
 	return res.Verdict.Level.ExitCode(), nil
+}
+
+// whenSearched words a source's selection for --list-sources.
+func whenSearched(sel sources.Selection) string {
+	switch sel {
+	case sources.Always:
+		return "always"
+	case sources.ByIdea:
+		return "if the idea suggests it"
+	case sources.ByIdeaOrFallback:
+		return "if the idea suggests it, or suggests none"
+	}
+	return "only with --sources or --add"
 }
 
 // searcher runs the searches started in the TUI with the settings of the

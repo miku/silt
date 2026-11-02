@@ -34,6 +34,24 @@ gets JSON.
 Binaries for Linux, macOS and Windows are on the
 [releases page](https://github.com/miku/silt/releases).
 
+## Which sources are searched
+
+GitHub and Hacker News are searched for every idea. The other sources are
+picked by words in the idea: "rust" picks crates.io, "cli" picks crates.io,
+Go, npm, PyPI, Homebrew and Arch Linux, and so on. When the idea picks none,
+npm, PyPI and crates.io stand in. Codeberg, whose search takes 5–15 s, is
+searched only when asked for, with `--sources` or `--add`. `--list-sources`
+says which is which:
+
+```shell
+$ silt --list-sources
+crates-io              crates.io     if the idea suggests it, or suggests none
+github                 GitHub        always
+...
+codeberg               Codeberg      only with --sources or --add
+arch-linux             Arch Linux    if the idea suggests it
+```
+
 ## The verdict
 
 silt embeds the idea and each match ("name: description") with
@@ -102,7 +120,7 @@ changes the score: an old project is still prior art.
 | `--cache-ttl DURATION` | how long a source's results are reused for the same idea (default `1h`; `0` turns the cache off) |
 | `--catalog-ttl DURATION` | how long downloaded catalogs (Homebrew's, PyPI's project names) are kept (default `24h`; `0` downloads them on every run) |
 | `--json` | print JSON instead of opening the TUI |
-| `--list-sources` | list the source names and exit |
+| `--list-sources` | list the source names, and when each is searched, and exit |
 | `--check-sources` | search each source once, without the caches, print whether it was reached and how long it took, and exit |
 | `--completions SHELL` | print completions for bash, fish, powershell or zsh |
 | `-V`, `--version` | print the version |

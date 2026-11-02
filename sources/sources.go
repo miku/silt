@@ -278,6 +278,38 @@ func detectSources(idea string) map[model.Source]bool {
 	return selected
 }
 
+// Selection says when a source is searched for an idea, unless an include,
+// Add or exclude says otherwise.
+type Selection int
+
+const (
+	// Always: for every idea.
+	Always Selection = iota
+	// ByIdea: when the idea mentions one of the source's terms.
+	ByIdea
+	// ByIdeaOrFallback: as ByIdea, and also when the idea mentions none of
+	// any source's terms.
+	ByIdeaOrFallback
+	// OnRequest: only through an include or Add.
+	OnRequest
+)
+
+// SelectionOf says when s is searched, from the tables detectSources uses.
+func SelectionOf(s model.Source) Selection {
+	switch {
+	case slices.Contains(alwaysOn, s):
+		return Always
+	case slices.Contains(fallback, s):
+		return ByIdeaOrFallback
+	}
+	for _, r := range selectionRules {
+		if slices.Contains(r.sources, s) {
+			return ByIdea
+		}
+	}
+	return OnRequest
+}
+
 // A Browser renders a page in a real browser and returns its DOM, for the
 // sources whose plain request is walled off; internal/browser is one.
 type Browser interface {

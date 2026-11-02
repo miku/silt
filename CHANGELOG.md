@@ -67,6 +67,8 @@ Where silt differs from patent:
   projects and describes the 20 best from PyPI's JSON API ("PyPI (names
   only)"; `SILT_PYPI_INDEX=off` turns it off). patent reports PyPI as not
   reached.
+- `--list-sources` also says when each source is searched: always, if the
+  idea suggests it, or only with `--sources` or `--add`.
 - `--completions` supports bash, fish, powershell and zsh, but not elvish.
 - Help and argument errors are worded by cobra rather than clap, with the
   same flags and exit codes.

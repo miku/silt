@@ -323,6 +323,33 @@ func TestSelectSourcesUsesStableOrderAndFilters(t *testing.T) {
 	}
 }
 
+func TestSelectionOf(t *testing.T) {
+	want := map[model.Source]Selection{
+		model.GitHub: Always, model.HackerNews: Always,
+		model.Npm: ByIdeaOrFallback, model.PyPI: ByIdeaOrFallback, model.CratesIO: ByIdeaOrFallback,
+		model.Codeberg: OnRequest,
+	}
+	for _, s := range model.All() {
+		w, ok := want[s]
+		if !ok {
+			w = ByIdea
+		}
+		if got := SelectionOf(s); got != w {
+			t.Errorf("SelectionOf(%v) = %v, want %v", s, got, w)
+		}
+	}
+	// It agrees with detectSources: an idea that mentions no source's terms
+	// searches exactly the Always and ByIdeaOrFallback sources.
+	for s, picked := range detectSources("a tool that sorts my socks") {
+		if sel := SelectionOf(s); !picked || (sel != Always && sel != ByIdeaOrFallback) {
+			t.Errorf("an idea with no terms searched %v, which is %v", s, sel)
+		}
+	}
+	if n := len(detectSources("a tool that sorts my socks")); n != 5 {
+		t.Errorf("an idea with no terms searched %d sources, want 5", n)
+	}
+}
+
 func TestEverySourceHasAnAdapterForTheLiveService(t *testing.T) {
 	client := NewHTTPClient()
 	for _, id := range model.All() {
