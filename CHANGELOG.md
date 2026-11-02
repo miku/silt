@@ -34,6 +34,9 @@ Where silt differs from patent:
   `--fast` is still accepted and changes nothing.
 - It reads `OLLAMA_HOST` as the `ollama` CLI does, so the verdict can come
   from an Ollama on another machine; patent always uses `localhost:11434`.
+- The API key doesn't fall back to `OPENAI_API_KEY`, so a key meant for
+  OpenAI is never sent to the server `--api-base` names; patent reads it
+  last.
 - The TUI is silt's own, with patent's layout, keys and integrity rules.
 - Duplicate matches are resolved in source order; in patent, which duplicate
   wins changes from run to run.

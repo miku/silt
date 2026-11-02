@@ -32,7 +32,7 @@ $ silt                                                                   # searc
 $ silt "cli tool that kills a process on a given port"                   # results in the TUI
 $ silt --json "cli tool that kills a process on a given port"            # JSON
 $ silt --llm-verdict --json "cli tool that kills a process on a given port"   # verdict via local Ollama
-$ silt --llm-verdict --json --api-base https://api.openai.com/v1 --model gpt-4o-mini "embedded vector database for mobile apps"
+$ silt --llm-verdict --json --api-base http://localhost:1234/v1 --model qwen3.5-122b "embedded vector database for mobile apps"
 $ silt --keyword-only --json "react component for infinite scroll"       # no model at all
 $ silt --print-prompt "kubernetes log viewer with live filtering"   # the LLM verdict's prompt, for your own agent
 $ silt --list-sources
@@ -54,7 +54,7 @@ Binaries for Linux, macOS and Windows are on the
 | `--keyword-only` | rank by keyword overlap instead of with the embedding model |
 | `--llm-verdict` | ask an LLM for the verdict instead of estimating it from the similarity data |
 | `--model NAME` | the LLM for `--llm-verdict`: `qwen3.5` on Ollama by default, required with `--api-base` |
-| `--api-base URL` | an OpenAI-compatible API instead of Ollama for `--llm-verdict`, e.g. `https://api.openai.com/v1` |
+| `--api-base URL` | an OpenAI-compatible API instead of Ollama for `--llm-verdict`, e.g. `http://localhost:1234/v1` |
 | `--api-key KEY` | the key for `--api-base`; omit it for servers without auth |
 | `--sources LIST` | search only these sources, comma-separated, instead of picking them from the idea |
 | `--exclude LIST` | leave these sources out |
@@ -76,13 +76,13 @@ directory: `~/.config/silt` on Linux, `~/Library/Application Support/silt`
 on macOS, `%AppData%\silt` on Windows.
 
 ```toml
-model = "gpt-4o-mini"
-api_base = "https://api.openai.com/v1"
-api_key = "sk-..."
+model = "qwen3.5-122b"
+api_base = "http://localhost:1234/v1"
+api_key = "..."
 ```
 
-A flag beats the environment, which beats the file. The key falls back to
-`OPENAI_API_KEY` last. These settings only apply with `--llm-verdict`.
+A flag beats the environment, which beats the file. `OPENAI_API_KEY` is not
+read. These settings only apply with `--llm-verdict`.
 Without `--api-base`, the LLM verdict comes from the Ollama daemon that
 `OLLAMA_HOST` names, as for the `ollama` CLI, or from `localhost:11434` if
 it is unset. `GITHUB_TOKEN`, if set, lifts GitHub's

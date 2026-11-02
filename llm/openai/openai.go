@@ -1,9 +1,8 @@
 // Package openai is a backend for OpenAI-compatible chat-completions APIs.
 //
-// It talks to any server that implements POST {base}/chat/completions:
-// OpenAI, OpenRouter, Groq, vLLM, LM Studio, llama.cpp, and others. The base
-// URL is set with --api-base (ending in /v1); auth, when the server needs it,
-// comes from --api-key or the OPENAI_API_KEY environment variable.
+// It talks to any server that implements POST {base}/chat/completions, such
+// as vLLM, LM Studio or llama.cpp. The base URL is set with --api-base (ending
+// in /v1); auth, when the server needs it, comes from --api-key.
 package openai
 
 import (

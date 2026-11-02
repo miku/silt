@@ -16,14 +16,14 @@ func deref(p *string) any {
 
 func TestParsesAllFields(t *testing.T) {
 	cfg, err := Parse([]byte(`
-		model    = "gpt-4o-mini"
-		api_base = "https://api.openai.com/v1"
-		api_key  = "sk-test"
+		model    = "qwen3.5-122b"
+		api_base = "http://localhost:1234/v1"
+		api_key  = "test-key"
 	`))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if deref(cfg.Model) != "gpt-4o-mini" || deref(cfg.APIBase) != "https://api.openai.com/v1" || deref(cfg.APIKey) != "sk-test" {
+	if deref(cfg.Model) != "qwen3.5-122b" || deref(cfg.APIBase) != "http://localhost:1234/v1" || deref(cfg.APIKey) != "test-key" {
 		t.Errorf("cfg = %v %v %v", deref(cfg.Model), deref(cfg.APIBase), deref(cfg.APIKey))
 	}
 }

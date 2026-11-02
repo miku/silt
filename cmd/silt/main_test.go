@@ -42,13 +42,16 @@ func TestResolveBackendPrecedence(t *testing.T) {
 		t.Errorf("flags: %v %v %v", deref(b.apiBase), deref(b.apiKey), deref(b.model))
 	}
 
-	// The config file beats the defaults, and OPENAI_API_KEY comes last.
-	b, _, _ = resolveBackend(nil, nil, nil, true, cfg, env(map[string]string{"OPENAI_API_KEY": "openai"}))
+	// The config file beats the defaults.
+	b, _, _ = resolveBackend(nil, nil, nil, true, cfg, env(nil))
 	if deref(b.apiBase) != "http://cfg/v1" || deref(b.apiKey) != "cfg-key" || deref(b.model) != "cfg-model" {
 		t.Errorf("config: %v %v %v", deref(b.apiBase), deref(b.apiKey), deref(b.model))
 	}
+
+	// OPENAI_API_KEY is not read, so a key meant for OpenAI is never sent
+	// to the server api_base names.
 	b, _, _ = resolveBackend(nil, nil, nil, true, config.Config{}, env(map[string]string{"OPENAI_API_KEY": "openai"}))
-	if deref(b.apiKey) != "openai" || b.apiBase != nil || b.model != nil || b.ollamaEndpoint != nil {
+	if b.apiKey != nil || b.apiBase != nil || b.model != nil || b.ollamaEndpoint != nil {
 		t.Errorf("defaults: %v %v %v %v", deref(b.apiBase), deref(b.apiKey), deref(b.model), deref(b.ollamaEndpoint))
 	}
 }
@@ -66,7 +69,6 @@ func TestResolveBackendWarnings(t *testing.T) {
 		base, key, model *string
 		llm              bool
 		cfg              config.Config
-		openAIKey        bool
 		want             []string
 		wantErr          bool
 	}{
@@ -76,9 +78,6 @@ func TestResolveBackendWarnings(t *testing.T) {
 			want: []string{"warning: api_key has no effect without api_base; using local Ollama."}},
 		{name: "key from the config file without base", cfg: config.Config{APIKey: str("k")}, llm: true,
 			want: []string{"warning: api_key has no effect without api_base; using local Ollama."}},
-		// OPENAI_API_KEY is only a fallback: having it in the environment is
-		// no reason to warn.
-		{name: "OPENAI_API_KEY without base", openAIKey: true, llm: true},
 		{name: "base and model", base: str("http://x/v1"), model: str("m"), llm: true,
 			want: []string{"note: --api-base sends your search query to http://x/v1 to generate the verdict; " +
 				"the default local Ollama backend and the verdict without --llm-verdict keep it on your machine."}},
@@ -88,11 +87,7 @@ func TestResolveBackendWarnings(t *testing.T) {
 		{name: "key without base, but no LLM", key: str("k")},
 		{name: "base and model, but no LLM", base: str("http://x/v1"), model: str("m")},
 	} {
-		vars := map[string]string{}
-		if tc.openAIKey {
-			vars["OPENAI_API_KEY"] = "sk"
-		}
-		_, notes, err := resolveBackend(tc.base, tc.key, tc.model, tc.llm, tc.cfg, env(vars))
+		_, notes, err := resolveBackend(tc.base, tc.key, tc.model, tc.llm, tc.cfg, env(nil))
 		if (err != nil) != tc.wantErr {
 			t.Errorf("%s: err = %v", tc.name, err)
 		}
@@ -284,11 +279,11 @@ func TestBackendNote(t *testing.T) {
 		{backend{ollamaEndpoint: str("http://strix.tiny.vpn:11434")}, true,
 			"Verdicts by qwen3.5 on the Ollama at http://strix.tiny.vpn:11434."},
 		// --api-base wins over OLLAMA_HOST.
-		{backend{apiBase: str("https://api.openai.com/v1"), model: str("gpt-4o-mini"), ollamaEndpoint: str("http://strix.tiny.vpn:11434")}, true,
-			"Verdicts by gpt-4o-mini, through the API at https://api.openai.com/v1."},
-		{backend{apiBase: str("https://api.openai.com/v1"), model: str("gpt-4o-mini")}, true,
-			"Verdicts by gpt-4o-mini, through the API at https://api.openai.com/v1."},
-		{backend{apiBase: str("https://api.openai.com/v1"), model: str("gpt-4o-mini")}, false,
+		{backend{apiBase: str("http://localhost:1234/v1"), model: str("qwen3.5-122b"), ollamaEndpoint: str("http://strix.tiny.vpn:11434")}, true,
+			"Verdicts by qwen3.5-122b, through the API at http://localhost:1234/v1."},
+		{backend{apiBase: str("http://localhost:1234/v1"), model: str("qwen3.5-122b")}, true,
+			"Verdicts by qwen3.5-122b, through the API at http://localhost:1234/v1."},
+		{backend{apiBase: str("http://localhost:1234/v1"), model: str("qwen3.5-122b")}, false,
 			"Verdicts are estimated from the similarity data; --llm-verdict asks an LLM."},
 	} {
 		if got := backendNote(tc.b, tc.llm); got != tc.want {

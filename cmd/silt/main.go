@@ -143,8 +143,8 @@ func (f *flags) register(cmd *cobra.Command) {
 	fs.Var(&f.limit, "limit", "Max number of matches to keep after ranking (must be at least 1)")
 	fs.BoolVar(&f.llmVerdict, "llm-verdict", false, "Ask an LLM for the verdict, with a headline and gaps in its own words,\ninstead of estimating it from the similarity data. Takes seconds more")
 	fs.StringVar(&f.model, "model", "", "LLM model for --llm-verdict. Defaults to qwen3.5 for Ollama; required with\n--api-base. Can also be set via SILT_MODEL or config file")
-	fs.StringVar(&f.apiBase, "api-base", "", "Use an OpenAI-compatible API instead of local Ollama for --llm-verdict.\nBase URL ending in /v1, e.g. https://api.openai.com/v1 or\nhttp://localhost:1234/v1. Can also be set via SILT_API_BASE or config file")
-	fs.StringVar(&f.apiKey, "api-key", "", "API key for --api-base. Falls back to SILT_API_KEY, config file, then\nOPENAI_API_KEY. Omit for servers without auth")
+	fs.StringVar(&f.apiBase, "api-base", "", "Use an OpenAI-compatible API instead of local Ollama for --llm-verdict.\nBase URL ending in /v1, e.g. http://localhost:1234/v1. Can also be set via\nSILT_API_BASE or config file")
+	fs.StringVar(&f.apiKey, "api-key", "", "API key for --api-base. Falls back to SILT_API_KEY, then the config file.\nOmit for servers without auth")
 	fs.BoolVar(&f.keywordOnly, "keyword-only", false, "Skip the embedding model and rank by keyword overlap instead.\nUseful offline or to avoid the ~80 MB model download")
 	fs.BoolVar(&f.fast, "fast", false, "Without an LLM: the default now")
 	_ = fs.MarkHidden("fast")
@@ -191,20 +191,17 @@ type backend struct {
 }
 
 // resolveBackend applies the precedence CLI flag / env var > config file >
-// built-in default, with OPENAI_API_KEY as a last fallback for the key only.
-// The Ollama daemon is the one OLLAMA_HOST names, as for the ollama CLI. It
-// returns the warnings and notes to print, or an error if the settings can't
-// work. Without llm, no LLM is asked, and the settings are neither checked
-// nor warned about: the environment and the config file may well hold them
-// for the runs with --llm-verdict.
+// built-in default. OPENAI_API_KEY is not read: a key meant for OpenAI is
+// never sent to whatever server api_base names. The Ollama daemon is the one
+// OLLAMA_HOST names, as for the ollama CLI. It returns the warnings and notes
+// to print, or an error if the settings can't work. Without llm, no LLM is
+// asked, and the settings are neither checked nor warned about: the
+// environment and the config file may well hold them for the runs with
+// --llm-verdict.
 func resolveBackend(flagBase, flagKey, flagModel *string, llm bool, cfg config.Config, lookupEnv func(string) (string, bool)) (backend, []string, error) {
-	var openAIKey *string
-	if v, ok := lookupEnv("OPENAI_API_KEY"); ok {
-		openAIKey = &v
-	}
 	b := backend{
 		apiBase: or(flagBase, cfg.APIBase),
-		apiKey:  or(flagKey, cfg.APIKey, openAIKey),
+		apiKey:  or(flagKey, cfg.APIKey),
 		model:   or(flagModel, cfg.Model),
 	}
 	if v, ok := lookupEnv("OLLAMA_HOST"); ok {
@@ -214,13 +211,11 @@ func resolveBackend(flagBase, flagKey, flagModel *string, llm bool, cfg config.C
 	if !llm {
 		return b, nil, nil
 	}
-	keyExplicit := flagKey != nil || cfg.APIKey != nil
-
 	if b.apiBase != nil && b.model == nil {
 		return backend{}, nil, errAPIBaseWithoutModel
 	}
 	var notes []string
-	if keyExplicit && b.apiBase == nil {
+	if b.apiKey != nil && b.apiBase == nil {
 		notes = append(notes, "warning: api_key has no effect without api_base; using local Ollama.")
 	}
 	if b.apiBase != nil {
