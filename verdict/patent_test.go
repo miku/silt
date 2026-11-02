@@ -39,9 +39,14 @@ func TestPromptMatchesPatentByteForByte(t *testing.T) {
 	}
 }
 
+// TestFromDataMatchesPatent compares FromData with patent's --fast verdict.
+// silt words the headline as a belief; patent's wording, which the guards on
+// the LLM's verdict still use, is compared in its place.
 func TestFromDataMatchesPatent(t *testing.T) {
 	f := patenttest.Load(t)
-	patenttest.JSONEqual(t, "from-data.json", FromData(f.Matches, f.SourcesChecked, f.SourcesFailed))
+	v := FromData(f.Matches, f.SourcesChecked, f.SourcesFailed)
+	v.Headline = dataHeadline(v.Level, f.Matches)
+	patenttest.JSONEqual(t, "from-data.json", v)
 }
 
 // canned is an LLM that answers every prompt with the same response.

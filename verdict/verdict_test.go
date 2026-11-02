@@ -166,7 +166,7 @@ func TestPromptListsTheTop15AndCountsTheRest(t *testing.T) {
 	}
 }
 
-// -- FromData: the --fast / no-LLM path ------------------------------------------
+// -- FromData: the default, no-LLM path ------------------------------------------
 
 func TestFromDataFloorsLevelAgainstSimilarity(t *testing.T) {
 	// Two matches at 0.85 and 0.60 => at least two >= 0.55 => Crowded,
@@ -260,5 +260,35 @@ func TestDataHeadlines(t *testing.T) {
 		if got := dataHeadline(tc.level, withSimilarities(tc.sims...)); got != tc.want {
 			t.Errorf("dataHeadline(%v, %v) = %q\nwant %q", tc.level, tc.sims, got, tc.want)
 		}
+	}
+}
+
+func TestBeliefHeadlines(t *testing.T) {
+	for _, tc := range []struct {
+		level model.Saturation
+		sims  []float32
+		want  string
+	}{
+		{model.Saturated, []float32{0.9, 0.8, 0.7, 0.6, 0.6, 0.6}, "We believe this space is saturated: 6 closely-related tools turned up in the sources checked."},
+		{model.Crowded, []float32{0.72}, "We believe this space is crowded: 1 closely-related tool turned up in the sources checked."},
+		{model.Crowded, []float32{0.6, 0.6}, "We believe this space is crowded: 2 closely-related tools turned up in the sources checked."},
+		{model.Open, nil, "We believe this space is open: nothing close turned up in the sources checked. Keep looking before committing."},
+		{model.Open, []float32{0.56}, "We believe this space is open: 1 closely-related tool turned up in the sources checked. Worth a look before committing."},
+	} {
+		got := beliefHeadline(tc.level, withSimilarities(tc.sims...))
+		if got != tc.want {
+			t.Errorf("beliefHeadline(%v, %v) = %q\nwant %q", tc.level, tc.sims, got, tc.want)
+		}
+		// The guard the LLM's headlines go through would let it stand.
+		if containsAbsencePhrase(got) || (len(tc.sims) > 0 && claimsNoMatch(got)) {
+			t.Errorf("beliefHeadline(%v, %v) = %q, which the guards would replace", tc.level, tc.sims, got)
+		}
+	}
+}
+
+func TestFromDataWordsTheLevelAsABelief(t *testing.T) {
+	v := FromData(sampleMatches(), checked(), nil)
+	if want := "We believe this space is crowded: 2 closely-related tools turned up in the sources checked."; v.Headline != want {
+		t.Errorf("headline = %q, want %q", v.Headline, want)
 	}
 }

@@ -6,7 +6,8 @@
 // looking before committing", never a green light. The model's answer is not
 // trusted on that: its level is floored against the similarity data, and a
 // headline or gap that claims absence is replaced or dropped. [FromData]
-// derives a verdict from the similarity data alone.
+// derives a verdict from the similarity data alone, which is what silt does
+// unless asked for an LLM verdict.
 package verdict
 
 import (
@@ -172,6 +173,23 @@ func dataHeadline(level model.Saturation, matches []model.Match) string {
 	}
 }
 
+// beliefHeadline is the headline of a verdict from the similarity data alone.
+// Its level is an estimate from counting close matches, which is wrong for
+// about four in ten ideas (notes/2026-10-31-verdict-experiments), so it is
+// worded as a belief. Like dataHeadline, it never asserts absence.
+func beliefHeadline(level model.Saturation, matches []model.Match) string {
+	closeMatches := countAtLeast(matches, 0.55)
+	belief := "We believe this space is " + strings.ToLower(level.String())
+	if level == model.Open && closeMatches == 0 {
+		return belief + ": nothing close turned up in the sources checked. Keep looking before committing."
+	}
+	headline := fmt.Sprintf("%s: %d closely-related tool%s turned up in the sources checked.", belief, closeMatches, plural(closeMatches))
+	if level == model.Open {
+		headline += " Worth a look before committing."
+	}
+	return headline
+}
+
 // floorLevel floors the model's level against the similarity data, so that
 // it can never hand out a green-light Open when the embeddings clearly show
 // close prior art.
@@ -194,18 +212,21 @@ func floorLevel(modelLevel model.Saturation, matches []model.Match) model.Satura
 // FromData builds a verdict from the similarity data alone, without calling
 // a model.
 //
-// This is the --fast path (and that of any caller that deliberately skips the
-// LLM). The level is derived purely by flooring against the similarity data,
-// and the headline is the same safe, scoped, data-only sentence the flooring
-// guard produces — so a run without an LLM still gives an honest signal,
-// never flashes a misleading green Open over a clearly populated space, and
-// still carries the fixed integrity [Caveat]. Gaps require a model, so they
-// are empty here.
+// This is silt's default path; --llm-verdict calls [Assess] instead. The
+// level is derived purely by flooring against the similarity data, and the
+// headline is a safe, scoped sentence that words the level as an estimate
+// ("We believe this space is crowded: ...") — so a run without an LLM still
+// gives an honest signal, never flashes a misleading green Open over a
+// clearly populated space, and still carries the fixed integrity [Caveat].
+// Gaps require a model, so they are empty here.
+//
+// patent words the headline as the flooring guard does ([dataHeadline]);
+// everything else is as in patent's --fast.
 func FromData(matches []model.Match, checked, failed []model.Source) model.Verdict {
 	level := floorLevel(model.Open, matches)
 	return model.Verdict{
 		Level:          level,
-		Headline:       dataHeadline(level, matches),
+		Headline:       beliefHeadline(level, matches),
 		Gaps:           []string{},
 		SourcesChecked: checked,
 		SourcesFailed:  failed,
