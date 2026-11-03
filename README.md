@@ -3,17 +3,18 @@
 A prior-art search for code ideas: has this already been shipped? silt is a Go
 port of [patent](https://github.com/r14dd/patent).
 
-Searches all 19 of patent's sources (crates.io, npm, PyPI, GitHub, Go, Maven,
+```
+$ go install github.com/miku/silt/cmd/silt@latest
+```
+
+Searches crates.io, npm, PyPI, GitHub, Go, Maven,
 NuGet, RubyGems, Docker Hub, Homebrew, Packagist, Hex, Artifact Hub, AUR,
-Hackage, Nixpkgs, the VS Code and JetBrains marketplaces, Hacker News) and two
-of its own (the official Arch Linux repositories, and Codeberg on request),
-ranks the matches by semantic similarity to the idea
-([all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2)
-in pure Go, downloaded once, about 90 MB) or by keyword overlap, and estimates
+Hackage, Nixpkgs, the VS Code and JetBrains marketplaces, Hacker News, official Arch Linux repositories, and Codeberg (on request),
+ranks the matches by semantic similarity to the idea (via [all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2)
+in pure Go, weights downloaded once, about 90 MB) or by keyword overlap, and estimates
 from those similarities how crowded the space is.
 
 ```shell
-$ go install github.com/miku/silt/cmd/silt@latest
 $ silt                                                              # search interactively
 $ silt "cli tool that kills a process on a given port"              # results in the TUI
 $ silt --json "cli tool that kills a process on a given port"       # JSON
@@ -24,14 +25,12 @@ $ silt --list-sources
 
 ![](demo/promptai.gif)
 
-## Which sources are searched
+## Data sources
 
 GitHub and Hacker News are searched for every idea. The other sources are
-picked by words in the idea: "rust" picks crates.io, "cli" picks crates.io,
-Go, npm, PyPI, Homebrew and Arch Linux, and so on. When the idea picks none,
-npm, PyPI and crates.io stand in. Codeberg, whose search takes 5–15 s, is
-searched only when asked for, with `--sources` or `--add`. `--list-sources`
-says which is which:
+picked by words in the idea, e.g. "rust" picks crates.io, "cli" picks
+crates.io, Go, npm, PyPI, Homebrew and Arch Linux, and so on. Codeberg, whose
+search takes 5–15 s, is searched only when asked for.
 
 ```shell
 $ silt --list-sources
@@ -45,9 +44,8 @@ arch-linux             Arch Linux    if the idea suggests it
 ## The verdict
 
 silt embeds the idea and each match ("name: description") with
-all-MiniLM-L6-v2, and scores the match by the cosine similarity of the two:
-near 0 for unrelated text, 1 for the same meaning. The verdict counts the
-matches that come close:
+[all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2), and scores the match by the [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity) of the two:
+near 0 for unrelated text, 1 for the same meaning. A verdict then counts the matches that come close:
 
 | Level | When |
 |---|---|
@@ -55,18 +53,7 @@ matches that come close:
 | 🟡 Crowded | 2 or more with at least 0.55, or 1 with at least 0.70 |
 | 🟢 Open | anything less |
 
-The headline words the level as the estimate it is, and counts the
-closely-related matches, those at 0.55 or more: "We believe this space is
-crowded: 3 closely-related tools turned up in the sources checked." The TUI
-shows their scores in yellow, or in green from 0.70. A `--limit` below 50
-only shortens the list: the verdict still counts among the best 50.
-
-The thresholds are patent's. With `--keyword-only`, a match's score is the
-share of the idea's keywords it contains, and the same thresholds apply, so
-the level is a rougher estimate there.
-
-The JSON output has the verdict, with a fixed caveat that the TUI leaves out,
-and the matches, best first:
+The JSON output has the verdict and the matches, best first:
 
 ```json
 {
@@ -77,7 +64,6 @@ and the matches, best first:
     "headline": "We believe this space is saturated: 7 closely-related tools turned up in the sources checked.",
     "sources_checked": ["crates-io", "npm"],
     "sources_failed": [],
-    "caveat": "Not proof it doesn't exist — only that nothing close turned up in the sources checked. Keep looking (web, app stores, niche communities) before committing."
   },
   "matches": [
     {
