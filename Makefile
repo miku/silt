@@ -1,6 +1,6 @@
 # VERSION overrides the version silt reports; by default it comes from the
 # module's build info (a VCS-stamped pseudo-version for local builds).
-VERSION ?=
+VERSION ?= 0.1.0
 LDFLAGS := $(if $(VERSION),-X github.com/miku/silt/internal/silt.version=$(VERSION))
 
 SHELL := /bin/bash
