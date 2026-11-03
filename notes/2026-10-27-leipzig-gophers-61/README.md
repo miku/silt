@@ -88,7 +88,7 @@ Has this dev tool already been shipped?
 
 A Go port of [patent](https://github.com/r14dd/patent) 0.14.1 (Rust, MIT).
 Thanks [Riad](https://github.com/r14dd) and greetings to
-[Baku](https://en.wikipedia.org/wiki/Baku).
+[Baku](https://en.wikipedia.org/wiki/Baku) (and thanks for the [response](https://riad.cc/writing/the-tests-were-the-spec/))!
 
 ---
 
