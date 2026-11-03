@@ -264,7 +264,6 @@ type Verdict struct {
 	// result isn't mistaken for "nothing out there" when coverage was
 	// actually reduced.
 	SourcesFailed []Source `json:"sources_failed"`
-	Caveat        string   `json:"caveat"`
 }
 
 // MarshalJSON writes nil slices as [] rather than null, matching patent's

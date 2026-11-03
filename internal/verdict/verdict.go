@@ -37,11 +37,6 @@ const (
 	VeryStrong float32 = 0.70
 )
 
-// Caveat is the fixed, humble caveat that every verdict carries into the JSON
-// output; the TUI leaves it out. Never weaken this.
-const Caveat = "Not proof it doesn't exist — only that nothing close turned up " +
-	"in the sources checked. Keep looking (web, app stores, niche communities) before committing."
-
 // FromData is the verdict on matches, scored by their similarity to the idea.
 // checked are the sources that were searched; failed are those that were
 // selected but not reached, which the verdict names so that a thin result is
@@ -53,7 +48,6 @@ func FromData(matches []model.Match, checked, failed []model.Source) model.Verdi
 		Headline:       headline(level, countAtLeast(matches, Close)),
 		SourcesChecked: checked,
 		SourcesFailed:  failed,
-		Caveat:         Caveat,
 	}
 }
 
