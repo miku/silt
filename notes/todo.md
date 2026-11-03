@@ -22,4 +22,9 @@ A modern option could be https://huggingface.co/google/embeddinggemma-2
 > modular vision (170M) and audio (300M) encoders.
 
 That is about 33x the size of "minilm", and would take likely some care to make
-it small and fast.
+it small and fast. Albeit EG2 looks flexible, too:
+
+> Flexible footprint: Combines a 270M parameter text backbone (130M transformer
+> + 140M embedder)
+
+Still, a 12x size increase.
