@@ -46,5 +46,4 @@ clean:
 	rm -f silt
 	rm -rf .mypy_cache/
 	rm -rf .ropeproject/
-	# What cargo clean removes, without needing cargo.
 	rm -rf scripts/patent-harness/target/
