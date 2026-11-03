@@ -1,0 +1,59 @@
+# goreleaser config for silt. See https://goreleaser.com
+#
+# silt ships as linux deb/rpm packages; no tarballs (the archive phase is
+# skipped via --skip=archive, see the Makefile).
+#
+# Local dry run:   make snapshot   (writes packages to ./dist, no publishing)
+# Real release:    git tag vX.Y.Z && make release   (needs GITHUB_TOKEN)
+version: 2
+
+project_name: silt
+
+builds:
+  - id: silt
+    binary: silt
+    main: ./cmd/silt
+    env: [CGO_ENABLED=0]
+    flags: [-trimpath]
+    # The version comes from the git tag; see internal/silt/version.go.
+    ldflags: [-s, -w, "-X github.com/miku/silt/internal/silt.version={{.Version}}"]
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    goos: [linux]
+    goarch: [amd64, arm64]
+
+nfpms:
+  - id: packages
+    package_name: silt
+    homepage: https://github.com/miku/silt
+    maintainer: Martin Czygan <martin.czygan@gmail.com>
+    description: A prior-art search for code ideas, has this already been shipped?
+    license: MIT
+    section: utils
+    priority: optional
+    formats: [deb, rpm]
+    # Native package naming: silt_0.1.0_amd64.deb, silt-0.1.0-1.x86_64.rpm
+    file_name_template: "{{ .ConventionalFileName }}"
+    contents:
+      - src: LICENSE
+        dst: /usr/share/doc/silt/LICENSE
+        file_info:
+          mode: 0644
+
+checksum:
+  name_template: "checksums.txt"
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^Merge "
+
+release:
+  github:
+    owner: miku
+    name: silt

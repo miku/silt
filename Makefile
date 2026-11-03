@@ -36,6 +36,17 @@ demos: $(DEMOS)
 demo/%.gif: demo/%.tape demo/settings.tape build
 	cd demo && PATH="$(CURDIR):$$PATH" vhs $*.tape
 
+# deb/rpm packages for linux amd64/arm64 via goreleaser, see .goreleaser.yaml.
+# snapshot builds them into ./dist without publishing; release needs a git
+# tag (vX.Y.Z) and GITHUB_TOKEN, and takes the version from the tag.
+.PHONY: snapshot
+snapshot:
+	goreleaser release --snapshot --clean --skip=publish,archive
+
+.PHONY: release
+release:
+	goreleaser release --clean --skip=archive
+
 .PHONY: lint
 lint:
 	go vet ./...
